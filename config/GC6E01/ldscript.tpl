@@ -24,6 +24,7 @@ SECTIONS
     _db_stack_addr = (_stack_addr + 0x8000);
     _db_stack_end = _stack_addr;
     __ArenaLo = (_db_stack_addr + 0x1f) & ~0x1f;
+    /* Preserve the original OSInit arena limit, not the default 0x81800000. */
     __ArenaHi = 0x81700000;
 }
 FORCEACTIVE
