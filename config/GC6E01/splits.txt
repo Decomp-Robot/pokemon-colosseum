@@ -6,19 +6,7 @@ Sections:
 	.rodata     type:rodata align:32
 	.data       type:data align:32
 	.bss        type:bss align:64
-	.sdata      type:data align:32
+	.sdata      type:data align:4
 	.sbss       type:bss align:16
 	.sdata2     type:rodata align:32
 	.sbss2      type:bss align:4
-
-main.cpp:
-	.init       start:0x80003100 end:0x80005544
-	.text       start:0x800055E0 end:0x8026635C
-	.dtors      start:0x80266380 end:0x80266384
-	.rodata     start:0x802663A0 end:0x8027A4F0
-	.data       start:0x8027A500 end:0x8039A6DB
-	.bss        start:0x8039A700 end:0x80478820
-	.sdata      start:0x80478820 end:0x80478DB4
-	.sbss       start:0x80478DC0 end:0x8047B684
-	.sdata2     start:0x8047B6A0 end:0x8047E700
-	.sbss2      start:0x8047E700 end:0x8047E738
