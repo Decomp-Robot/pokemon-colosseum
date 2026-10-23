@@ -1,27 +1,23 @@
 MEMORY
 {
-    text : origin = 0x80003100
+    text : origin = $ORIGIN
 }
 SECTIONS
 {
     GROUP:
     {
-        .init ALIGN(0x4):{}
-        .text ALIGN(0x20):{}
-        .ctors ALIGN(0x8):{}
-        .dtors ALIGN(0x20):{}
-        .rodata ALIGN(0x20):{}
-        .data ALIGN(0x20):{}
-        .bss ALIGN(0x40):{}
-        .sdata ALIGN(0x20):{}
-        .sbss ALIGN(0x10):{}
-        .sdata2 ALIGN(0x20):{}
-        .sbss2 ALIGN(0x4):{}
+        $SECTIONS
+        .stack ALIGN(0x100):{}
     } > text
-    _stack_end = _f_sbss2 + SIZEOF(.sbss2);
-    _stack_addr = (_stack_end + 0x10000 + 0x7) & ~0x7;
+    _stack_end = $LAST_SECTION_SYMBOL + SIZEOF($LAST_SECTION_NAME);
+    _stack_addr = (_stack_end + $STACKSIZE + 0x7) & ~0x7;
+    /* Original InitMetroTRK uses a 0x8000-byte debugger stack. */
     _db_stack_addr = (_stack_addr + 0x8000);
+    _db_stack_end = _stack_addr;
     __ArenaLo = (_db_stack_addr + 0x1f) & ~0x1f;
-    /* OSInit references the original 23 MiB arena boundary. */
-    __ArenaHi = 0x81700000;
+    __ArenaHi = $ARENAHI;
+}
+FORCEACTIVE
+{
+    $FORCEACTIVE
 }
