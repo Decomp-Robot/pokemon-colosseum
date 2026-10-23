@@ -4,8 +4,8 @@ symbols: config/GC6E01/symbols.txt
 splits: config/GC6E01/splits.txt
 mw_comment_version: 10
 ldscript_template: config/GC6E01/ldscript.tpl
-symbols_known: true
-detect_objects: false
+detect_objects: true
 detect_strings: false
 export_all: true
+# Preserve original padding and startup-table placement between symbols.
 fill_gaps: true

@@ -11,7 +11,7 @@ Sections:
 	.sdata2     type:rodata align:32
 	.sbss2      type:bss align:4
 
-orig/GC6E01/sys/main.dol:
+main.cpp:
 	.init       start:0x80003100 end:0x80005544
 	.text       start:0x800055E0 end:0x8026635C
 	.dtors      start:0x80266380 end:0x80266384
