@@ -18,7 +18,7 @@ sjiswrap_tag = "v1.2.2"
 wibo_tag = "1.0.3"
 
 [build]
-linker_version = ""
+linker_version = "GC/2.6"
 # $VERSION and $VERSION_NUM are replaced at runtime
 
 # Assembler flags
