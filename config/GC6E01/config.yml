@@ -8,6 +8,7 @@ detect_objects: false
 detect_strings: false
 export_all: true
 fill_gaps: true
+# Emit reference disassembly for inspection only; no library claims it as source.
 write_asm: true
 force_active:
   - "__start"

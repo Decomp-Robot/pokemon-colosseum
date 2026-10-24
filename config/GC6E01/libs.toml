@@ -1,3 +1,5 @@
+# Bootstrap ranges are extracted original objects, not recovered source.
+# Keep every unit incomplete until an independently implemented source exists.
 [[lib]]
 name = "main"
 mw_version = "GC/2.6"
@@ -6,628 +8,500 @@ progress_category = "game"
 
 [[lib.object]]
 name = "code/range_80003100.s"
-src_dir = "build/GC6E01/asm"
-completed = true
+completed = false
 
 [[lib.object]]
 name = "code/range_80003154.s"
-src_dir = "build/GC6E01/asm"
-completed = true
+completed = false
 
 [[lib.object]]
 name = "code/range_800032B0.s"
-src_dir = "build/GC6E01/asm"
-completed = true
+completed = false
 
 [[lib.object]]
 name = "code/range_800055E0.s"
-src_dir = "build/GC6E01/asm"
-completed = true
+completed = false
 
 [[lib.object]]
 name = "code/range_8000C588.s"
-src_dir = "build/GC6E01/asm"
-completed = true
+completed = false
 
 [[lib.object]]
 name = "code/range_8000C624.s"
-src_dir = "build/GC6E01/asm"
-completed = true
+completed = false
 
 [[lib.object]]
 name = "code/range_8002EE74.s"
-src_dir = "build/GC6E01/asm"
-completed = true
+completed = false
 
 [[lib.object]]
 name = "code/range_8002F284.s"
-src_dir = "build/GC6E01/asm"
-completed = true
+completed = false
 
 [[lib.object]]
 name = "code/range_8002F79C.s"
-src_dir = "build/GC6E01/asm"
-completed = true
+completed = false
 
 [[lib.object]]
 name = "code/range_8002FC58.s"
-src_dir = "build/GC6E01/asm"
-completed = true
+completed = false
 
 [[lib.object]]
 name = "code/range_80030170.s"
-src_dir = "build/GC6E01/asm"
-completed = true
+completed = false
 
 [[lib.object]]
 name = "code/range_80031B4C.s"
-src_dir = "build/GC6E01/asm"
-completed = true
+completed = false
 
 [[lib.object]]
 name = "code/range_800324A0.s"
-src_dir = "build/GC6E01/asm"
-completed = true
+completed = false
 
 [[lib.object]]
 name = "code/range_80044630.s"
-src_dir = "build/GC6E01/asm"
-completed = true
+completed = false
 
 [[lib.object]]
 name = "code/range_80046168.s"
-src_dir = "build/GC6E01/asm"
-completed = true
+completed = false
 
 [[lib.object]]
 name = "code/range_80099A44.s"
-src_dir = "build/GC6E01/asm"
-completed = true
+completed = false
 
 [[lib.object]]
 name = "code/range_80099E1C.s"
-src_dir = "build/GC6E01/asm"
-completed = true
+completed = false
 
 [[lib.object]]
 name = "code/range_8009A528.s"
-src_dir = "build/GC6E01/asm"
-completed = true
+completed = false
 
 [[lib.object]]
 name = "code/range_8009A590.s"
-src_dir = "build/GC6E01/asm"
-completed = true
+completed = false
 
 [[lib.object]]
 name = "code/range_8009A6AC.s"
-src_dir = "build/GC6E01/asm"
-completed = true
+completed = false
 
 [[lib.object]]
 name = "code/range_8009A8DC.s"
-src_dir = "build/GC6E01/asm"
-completed = true
+completed = false
 
 [[lib.object]]
 name = "code/range_8009A92C.s"
-src_dir = "build/GC6E01/asm"
-completed = true
+completed = false
 
 [[lib.object]]
 name = "code/range_8009BB60.s"
-src_dir = "build/GC6E01/asm"
-completed = true
+completed = false
 
 [[lib.object]]
 name = "code/range_8009BB68.s"
-src_dir = "build/GC6E01/asm"
-completed = true
+completed = false
 
 [[lib.object]]
 name = "code/range_8009C0E8.s"
-src_dir = "build/GC6E01/asm"
-completed = true
+completed = false
 
 [[lib.object]]
 name = "code/range_8009C16C.s"
-src_dir = "build/GC6E01/asm"
-completed = true
+completed = false
 
 [[lib.object]]
 name = "code/range_8009F664.s"
-src_dir = "build/GC6E01/asm"
-completed = true
+completed = false
 
 [[lib.object]]
 name = "code/range_8009F77C.s"
-src_dir = "build/GC6E01/asm"
-completed = true
+completed = false
 
 [[lib.object]]
 name = "code/range_8009FFC0.s"
-src_dir = "build/GC6E01/asm"
-completed = true
+completed = false
 
 [[lib.object]]
 name = "code/range_800A0008.s"
-src_dir = "build/GC6E01/asm"
-completed = true
+completed = false
 
 [[lib.object]]
 name = "code/range_800A0290.s"
-src_dir = "build/GC6E01/asm"
-completed = true
+completed = false
 
 [[lib.object]]
 name = "code/range_800A1960.s"
-src_dir = "build/GC6E01/asm"
-completed = true
+completed = false
 
 [[lib.object]]
 name = "code/range_800A1990.s"
-src_dir = "build/GC6E01/asm"
-completed = true
+completed = false
 
 [[lib.object]]
 name = "code/range_800A19CC.s"
-src_dir = "build/GC6E01/asm"
-completed = true
+completed = false
 
 [[lib.object]]
 name = "code/range_800A1BB4.s"
-src_dir = "build/GC6E01/asm"
-completed = true
+completed = false
 
 [[lib.object]]
 name = "code/range_800A1C98.s"
-src_dir = "build/GC6E01/asm"
-completed = true
+completed = false
 
 [[lib.object]]
 name = "code/range_800A1E54.s"
-src_dir = "build/GC6E01/asm"
-completed = true
+completed = false
 
 [[lib.object]]
 name = "code/range_800A1F94.s"
-src_dir = "build/GC6E01/asm"
-completed = true
+completed = false
 
 [[lib.object]]
 name = "code/range_800A221C.s"
-src_dir = "build/GC6E01/asm"
-completed = true
+completed = false
 
 [[lib.object]]
 name = "code/range_800A238C.s"
-src_dir = "build/GC6E01/asm"
-completed = true
+completed = false
 
 [[lib.object]]
 name = "code/range_800A2478.s"
-src_dir = "build/GC6E01/asm"
-completed = true
+completed = false
 
 [[lib.object]]
 name = "code/range_800A257C.s"
-src_dir = "build/GC6E01/asm"
-completed = true
+completed = false
 
 [[lib.object]]
 name = "code/range_800A263C.s"
-src_dir = "build/GC6E01/asm"
-completed = true
+completed = false
 
 [[lib.object]]
 name = "code/range_800A2B9C.s"
-src_dir = "build/GC6E01/asm"
-completed = true
+completed = false
 
 [[lib.object]]
 name = "code/range_800A2BBC.s"
-src_dir = "build/GC6E01/asm"
-completed = true
+completed = false
 
 [[lib.object]]
 name = "code/range_800A5784.s"
-src_dir = "build/GC6E01/asm"
-completed = true
+completed = false
 
 [[lib.object]]
 name = "code/range_800A5810.s"
-src_dir = "build/GC6E01/asm"
-completed = true
+completed = false
 
 [[lib.object]]
 name = "code/range_800A58BC.s"
-src_dir = "build/GC6E01/asm"
-completed = true
+completed = false
 
 [[lib.object]]
 name = "code/range_800A58F0.s"
-src_dir = "build/GC6E01/asm"
-completed = true
+completed = false
 
 [[lib.object]]
 name = "code/range_800A59CC.s"
-src_dir = "build/GC6E01/asm"
-completed = true
+completed = false
 
 [[lib.object]]
 name = "code/range_800A5C60.s"
-src_dir = "build/GC6E01/asm"
-completed = true
+completed = false
 
 [[lib.object]]
 name = "code/range_800A5CC8.s"
-src_dir = "build/GC6E01/asm"
-completed = true
+completed = false
 
 [[lib.object]]
 name = "code/range_800A5D60.s"
-src_dir = "build/GC6E01/asm"
-completed = true
+completed = false
 
 [[lib.object]]
 name = "code/range_800A5D88.s"
-src_dir = "build/GC6E01/asm"
-completed = true
+completed = false
 
 [[lib.object]]
 name = "code/range_800A5EE0.s"
-src_dir = "build/GC6E01/asm"
-completed = true
+completed = false
 
 [[lib.object]]
 name = "code/range_800A6028.s"
-src_dir = "build/GC6E01/asm"
-completed = true
+completed = false
 
 [[lib.object]]
 name = "code/range_800A609C.s"
-src_dir = "build/GC6E01/asm"
-completed = true
+completed = false
 
 [[lib.object]]
 name = "code/range_800A60D4.s"
-src_dir = "build/GC6E01/asm"
-completed = true
+completed = false
 
 [[lib.object]]
 name = "code/range_800A61E8.s"
-src_dir = "build/GC6E01/asm"
-completed = true
+completed = false
 
 [[lib.object]]
 name = "code/range_800A62CC.s"
-src_dir = "build/GC6E01/asm"
-completed = true
+completed = false
 
 [[lib.object]]
 name = "code/range_800A63C8.s"
-src_dir = "build/GC6E01/asm"
-completed = true
+completed = false
 
 [[lib.object]]
 name = "code/range_800A640C.s"
-src_dir = "build/GC6E01/asm"
-completed = true
+completed = false
 
 [[lib.object]]
 name = "code/range_800A64D8.s"
-src_dir = "build/GC6E01/asm"
-completed = true
+completed = false
 
 [[lib.object]]
 name = "code/range_800A6508.s"
-src_dir = "build/GC6E01/asm"
-completed = true
+completed = false
 
 [[lib.object]]
 name = "code/range_800A6578.s"
-src_dir = "build/GC6E01/asm"
-completed = true
+completed = false
 
 [[lib.object]]
 name = "code/range_800A65A0.s"
-src_dir = "build/GC6E01/asm"
-completed = true
+completed = false
 
 [[lib.object]]
 name = "code/range_800A6684.s"
-src_dir = "build/GC6E01/asm"
-completed = true
+completed = false
 
 [[lib.object]]
 name = "code/range_800A68B4.s"
-src_dir = "build/GC6E01/asm"
-completed = true
+completed = false
 
 [[lib.object]]
 name = "code/range_800A6BD4.s"
-src_dir = "build/GC6E01/asm"
-completed = true
+completed = false
 
 [[lib.object]]
 name = "code/range_800A720C.s"
-src_dir = "build/GC6E01/asm"
-completed = true
+completed = false
 
 [[lib.object]]
 name = "code/range_800A72E8.s"
-src_dir = "build/GC6E01/asm"
-completed = true
+completed = false
 
 [[lib.object]]
 name = "code/range_800A73B4.s"
-src_dir = "build/GC6E01/asm"
-completed = true
+completed = false
 
 [[lib.object]]
 name = "code/range_800A7484.s"
-src_dir = "build/GC6E01/asm"
-completed = true
+completed = false
 
 [[lib.object]]
 name = "code/range_800A7558.s"
-src_dir = "build/GC6E01/asm"
-completed = true
+completed = false
 
 [[lib.object]]
 name = "code/range_800A7614.s"
-src_dir = "build/GC6E01/asm"
-completed = true
+completed = false
 
 [[lib.object]]
 name = "code/range_800A76E4.s"
-src_dir = "build/GC6E01/asm"
-completed = true
+completed = false
 
 [[lib.object]]
 name = "code/range_800A7830.s"
-src_dir = "build/GC6E01/asm"
-completed = true
+completed = false
 
 [[lib.object]]
 name = "code/range_800A7880.s"
-src_dir = "build/GC6E01/asm"
-completed = true
+completed = false
 
 [[lib.object]]
 name = "code/range_800A7AFC.s"
-src_dir = "build/GC6E01/asm"
-completed = true
+completed = false
 
 [[lib.object]]
 name = "code/range_800A7CCC.s"
-src_dir = "build/GC6E01/asm"
-completed = true
+completed = false
 
 [[lib.object]]
 name = "code/range_800A7DE8.s"
-src_dir = "build/GC6E01/asm"
-completed = true
+completed = false
 
 [[lib.object]]
 name = "code/range_800A80FC.s"
-src_dir = "build/GC6E01/asm"
-completed = true
+completed = false
 
 [[lib.object]]
 name = "code/range_800A8178.s"
-src_dir = "build/GC6E01/asm"
-completed = true
+completed = false
 
 [[lib.object]]
 name = "code/range_800C8520.s"
-src_dir = "build/GC6E01/asm"
-completed = true
+completed = false
 
 [[lib.object]]
 name = "code/range_800C8600.s"
-src_dir = "build/GC6E01/asm"
-completed = true
+completed = false
 
 [[lib.object]]
 name = "code/range_800C8678.s"
-src_dir = "build/GC6E01/asm"
-completed = true
+completed = false
 
 [[lib.object]]
 name = "code/range_800C8710.s"
-src_dir = "build/GC6E01/asm"
-completed = true
+completed = false
 
 [[lib.object]]
 name = "code/range_800C87F8.s"
-src_dir = "build/GC6E01/asm"
-completed = true
+completed = false
 
 [[lib.object]]
 name = "code/range_800C88BC.s"
-src_dir = "build/GC6E01/asm"
-completed = true
+completed = false
 
 [[lib.object]]
 name = "code/range_800C9030.s"
-src_dir = "build/GC6E01/asm"
-completed = true
+completed = false
 
 [[lib.object]]
 name = "code/range_800C9878.s"
-src_dir = "build/GC6E01/asm"
-completed = true
+completed = false
 
 [[lib.object]]
 name = "code/range_800C9BB0.s"
-src_dir = "build/GC6E01/asm"
-completed = true
+completed = false
 
 [[lib.object]]
 name = "code/range_800E3C08.s"
-src_dir = "build/GC6E01/asm"
-completed = true
+completed = false
 
 [[lib.object]]
 name = "code/range_800E3C5C.s"
-src_dir = "build/GC6E01/asm"
-completed = true
+completed = false
 
 [[lib.object]]
 name = "code/range_800EB268.s"
-src_dir = "build/GC6E01/asm"
-completed = true
+completed = false
 
 [[lib.object]]
 name = "code/range_800EB340.s"
-src_dir = "build/GC6E01/asm"
-completed = true
+completed = false
 
 [[lib.object]]
 name = "code/range_800EB414.s"
-src_dir = "build/GC6E01/asm"
-completed = true
+completed = false
 
 [[lib.object]]
 name = "code/range_80109934.s"
-src_dir = "build/GC6E01/asm"
-completed = true
+completed = false
 
 [[lib.object]]
 name = "code/range_80109B90.s"
-src_dir = "build/GC6E01/asm"
-completed = true
+completed = false
 
 [[lib.object]]
 name = "code/range_80117D14.s"
-src_dir = "build/GC6E01/asm"
-completed = true
+completed = false
 
 [[lib.object]]
 name = "code/range_80117E58.s"
-src_dir = "build/GC6E01/asm"
-completed = true
+completed = false
 
 [[lib.object]]
 name = "code/range_801181B0.s"
-src_dir = "build/GC6E01/asm"
-completed = true
+completed = false
 
 [[lib.object]]
 name = "code/range_801183EC.s"
-src_dir = "build/GC6E01/asm"
-completed = true
+completed = false
 
 [[lib.object]]
 name = "code/range_80118874.s"
-src_dir = "build/GC6E01/asm"
-completed = true
+completed = false
 
 [[lib.object]]
 name = "code/range_80118A68.s"
-src_dir = "build/GC6E01/asm"
-completed = true
+completed = false
 
 [[lib.object]]
 name = "code/range_80118C20.s"
-src_dir = "build/GC6E01/asm"
-completed = true
+completed = false
 
 [[lib.object]]
 name = "code/range_801193BC.s"
-src_dir = "build/GC6E01/asm"
-completed = true
+completed = false
 
 [[lib.object]]
 name = "code/range_801195AC.s"
-src_dir = "build/GC6E01/asm"
-completed = true
+completed = false
 
 [[lib.object]]
 name = "code/range_80119930.s"
-src_dir = "build/GC6E01/asm"
-completed = true
+completed = false
 
 [[lib.object]]
 name = "code/range_80119BD0.s"
-src_dir = "build/GC6E01/asm"
-completed = true
+completed = false
 
 [[lib.object]]
 name = "code/range_8013DE6C.s"
-src_dir = "build/GC6E01/asm"
-completed = true
+completed = false
 
 [[lib.object]]
 name = "code/range_8013E258.s"
-src_dir = "build/GC6E01/asm"
-completed = true
+completed = false
 
 [[lib.object]]
 name = "code/range_8013EA44.s"
-src_dir = "build/GC6E01/asm"
-completed = true
+completed = false
 
 [[lib.object]]
 name = "code/range_8013F000.s"
-src_dir = "build/GC6E01/asm"
-completed = true
+completed = false
 
 [[lib.object]]
 name = "code/range_801D91EC.s"
-src_dir = "build/GC6E01/asm"
-completed = true
+completed = false
 
 [[lib.object]]
 name = "code/range_801D97F0.s"
-src_dir = "build/GC6E01/asm"
-completed = true
+completed = false
 
 [[lib.object]]
 name = "code/range_801F7404.s"
-src_dir = "build/GC6E01/asm"
-completed = true
+completed = false
 
 [[lib.object]]
 name = "code/range_801F7480.s"
-src_dir = "build/GC6E01/asm"
-completed = true
+completed = false
 
 [[lib.object]]
 name = "code/range_801F76B8.s"
-src_dir = "build/GC6E01/asm"
-completed = true
+completed = false
 
 [[lib.object]]
 name = "code/range_801F7798.s"
-src_dir = "build/GC6E01/asm"
-completed = true
+completed = false
 
 [[lib.object]]
 name = "code/range_801FB1C0.s"
-src_dir = "build/GC6E01/asm"
-completed = true
+completed = false
 
 [[lib.object]]
 name = "code/range_801FB8F8.s"
-src_dir = "build/GC6E01/asm"
-completed = true
+completed = false
 
 [[lib.object]]
 name = "code/range_8021E754.s"
-src_dir = "build/GC6E01/asm"
-completed = true
+completed = false
 
 [[lib.object]]
 name = "code/range_8021E9F4.s"
-src_dir = "build/GC6E01/asm"
-completed = true
+completed = false
 
 [[lib.object]]
 name = "data.s"
-src_dir = "build/GC6E01/asm"
-# GNU as diagnoses its built-in .sbss2 type; retain the original NOBITS
-# section and let the native dtk ELF fixup process it. Keep warnings visible.
-asflags = ["-mgekko", "--strip-local-absolute", "-I include", "-I build/GC6E01/include", "--defsym BUILD_VERSION=0"]
-completed = true
+completed = false
