@@ -11,7 +11,6 @@ SECTIONS
     } > text
     _stack_end = $LAST_SECTION_SYMBOL + SIZEOF($LAST_SECTION_NAME);
     _stack_addr = (_stack_end + $STACKSIZE + 0x7) & ~0x7;
-    /* Original InitMetroTRK uses a 0x8000-byte debugger stack. */
     _db_stack_addr = (_stack_addr + 0x8000);
     _db_stack_end = _stack_addr;
     __ArenaLo = (_db_stack_addr + 0x1f) & ~0x1f;

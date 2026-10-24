@@ -10,3 +10,385 @@ Sections:
 	.sbss       type:bss align:16
 	.sdata2     type:rodata align:32
 	.sbss2      type:bss align:4
+
+data.s:
+	.dtors      start:0x80266380 end:0x80266384
+	.rodata     start:0x802663A0 end:0x8027A4F0
+	.data       start:0x8027A500 end:0x8039A6DB
+	.bss        start:0x8039A700 end:0x80478820
+	.sdata      start:0x80478820 end:0x80478DB4
+	.sbss       start:0x80478DC0 end:0x8047B684
+	.sdata2     start:0x8047B6A0 end:0x8047E700
+	.sbss2      start:0x8047E700 end:0x8047E738
+
+code/range_800055E0.s:
+	.text       start:0x800055E0 end:0x8000C588
+
+code/range_8000C588.s:
+	.text       start:0x8000C588 end:0x8000C624
+
+code/range_8000C624.s:
+	.text       start:0x8000C624 end:0x8002EE74
+
+code/range_8002EE74.s:
+	.text       start:0x8002EE74 end:0x8002F284
+
+code/range_8002F284.s:
+	.text       start:0x8002F284 end:0x8002F79C
+
+code/range_8002F79C.s:
+	.text       start:0x8002F79C end:0x8002FC58
+
+code/range_8002FC58.s:
+	.text       start:0x8002FC58 end:0x80030170
+
+code/range_80030170.s:
+	.text       start:0x80030170 end:0x80031B4C
+
+code/range_80031B4C.s:
+	.text       start:0x80031B4C end:0x800324A0
+
+code/range_800324A0.s:
+	.text       start:0x800324A0 end:0x80044630
+
+code/range_80044630.s:
+	.text       start:0x80044630 end:0x80046168
+
+code/range_80046168.s:
+	.text       start:0x80046168 end:0x80099A44
+
+code/range_80099A44.s:
+	.text       start:0x80099A44 end:0x80099E1C
+
+code/range_80099E1C.s:
+	.text       start:0x80099E1C end:0x8009A528
+
+code/range_8009A528.s:
+	.text       start:0x8009A528 end:0x8009A590
+
+code/range_8009A590.s:
+	.text       start:0x8009A590 end:0x8009A6AC
+
+code/range_8009A6AC.s:
+	.text       start:0x8009A6AC end:0x8009A8DC
+
+code/range_8009A8DC.s:
+	.text       start:0x8009A8DC end:0x8009A92C
+
+code/range_8009A92C.s:
+	.text       start:0x8009A92C end:0x8009BB60
+
+code/range_8009BB60.s:
+	.text       start:0x8009BB60 end:0x8009BB68
+
+code/range_8009BB68.s:
+	.text       start:0x8009BB68 end:0x8009C0E8
+
+code/range_8009C0E8.s:
+	.text       start:0x8009C0E8 end:0x8009C16C
+
+code/range_8009C16C.s:
+	.text       start:0x8009C16C end:0x8009F664
+
+code/range_8009F664.s:
+	.text       start:0x8009F664 end:0x8009F77C
+
+code/range_8009F77C.s:
+	.text       start:0x8009F77C end:0x8009FFC0
+
+code/range_8009FFC0.s:
+	.text       start:0x8009FFC0 end:0x800A0008
+
+code/range_800A0008.s:
+	.text       start:0x800A0008 end:0x800A0290
+
+code/range_800A0290.s:
+	.text       start:0x800A0290 end:0x800A1960
+
+code/range_800A1960.s:
+	.text       start:0x800A1960 end:0x800A1990
+
+code/range_800A1990.s:
+	.text       start:0x800A1990 end:0x800A19CC
+
+code/range_800A19CC.s:
+	.text       start:0x800A19CC end:0x800A1BB4
+
+code/range_800A1BB4.s:
+	.text       start:0x800A1BB4 end:0x800A1C98
+
+code/range_800A1C98.s:
+	.text       start:0x800A1C98 end:0x800A1E54
+
+code/range_800A1E54.s:
+	.text       start:0x800A1E54 end:0x800A1F94
+
+code/range_800A1F94.s:
+	.text       start:0x800A1F94 end:0x800A221C
+
+code/range_800A221C.s:
+	.text       start:0x800A221C end:0x800A238C
+
+code/range_800A238C.s:
+	.text       start:0x800A238C end:0x800A2478
+
+code/range_800A2478.s:
+	.text       start:0x800A2478 end:0x800A257C
+
+code/range_800A257C.s:
+	.text       start:0x800A257C end:0x800A263C
+
+code/range_800A263C.s:
+	.text       start:0x800A263C end:0x800A2B9C
+
+code/range_800A2B9C.s:
+	.text       start:0x800A2B9C end:0x800A2BBC
+
+code/range_800A2BBC.s:
+	.text       start:0x800A2BBC end:0x800A5784
+
+code/range_800A5784.s:
+	.text       start:0x800A5784 end:0x800A5810
+
+code/range_800A5810.s:
+	.text       start:0x800A5810 end:0x800A58BC
+
+code/range_800A58BC.s:
+	.text       start:0x800A58BC end:0x800A58F0
+
+code/range_800A58F0.s:
+	.text       start:0x800A58F0 end:0x800A59CC
+
+code/range_800A59CC.s:
+	.text       start:0x800A59CC end:0x800A5C60
+
+code/range_800A5C60.s:
+	.text       start:0x800A5C60 end:0x800A5CC8
+
+code/range_800A5CC8.s:
+	.text       start:0x800A5CC8 end:0x800A5D60
+
+code/range_800A5D60.s:
+	.text       start:0x800A5D60 end:0x800A5D88
+
+code/range_800A5D88.s:
+	.text       start:0x800A5D88 end:0x800A5EE0
+
+code/range_800A5EE0.s:
+	.text       start:0x800A5EE0 end:0x800A6028
+
+code/range_800A6028.s:
+	.text       start:0x800A6028 end:0x800A609C
+
+code/range_800A609C.s:
+	.text       start:0x800A609C end:0x800A60D4
+
+code/range_800A60D4.s:
+	.text       start:0x800A60D4 end:0x800A61E8
+
+code/range_800A61E8.s:
+	.text       start:0x800A61E8 end:0x800A62CC
+
+code/range_800A62CC.s:
+	.text       start:0x800A62CC end:0x800A63C8
+
+code/range_800A63C8.s:
+	.text       start:0x800A63C8 end:0x800A640C
+
+code/range_800A640C.s:
+	.text       start:0x800A640C end:0x800A64D8
+
+code/range_800A64D8.s:
+	.text       start:0x800A64D8 end:0x800A6508
+
+code/range_800A6508.s:
+	.text       start:0x800A6508 end:0x800A6578
+
+code/range_800A6578.s:
+	.text       start:0x800A6578 end:0x800A65A0
+
+code/range_800A65A0.s:
+	.text       start:0x800A65A0 end:0x800A6684
+
+code/range_800A6684.s:
+	.text       start:0x800A6684 end:0x800A68B4
+
+code/range_800A68B4.s:
+	.text       start:0x800A68B4 end:0x800A6BD4
+
+code/range_800A6BD4.s:
+	.text       start:0x800A6BD4 end:0x800A720C
+
+code/range_800A720C.s:
+	.text       start:0x800A720C end:0x800A72E8
+
+code/range_800A72E8.s:
+	.text       start:0x800A72E8 end:0x800A73B4
+
+code/range_800A73B4.s:
+	.text       start:0x800A73B4 end:0x800A7484
+
+code/range_800A7484.s:
+	.text       start:0x800A7484 end:0x800A7558
+
+code/range_800A7558.s:
+	.text       start:0x800A7558 end:0x800A7614
+
+code/range_800A7614.s:
+	.text       start:0x800A7614 end:0x800A76E4
+
+code/range_800A76E4.s:
+	.text       start:0x800A76E4 end:0x800A7830
+
+code/range_800A7830.s:
+	.text       start:0x800A7830 end:0x800A7880
+
+code/range_800A7880.s:
+	.text       start:0x800A7880 end:0x800A7AFC
+
+code/range_800A7AFC.s:
+	.text       start:0x800A7AFC end:0x800A7CCC
+
+code/range_800A7CCC.s:
+	.text       start:0x800A7CCC end:0x800A7DE8
+
+code/range_800A7DE8.s:
+	.text       start:0x800A7DE8 end:0x800A80FC
+
+code/range_800A80FC.s:
+	.text       start:0x800A80FC end:0x800A8178
+
+code/range_800A8178.s:
+	.text       start:0x800A8178 end:0x800C8520
+
+code/range_800C8520.s:
+	.text       start:0x800C8520 end:0x800C8600
+
+code/range_800C8600.s:
+	.text       start:0x800C8600 end:0x800C8678
+
+code/range_800C8678.s:
+	.text       start:0x800C8678 end:0x800C8710
+
+code/range_800C8710.s:
+	.text       start:0x800C8710 end:0x800C87F8
+
+code/range_800C87F8.s:
+	.text       start:0x800C87F8 end:0x800C88BC
+
+code/range_800C88BC.s:
+	.text       start:0x800C88BC end:0x800C9030
+
+code/range_800C9030.s:
+	.text       start:0x800C9030 end:0x800C9878
+
+code/range_800C9878.s:
+	.text       start:0x800C9878 end:0x800C9BB0
+
+code/range_800C9BB0.s:
+	.text       start:0x800C9BB0 end:0x800E3C08
+
+code/range_800E3C08.s:
+	.text       start:0x800E3C08 end:0x800E3C5C
+
+code/range_800E3C5C.s:
+	.text       start:0x800E3C5C end:0x800EB268
+
+code/range_800EB268.s:
+	.text       start:0x800EB268 end:0x800EB340
+
+code/range_800EB340.s:
+	.text       start:0x800EB340 end:0x800EB414
+
+code/range_800EB414.s:
+	.text       start:0x800EB414 end:0x80109934
+
+code/range_80109934.s:
+	.text       start:0x80109934 end:0x80109B90
+
+code/range_80109B90.s:
+	.text       start:0x80109B90 end:0x80117D14
+
+code/range_80117D14.s:
+	.text       start:0x80117D14 end:0x80117E58
+
+code/range_80117E58.s:
+	.text       start:0x80117E58 end:0x801181B0
+
+code/range_801181B0.s:
+	.text       start:0x801181B0 end:0x801183EC
+
+code/range_801183EC.s:
+	.text       start:0x801183EC end:0x80118874
+
+code/range_80118874.s:
+	.text       start:0x80118874 end:0x80118A68
+
+code/range_80118A68.s:
+	.text       start:0x80118A68 end:0x80118C20
+
+code/range_80118C20.s:
+	.text       start:0x80118C20 end:0x801193BC
+
+code/range_801193BC.s:
+	.text       start:0x801193BC end:0x801195AC
+
+code/range_801195AC.s:
+	.text       start:0x801195AC end:0x80119930
+
+code/range_80119930.s:
+	.text       start:0x80119930 end:0x80119BD0
+
+code/range_80119BD0.s:
+	.text       start:0x80119BD0 end:0x8013DE6C
+
+code/range_8013DE6C.s:
+	.text       start:0x8013DE6C end:0x8013E258
+
+code/range_8013E258.s:
+	.text       start:0x8013E258 end:0x8013EA44
+
+code/range_8013EA44.s:
+	.text       start:0x8013EA44 end:0x8013F000
+
+code/range_8013F000.s:
+	.text       start:0x8013F000 end:0x801D91EC
+
+code/range_801D91EC.s:
+	.text       start:0x801D91EC end:0x801D97F0
+
+code/range_801D97F0.s:
+	.text       start:0x801D97F0 end:0x801F7404
+
+code/range_801F7404.s:
+	.text       start:0x801F7404 end:0x801F7480
+
+code/range_801F7480.s:
+	.text       start:0x801F7480 end:0x801F76B8
+
+code/range_801F76B8.s:
+	.text       start:0x801F76B8 end:0x801F7798
+
+code/range_801F7798.s:
+	.text       start:0x801F7798 end:0x801FB1C0
+
+code/range_801FB1C0.s:
+	.text       start:0x801FB1C0 end:0x801FB8F8
+
+code/range_801FB8F8.s:
+	.text       start:0x801FB8F8 end:0x8021E754
+
+code/range_8021E754.s:
+	.text       start:0x8021E754 end:0x8021E9F4
+
+code/range_8021E9F4.s:
+	.text       start:0x8021E9F4 end:0x8026635C
+
+code/range_80003100.s:
+	.init       start:0x80003100 end:0x80003154
+
+code/range_80003154.s:
+	.init       start:0x80003154 end:0x800032B0
+
+code/range_800032B0.s:
+	.init       start:0x800032B0 end:0x80005544
