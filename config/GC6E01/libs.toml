@@ -1,5 +1,3 @@
-# Bootstrap ranges are extracted original objects, not recovered source.
-# Keep every unit incomplete until an independently implemented source exists.
 [[lib]]
 name = "main"
 mw_version = "GC/2.6"
@@ -8,500 +6,375 @@ progress_category = "game"
 
 [[lib.object]]
 name = "code/range_80003100.s"
-completed = false
 
 [[lib.object]]
 name = "code/range_80003154.s"
-completed = false
 
 [[lib.object]]
 name = "code/range_800032B0.s"
-completed = false
 
 [[lib.object]]
 name = "code/range_800055E0.s"
-completed = false
 
 [[lib.object]]
 name = "code/range_8000C588.s"
-completed = false
 
 [[lib.object]]
 name = "code/range_8000C624.s"
-completed = false
 
 [[lib.object]]
 name = "code/range_8002EE74.s"
-completed = false
 
 [[lib.object]]
 name = "code/range_8002F284.s"
-completed = false
 
 [[lib.object]]
 name = "code/range_8002F79C.s"
-completed = false
 
 [[lib.object]]
 name = "code/range_8002FC58.s"
-completed = false
 
 [[lib.object]]
 name = "code/range_80030170.s"
-completed = false
 
 [[lib.object]]
 name = "code/range_80031B4C.s"
-completed = false
 
 [[lib.object]]
 name = "code/range_800324A0.s"
-completed = false
 
 [[lib.object]]
 name = "code/range_80044630.s"
-completed = false
 
 [[lib.object]]
 name = "code/range_80046168.s"
-completed = false
 
 [[lib.object]]
 name = "code/range_80099A44.s"
-completed = false
 
 [[lib.object]]
 name = "code/range_80099E1C.s"
-completed = false
 
 [[lib.object]]
 name = "code/range_8009A528.s"
-completed = false
 
 [[lib.object]]
 name = "code/range_8009A590.s"
-completed = false
 
 [[lib.object]]
 name = "code/range_8009A6AC.s"
-completed = false
 
 [[lib.object]]
 name = "code/range_8009A8DC.s"
-completed = false
 
 [[lib.object]]
 name = "code/range_8009A92C.s"
-completed = false
 
 [[lib.object]]
 name = "code/range_8009BB60.s"
-completed = false
 
 [[lib.object]]
 name = "code/range_8009BB68.s"
-completed = false
 
 [[lib.object]]
 name = "code/range_8009C0E8.s"
-completed = false
 
 [[lib.object]]
 name = "code/range_8009C16C.s"
-completed = false
 
 [[lib.object]]
 name = "code/range_8009F664.s"
-completed = false
 
 [[lib.object]]
 name = "code/range_8009F77C.s"
-completed = false
 
 [[lib.object]]
 name = "code/range_8009FFC0.s"
-completed = false
 
 [[lib.object]]
 name = "code/range_800A0008.s"
-completed = false
 
 [[lib.object]]
 name = "code/range_800A0290.s"
-completed = false
 
 [[lib.object]]
 name = "code/range_800A1960.s"
-completed = false
 
 [[lib.object]]
 name = "code/range_800A1990.s"
-completed = false
 
 [[lib.object]]
 name = "code/range_800A19CC.s"
-completed = false
 
 [[lib.object]]
 name = "code/range_800A1BB4.s"
-completed = false
 
 [[lib.object]]
 name = "code/range_800A1C98.s"
-completed = false
 
 [[lib.object]]
 name = "code/range_800A1E54.s"
-completed = false
 
 [[lib.object]]
 name = "code/range_800A1F94.s"
-completed = false
 
 [[lib.object]]
 name = "code/range_800A221C.s"
-completed = false
 
 [[lib.object]]
 name = "code/range_800A238C.s"
-completed = false
 
 [[lib.object]]
 name = "code/range_800A2478.s"
-completed = false
 
 [[lib.object]]
 name = "code/range_800A257C.s"
-completed = false
 
 [[lib.object]]
 name = "code/range_800A263C.s"
-completed = false
 
 [[lib.object]]
 name = "code/range_800A2B9C.s"
-completed = false
 
 [[lib.object]]
 name = "code/range_800A2BBC.s"
-completed = false
 
 [[lib.object]]
 name = "code/range_800A5784.s"
-completed = false
 
 [[lib.object]]
 name = "code/range_800A5810.s"
-completed = false
 
 [[lib.object]]
 name = "code/range_800A58BC.s"
-completed = false
 
 [[lib.object]]
 name = "code/range_800A58F0.s"
-completed = false
 
 [[lib.object]]
 name = "code/range_800A59CC.s"
-completed = false
 
 [[lib.object]]
 name = "code/range_800A5C60.s"
-completed = false
 
 [[lib.object]]
 name = "code/range_800A5CC8.s"
-completed = false
 
 [[lib.object]]
 name = "code/range_800A5D60.s"
-completed = false
 
 [[lib.object]]
 name = "code/range_800A5D88.s"
-completed = false
 
 [[lib.object]]
 name = "code/range_800A5EE0.s"
-completed = false
 
 [[lib.object]]
 name = "code/range_800A6028.s"
-completed = false
 
 [[lib.object]]
 name = "code/range_800A609C.s"
-completed = false
 
 [[lib.object]]
 name = "code/range_800A60D4.s"
-completed = false
 
 [[lib.object]]
 name = "code/range_800A61E8.s"
-completed = false
 
 [[lib.object]]
 name = "code/range_800A62CC.s"
-completed = false
 
 [[lib.object]]
 name = "code/range_800A63C8.s"
-completed = false
 
 [[lib.object]]
 name = "code/range_800A640C.s"
-completed = false
 
 [[lib.object]]
 name = "code/range_800A64D8.s"
-completed = false
 
 [[lib.object]]
 name = "code/range_800A6508.s"
-completed = false
 
 [[lib.object]]
 name = "code/range_800A6578.s"
-completed = false
 
 [[lib.object]]
 name = "code/range_800A65A0.s"
-completed = false
 
 [[lib.object]]
 name = "code/range_800A6684.s"
-completed = false
 
 [[lib.object]]
 name = "code/range_800A68B4.s"
-completed = false
 
 [[lib.object]]
 name = "code/range_800A6BD4.s"
-completed = false
 
 [[lib.object]]
 name = "code/range_800A720C.s"
-completed = false
 
 [[lib.object]]
 name = "code/range_800A72E8.s"
-completed = false
 
 [[lib.object]]
 name = "code/range_800A73B4.s"
-completed = false
 
 [[lib.object]]
 name = "code/range_800A7484.s"
-completed = false
 
 [[lib.object]]
 name = "code/range_800A7558.s"
-completed = false
 
 [[lib.object]]
 name = "code/range_800A7614.s"
-completed = false
 
 [[lib.object]]
 name = "code/range_800A76E4.s"
-completed = false
 
 [[lib.object]]
 name = "code/range_800A7830.s"
-completed = false
 
 [[lib.object]]
 name = "code/range_800A7880.s"
-completed = false
 
 [[lib.object]]
 name = "code/range_800A7AFC.s"
-completed = false
 
 [[lib.object]]
 name = "code/range_800A7CCC.s"
-completed = false
 
 [[lib.object]]
 name = "code/range_800A7DE8.s"
-completed = false
 
 [[lib.object]]
 name = "code/range_800A80FC.s"
-completed = false
 
 [[lib.object]]
 name = "code/range_800A8178.s"
-completed = false
 
 [[lib.object]]
 name = "code/range_800C8520.s"
-completed = false
 
 [[lib.object]]
 name = "code/range_800C8600.s"
-completed = false
 
 [[lib.object]]
 name = "code/range_800C8678.s"
-completed = false
 
 [[lib.object]]
 name = "code/range_800C8710.s"
-completed = false
 
 [[lib.object]]
 name = "code/range_800C87F8.s"
-completed = false
 
 [[lib.object]]
 name = "code/range_800C88BC.s"
-completed = false
 
 [[lib.object]]
 name = "code/range_800C9030.s"
-completed = false
 
 [[lib.object]]
 name = "code/range_800C9878.s"
-completed = false
 
 [[lib.object]]
 name = "code/range_800C9BB0.s"
-completed = false
 
 [[lib.object]]
 name = "code/range_800E3C08.s"
-completed = false
 
 [[lib.object]]
 name = "code/range_800E3C5C.s"
-completed = false
 
 [[lib.object]]
 name = "code/range_800EB268.s"
-completed = false
 
 [[lib.object]]
 name = "code/range_800EB340.s"
-completed = false
 
 [[lib.object]]
 name = "code/range_800EB414.s"
-completed = false
 
 [[lib.object]]
 name = "code/range_80109934.s"
-completed = false
 
 [[lib.object]]
 name = "code/range_80109B90.s"
-completed = false
 
 [[lib.object]]
 name = "code/range_80117D14.s"
-completed = false
 
 [[lib.object]]
 name = "code/range_80117E58.s"
-completed = false
 
 [[lib.object]]
 name = "code/range_801181B0.s"
-completed = false
 
 [[lib.object]]
 name = "code/range_801183EC.s"
-completed = false
 
 [[lib.object]]
 name = "code/range_80118874.s"
-completed = false
 
 [[lib.object]]
 name = "code/range_80118A68.s"
-completed = false
 
 [[lib.object]]
 name = "code/range_80118C20.s"
-completed = false
 
 [[lib.object]]
 name = "code/range_801193BC.s"
-completed = false
 
 [[lib.object]]
 name = "code/range_801195AC.s"
-completed = false
 
 [[lib.object]]
 name = "code/range_80119930.s"
-completed = false
 
 [[lib.object]]
 name = "code/range_80119BD0.s"
-completed = false
 
 [[lib.object]]
 name = "code/range_8013DE6C.s"
-completed = false
 
 [[lib.object]]
 name = "code/range_8013E258.s"
-completed = false
 
 [[lib.object]]
 name = "code/range_8013EA44.s"
-completed = false
 
 [[lib.object]]
 name = "code/range_8013F000.s"
-completed = false
 
 [[lib.object]]
 name = "code/range_801D91EC.s"
-completed = false
 
 [[lib.object]]
 name = "code/range_801D97F0.s"
-completed = false
 
 [[lib.object]]
 name = "code/range_801F7404.s"
-completed = false
 
 [[lib.object]]
 name = "code/range_801F7480.s"
-completed = false
 
 [[lib.object]]
 name = "code/range_801F76B8.s"
-completed = false
 
 [[lib.object]]
 name = "code/range_801F7798.s"
-completed = false
 
 [[lib.object]]
 name = "code/range_801FB1C0.s"
-completed = false
 
 [[lib.object]]
 name = "code/range_801FB8F8.s"
-completed = false
 
 [[lib.object]]
 name = "code/range_8021E754.s"
-completed = false
 
 [[lib.object]]
 name = "code/range_8021E9F4.s"
-completed = false
 
 [[lib.object]]
 name = "data.s"
-completed = false
