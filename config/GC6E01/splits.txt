@@ -10,3 +10,6 @@ Sections:
 	.sbss       type:bss align:16
 	.sdata2     type:rodata align:32
 	.sbss2      type:bss align:4
+
+ext/dolsdk2001/base/PPCArch.c:
+	.text       start:0x80097FFC end:0x800980E0
