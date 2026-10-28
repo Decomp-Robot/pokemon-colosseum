@@ -99,3 +99,6 @@ ext/dolsdk2001/os/OSRtc.c:
 
 ext/dolsdk2001/os/OSStopwatch.c:
 	.text       start:0x800A1208 end:0x800A1208
+
+ext/dolsdk2001/os/OSSync.c:
+	.text       start:0x800A1208 end:0x800A128C
