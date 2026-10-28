@@ -88,3 +88,7 @@ ext/dolsdk2001/os/OSMutex.c:
 ext/dolsdk2001/os/OSReset.c:
 	.text       start:0x8009FE38 end:0x800A02C0
 	.sbss       start:0x8047A738 end:0x8047A740
+
+ext/dolsdk2001/os/OSResetSW.c:
+	.text       start:0x800A02C0 end:0x800A03B4
+	.sbss       start:0x8047A740 end:0x8047A760

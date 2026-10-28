@@ -93,3 +93,7 @@ completed = true
 name = "ext/dolsdk2001/os/OSReset.c"
 extra_cflags = ["-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/os", "-i src/ext/dolsdk2001/include/libc"]
 completed = true
+[[lib.object]]
+name = "ext/dolsdk2001/os/OSResetSW.c"
+extra_cflags = ["-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/os", "-i src/ext/dolsdk2001/include/libc"]
+completed = true
