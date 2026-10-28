@@ -23,6 +23,11 @@ void __OSCacheInit(void);
 void __OSContextInit(void);
 
 // OSError.c
+/* The error handler table has one slot per exception plus a dedicated slot for
+ * the floating-point exception handler (see __OSUnhandledException). */
+#define __OS_ERROR_FPU_EXCEPTION (OS_ERROR_MAX)
+#define __OS_ERROR_MAX (__OS_ERROR_FPU_EXCEPTION + 1)
+extern OSErrorHandler __OSErrorTable[__OS_ERROR_MAX];
 void __OSUnhandledException(unsigned char exception, struct OSContext * context, unsigned long dsisr, unsigned long dar);
 
 // OSInterrupt.c
