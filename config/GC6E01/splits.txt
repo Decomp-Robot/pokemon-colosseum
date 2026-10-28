@@ -26,3 +26,7 @@ ext/dolsdk2001/os/OS.c:
 
 ext/dolsdk2001/os/OSAddress.c:
 	.text       start:0x8009A23C end:0x8009A23C
+
+ext/dolsdk2001/os/OSAlarm.c:
+	.text       start:0x8009A27C end:0x8009A92C
+	.sbss       start:0x8047A6E0 end:0x8047A6E8
