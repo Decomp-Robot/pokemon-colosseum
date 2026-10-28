@@ -84,3 +84,7 @@ ext/dolsdk2001/os/OSMemory.c:
 
 ext/dolsdk2001/os/OSMutex.c:
 	.text       start:0x8009F77C end:0x8009FADC
+
+ext/dolsdk2001/os/OSReset.c:
+	.text       start:0x8009FE38 end:0x800A02C0
+	.sbss       start:0x8047A738 end:0x8047A740
