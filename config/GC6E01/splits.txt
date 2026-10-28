@@ -96,3 +96,6 @@ ext/dolsdk2001/os/OSResetSW.c:
 ext/dolsdk2001/os/OSRtc.c:
 	.text       start:0x800A064C end:0x800A1208
 	.bss        start:0x803FB840 end:0x803FB894
+
+ext/dolsdk2001/os/OSStopwatch.c:
+	.text       start:0x800A1208 end:0x800A1208
