@@ -13,3 +13,6 @@ Sections:
 
 ext/dolsdk2001/base/PPCArch.c:
 	.text       start:0x80097FFC end:0x800980E0
+
+ext/dolsdk2001/base/PPCPm.c:
+	.text       start:0x800980E0 end:0x800980E0

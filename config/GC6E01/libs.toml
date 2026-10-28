@@ -16,3 +16,7 @@ progress_category = "sdk"
 name = "ext/dolsdk2001/base/PPCArch.c"
 extra_cflags = ["-i src/ext/dolsdk2001/include"]
 completed = true
+[[lib.object]]
+name = "ext/dolsdk2001/base/PPCPm.c"
+extra_cflags = ["-i src/ext/dolsdk2001/include"]
+completed = true
