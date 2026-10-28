@@ -1,7 +1,7 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="560" height="246" viewBox="0 0 560 246" role="img" aria-labelledby="title description">
   <title id="title">Pokemon Colosseum decompilation progress</title>
-  <desc id="description">Target IDs: GC6E01. Decompiled: 0.28%. Fully linked: 0.28%. Trajectory over 7 accepted builds.</desc>
-  <metadata id="progress-history">{&quot;points&quot;:[{&quot;total_code&quot;:0,&quot;matched_code&quot;:0,&quot;matched_code_percent&quot;:0.0,&quot;complete_code&quot;:0,&quot;complete_code_percent&quot;:0.0},{&quot;total_code&quot;:2495108,&quot;matched_code&quot;:228,&quot;matched_code_percent&quot;:0.009137881,&quot;complete_code&quot;:228,&quot;complete_code_percent&quot;:0.009137881,&quot;report_generated_at&quot;:&quot;2026-10-27T02:58:01.154984Z&quot;},{&quot;total_code&quot;:2495108,&quot;matched_code&quot;:2960,&quot;matched_code_percent&quot;:0.11863214,&quot;complete_code&quot;:2960,&quot;complete_code_percent&quot;:0.11863214,&quot;report_generated_at&quot;:&quot;2026-10-28T02:32:33.436181Z&quot;},{&quot;total_code&quot;:2495108,&quot;matched_code&quot;:4672,&quot;matched_code_percent&quot;:0.18724641,&quot;complete_code&quot;:4672,&quot;complete_code_percent&quot;:0.18724641,&quot;report_generated_at&quot;:&quot;2026-10-28T03:06:30.385512Z&quot;},{&quot;total_code&quot;:2495108,&quot;matched_code&quot;:6340,&quot;matched_code_percent&quot;:0.25409722,&quot;complete_code&quot;:6340,&quot;complete_code_percent&quot;:0.25409722,&quot;report_generated_at&quot;:&quot;2026-10-28T03:28:10.877112Z&quot;},{&quot;total_code&quot;:2495108,&quot;matched_code&quot;:6416,&quot;matched_code_percent&quot;:0.25714317,&quot;complete_code&quot;:6416,&quot;complete_code_percent&quot;:0.25714317,&quot;report_generated_at&quot;:&quot;2026-10-28T03:51:25.312409Z&quot;},{&quot;total_code&quot;:2495108,&quot;matched_code&quot;:7076,&quot;matched_code_percent&quot;:0.28359494,&quot;complete_code&quot;:7076,&quot;complete_code_percent&quot;:0.28359494,&quot;report_generated_at&quot;:&quot;2026-10-28T04:09:18.121756Z&quot;}]}</metadata>
+  <desc id="description">Target IDs: GC6E01. Decompiled: 0.35%. Fully linked: 0.35%. Trajectory over 8 accepted builds.</desc>
+  <metadata id="progress-history">{&quot;points&quot;:[{&quot;total_code&quot;:0,&quot;matched_code&quot;:0,&quot;matched_code_percent&quot;:0.0,&quot;complete_code&quot;:0,&quot;complete_code_percent&quot;:0.0},{&quot;total_code&quot;:2495108,&quot;matched_code&quot;:228,&quot;matched_code_percent&quot;:0.009137881,&quot;complete_code&quot;:228,&quot;complete_code_percent&quot;:0.009137881,&quot;report_generated_at&quot;:&quot;2026-10-27T02:58:01.154984Z&quot;},{&quot;total_code&quot;:2495108,&quot;matched_code&quot;:2960,&quot;matched_code_percent&quot;:0.11863214,&quot;complete_code&quot;:2960,&quot;complete_code_percent&quot;:0.11863214,&quot;report_generated_at&quot;:&quot;2026-10-28T02:32:33.436181Z&quot;},{&quot;total_code&quot;:2495108,&quot;matched_code&quot;:4672,&quot;matched_code_percent&quot;:0.18724641,&quot;complete_code&quot;:4672,&quot;complete_code_percent&quot;:0.18724641,&quot;report_generated_at&quot;:&quot;2026-10-28T03:06:30.385512Z&quot;},{&quot;total_code&quot;:2495108,&quot;matched_code&quot;:6340,&quot;matched_code_percent&quot;:0.25409722,&quot;complete_code&quot;:6340,&quot;complete_code_percent&quot;:0.25409722,&quot;report_generated_at&quot;:&quot;2026-10-28T03:28:10.877112Z&quot;},{&quot;total_code&quot;:2495108,&quot;matched_code&quot;:6416,&quot;matched_code_percent&quot;:0.25714317,&quot;complete_code&quot;:6416,&quot;complete_code_percent&quot;:0.25714317,&quot;report_generated_at&quot;:&quot;2026-10-28T03:51:25.312409Z&quot;},{&quot;total_code&quot;:2495108,&quot;matched_code&quot;:7076,&quot;matched_code_percent&quot;:0.28359494,&quot;complete_code&quot;:7076,&quot;complete_code_percent&quot;:0.28359494,&quot;report_generated_at&quot;:&quot;2026-10-28T04:09:18.121756Z&quot;},{&quot;total_code&quot;:2495108,&quot;matched_code&quot;:8744,&quot;matched_code_percent&quot;:0.35044575,&quot;complete_code&quot;:8744,&quot;complete_code_percent&quot;:0.35044575,&quot;report_generated_at&quot;:&quot;2026-10-28T04:28:11.809404Z&quot;}]}</metadata>
   <defs>
     <filter id="card-shadow" x="-10%" y="-10%" width="120%" height="130%">
       <feDropShadow dx="0" dy="2" stdDeviation="4" flood-color="#000000" flood-opacity="0.4"/>
@@ -12,23 +12,23 @@
   <text x="20" y="48" fill="#7a7674" font-family="'Martian Mono', monospace" font-size="11">Target IDs: GC6E01</text>
   <text x="20" y="68" fill="#c9c6c4" font-family="'Red Hat Text', system-ui, sans-serif" font-size="12">Decompiled</text>
 <rect x="112" y="58" width="310" height="8" rx="4" fill="#0d0d0d"/>
-<rect x="112" y="58" width="0.88" height="8" rx="4" fill="#5eaaa4"/>
-<text x="540" y="68" text-anchor="end" fill="#fcfcfc" font-family="'Martian Mono', monospace" font-size="12">0.28%</text>
+<rect x="112" y="58" width="1.09" height="8" rx="4" fill="#5eaaa4"/>
+<text x="540" y="68" text-anchor="end" fill="#fcfcfc" font-family="'Martian Mono', monospace" font-size="12">0.35%</text>
   <text x="20" y="108" fill="#c9c6c4" font-family="'Red Hat Text', system-ui, sans-serif" font-size="12">Fully linked</text>
 <rect x="112" y="98" width="310" height="8" rx="4" fill="#0d0d0d"/>
-<rect x="112" y="98" width="0.88" height="8" rx="4" fill="#4ade80"/>
-<text x="540" y="108" text-anchor="end" fill="#fcfcfc" font-family="'Martian Mono', monospace" font-size="12">0.28%</text>
+<rect x="112" y="98" width="1.09" height="8" rx="4" fill="#4ade80"/>
+<text x="540" y="108" text-anchor="end" fill="#fcfcfc" font-family="'Martian Mono', monospace" font-size="12">0.35%</text>
   <rect x="12" y="126" width="536" height="102" rx="12" fill="#0d0d0d" stroke="#ffffff" stroke-opacity="0.06" stroke-width="1"/>
-  <text x="24" y="146" fill="#7a7674" font-family="'Red Hat Text', system-ui, sans-serif" font-size="10" letter-spacing="1">LAST 7 BUILDS</text>
-  <text x="536" y="146" text-anchor="end" fill="#5eaaa4" font-family="'Martian Mono', monospace" font-size="10">+0.28 pts</text>
+  <text x="24" y="146" fill="#7a7674" font-family="'Red Hat Text', system-ui, sans-serif" font-size="10" letter-spacing="1">LAST 8 BUILDS</text>
+  <text x="536" y="146" text-anchor="end" fill="#5eaaa4" font-family="'Martian Mono', monospace" font-size="10">+0.35 pts</text>
   <line x1="24" y1="158" x2="536" y2="158" stroke="#ffffff" stroke-opacity="0.06" stroke-width="1"/>
   <line x1="24" y1="179.0" x2="536" y2="179.0" stroke="#ffffff" stroke-opacity="0.06" stroke-width="1"/>
   <line x1="24" y1="200" x2="536" y2="200" stroke="#ffffff" stroke-opacity="0.06" stroke-width="1"/>
-  <path d="M24.00,200.00 L109.33,199.85 L194.67,198.11 L280.00,197.02 L365.33,195.96 L450.67,195.91 L536.00,195.49 L536.00,200.00 L24.00,200.00 Z" fill="#5eaaa4" fill-opacity="0.06"/>
-  <path d="M24.00,200.00 L109.33,199.85 L194.67,198.11 L280.00,197.02 L365.33,195.96 L450.67,195.91 L536.00,195.49" fill="none" stroke="#4ade80" stroke-width="1.5" stroke-linejoin="round" stroke-linecap="round"/>
-  <path d="M24.00,200.00 L109.33,199.85 L194.67,198.11 L280.00,197.02 L365.33,195.96 L450.67,195.91 L536.00,195.49" fill="none" stroke="#5eaaa4" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
-  <circle cx="536.00" cy="195.49" r="2.6" fill="#4ade80" stroke="#0d0d0d" stroke-width="1"/>
-  <circle cx="536.00" cy="195.49" r="3.2" fill="#5eaaa4" stroke="#0d0d0d" stroke-width="1"/>
+  <path d="M24.00,200.00 L97.14,199.86 L170.29,198.14 L243.43,197.06 L316.57,196.01 L389.71,195.96 L462.86,195.55 L536.00,194.50 L536.00,200.00 L24.00,200.00 Z" fill="#5eaaa4" fill-opacity="0.06"/>
+  <path d="M24.00,200.00 L97.14,199.86 L170.29,198.14 L243.43,197.06 L316.57,196.01 L389.71,195.96 L462.86,195.55 L536.00,194.50" fill="none" stroke="#4ade80" stroke-width="1.5" stroke-linejoin="round" stroke-linecap="round"/>
+  <path d="M24.00,200.00 L97.14,199.86 L170.29,198.14 L243.43,197.06 L316.57,196.01 L389.71,195.96 L462.86,195.55 L536.00,194.50" fill="none" stroke="#5eaaa4" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
+  <circle cx="536.00" cy="194.50" r="2.6" fill="#4ade80" stroke="#0d0d0d" stroke-width="1"/>
+  <circle cx="536.00" cy="194.50" r="3.2" fill="#5eaaa4" stroke="#0d0d0d" stroke-width="1"/>
   <text x="24" y="220" fill="#7a7674" font-family="'Martian Mono', monospace" font-size="9">FIRST</text>
   <text x="536" y="220" text-anchor="end" fill="#7a7674" font-family="'Martian Mono', monospace" font-size="9">28 Oct</text>
 </svg>
