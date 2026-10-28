@@ -16,3 +16,10 @@ ext/dolsdk2001/base/PPCArch.c:
 
 ext/dolsdk2001/base/PPCPm.c:
 	.text       start:0x800980E0 end:0x800980E0
+
+ext/dolsdk2001/os/OS.c:
+	.text       start:0x80099790 end:0x8009A23C
+	.data       start:0x8030FFA0 end:0x80310198
+	.bss        start:0x803FB4A0 end:0x803FB4F0
+	.sdata      start:0x80478970 end:0x8047897C
+	.sbss       start:0x8047A6A0 end:0x8047A6E0
