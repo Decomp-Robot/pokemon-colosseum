@@ -92,3 +92,7 @@ ext/dolsdk2001/os/OSReset.c:
 ext/dolsdk2001/os/OSResetSW.c:
 	.text       start:0x800A02C0 end:0x800A03B4
 	.sbss       start:0x8047A740 end:0x8047A760
+
+ext/dolsdk2001/os/OSRtc.c:
+	.text       start:0x800A064C end:0x800A1208
+	.bss        start:0x803FB840 end:0x803FB894
