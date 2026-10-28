@@ -23,3 +23,6 @@ ext/dolsdk2001/os/OS.c:
 	.bss        start:0x803FB4A0 end:0x803FB4F0
 	.sdata      start:0x80478970 end:0x8047897C
 	.sbss       start:0x8047A6A0 end:0x8047A6E0
+
+ext/dolsdk2001/os/OSAddress.c:
+	.text       start:0x8009A23C end:0x8009A23C
