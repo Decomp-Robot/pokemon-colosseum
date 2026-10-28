@@ -59,3 +59,10 @@ ext/dolsdk2001/os/OSError.c:
 	.data       start:0x803109B8 end:0x80310CD4
 	.bss        start:0x803FB4F0 end:0x803FB534
 	.sdata      start:0x80478990 end:0x80478998
+
+ext/dolsdk2001/os/OSFont.c:
+	.text       start:0x8009D510 end:0x8009DF3C
+	.data       start:0x80310CD8 end:0x803117E8
+	.sdata      start:0x804789A0 end:0x804789A4
+	.sbss       start:0x8047A700 end:0x8047A710
+	.sdata2     start:0x8047C280 end:0x8047C288
