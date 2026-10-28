@@ -28,6 +28,8 @@ void __OSContextInit(void);
 #define __OS_ERROR_FPU_EXCEPTION (OS_ERROR_MAX)
 #define __OS_ERROR_MAX (__OS_ERROR_FPU_EXCEPTION + 1)
 extern OSErrorHandler __OSErrorTable[__OS_ERROR_MAX];
+/* FPSCR exception-enable bits applied to every thread (OSError.c). */
+extern unsigned long __OSFpscrEnableBits;
 void __OSUnhandledException(unsigned char exception, struct OSContext * context, unsigned long dsisr, unsigned long dar);
 
 // OSInterrupt.c

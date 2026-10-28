@@ -102,3 +102,8 @@ ext/dolsdk2001/os/OSStopwatch.c:
 
 ext/dolsdk2001/os/OSSync.c:
 	.text       start:0x800A1208 end:0x800A128C
+
+ext/dolsdk2001/os/OSThread.c:
+	.text       start:0x800A1290 end:0x800A26CC
+	.bss        start:0x803FB898 end:0x803FC290
+	.sbss       start:0x8047A760 end:0x8047A76C

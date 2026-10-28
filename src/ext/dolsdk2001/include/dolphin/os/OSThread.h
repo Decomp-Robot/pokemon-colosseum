@@ -52,7 +52,13 @@ typedef struct OSThread
     /*0x2FC*/ struct OSThreadLink linkActive;             
     /*0x304*/ u8 *stackBase; 
     /*0x308*/ u32 *stackEnd;  
+    /*0x30C*/ s32 error;
+    /*0x310*/ void *specific[2];
 } OSThread;
+
+typedef void (*OSSwitchThreadCallback)(struct OSThread *from, struct OSThread *to);
+
+extern OSSwitchThreadCallback SwitchThreadCallback;
 
 enum OS_THREAD_STATE
 {
@@ -70,6 +76,7 @@ enum OS_THREAD_STATE
 
 #define OS_THREAD_STACK_MAGIC 0xDEADBABE
 
+void OSClearStack(u8 val);
 void OSInitThreadQueue(OSThreadQueue *queue);
 void OSSleepThread(OSThreadQueue *queue);
 void OSWakeupThread(OSThreadQueue *queue);
