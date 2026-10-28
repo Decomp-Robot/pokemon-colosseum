@@ -75,3 +75,6 @@ ext/dolsdk2001/os/OSInterrupt.c:
 ext/dolsdk2001/os/OSLink.c:
 	.text       start:0x8009E7A8 end:0x8009F1D0
 	.data       start:0x80311818 end:0x80311868
+
+ext/dolsdk2001/os/OSMemory.c:
+	.text       start:0x8009F3D4 end:0x8009F3E0
