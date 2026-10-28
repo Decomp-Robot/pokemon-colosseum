@@ -7,7 +7,7 @@
 extern "C" {
 #endif
 
-#define OS_MODULE_VERSION 1
+#define OS_MODULE_VERSION 3
 typedef struct OSModuleHeader OSModuleHeader;
 
 typedef u32 OSModuleID;
@@ -105,8 +105,8 @@ BOOL OSUnlink(OSModuleInfo* oldModule);
 OSModuleInfo* OSSearchModule(void* ptr, u32* section, u32* offset);
 
 // debugger notification
-void OSNotifyLink(void);
-void OSNotifyUnlink(void);
+void OSNotifyLink(OSModuleInfo* newModule);
+void OSNotifyUnlink(OSModuleInfo* oldModule);
 
 #ifdef __cplusplus
 }

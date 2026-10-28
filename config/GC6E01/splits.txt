@@ -71,3 +71,7 @@ ext/dolsdk2001/os/OSInterrupt.c:
 	.text       start:0x8009DF3C end:0x8009E7A8
 	.data       start:0x803117E8 end:0x80311814
 	.sbss       start:0x8047A710 end:0x8047A714
+
+ext/dolsdk2001/os/OSLink.c:
+	.text       start:0x8009E7A8 end:0x8009F1D0
+	.data       start:0x80311818 end:0x80311868
