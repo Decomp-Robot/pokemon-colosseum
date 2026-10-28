@@ -81,3 +81,6 @@ ext/dolsdk2001/os/OSMessage.c:
 
 ext/dolsdk2001/os/OSMemory.c:
 	.text       start:0x8009F3D4 end:0x8009F3E0
+
+ext/dolsdk2001/os/OSMutex.c:
+	.text       start:0x8009F77C end:0x8009FADC
