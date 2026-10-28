@@ -107,3 +107,7 @@ ext/dolsdk2001/os/OSThread.c:
 	.text       start:0x800A1290 end:0x800A26CC
 	.bss        start:0x803FB898 end:0x803FC290
 	.sbss       start:0x8047A760 end:0x8047A76C
+
+ext/dolsdk2001/os/OSTime.c:
+	.text       start:0x800A2778 end:0x800A2B9C
+	.data       start:0x80311878 end:0x803118D8
