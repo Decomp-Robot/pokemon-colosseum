@@ -319,3 +319,31 @@ completed = true
 name = "ext/dolsdk2001/support/Tree.c"
 extra_cflags = ["-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/include/libc"]
 completed = true
+
+# string.o was dropped by the original link as well: the retail image contains no
+# Strcat/Strcpy/Strcmp/Strlen. Binary evidence: this member was compiled with
+# every vendored GC compiler (1.0, 1.1, 1.1p1, 1.2.5, 1.2.5n, 1.3, 2.0, 2.5,
+# 2.6, 2.7, 3.0a3, 3.0a3.2, 3.0a5.2) at -O0/-O1/-O2/-O3/-O4,p/-O4,s (44
+# objects) and no compiled body -- nor any prefix of one ending at its final
+# `blr` -- occurs anywhere in the DOL's text or data. A codegen-independent
+# shape scan (per-instruction opcode + immediate, register fields, branch
+# displacements and offsets masked) matches 0 sites for the 42-instruction
+# Strcat, the 36-instruction Strcmp, the 20-instruction Strlen and the
+# 9-instruction Strcpy; the same scanner locates linked units at their exact
+# addresses (PSVECAdd at 0x800A3A78), so it is validated. The only byte-level
+# hit is the 16-byte Strcat null-check prologue
+# `cmplwi r5,0; bne; li r3,0; blr`, which occurs 9 times inside unrelated
+# functions (e.g. 0x800CA82C, in the CodeWarrior runtime strcmp) and in data,
+# and never extends past those 4 instructions. The game's string routines come
+# from the CodeWarrior runtime instead (strcmp 0x800CA7FC, strcpy 0x800CA968,
+# strlen 0x800CAA20), and mwldeppc extracts an archive member as a unit, so the
+# absence of the four bodies means string.o was never pulled out of support.a --
+# the same conclusion as its siblings HTable.o/List.o/Tree.o, whose slot at
+# 0x800CF708 is followed by unrelated DVD/EXI code. The member has no data of
+# its own (.text only) and the charPipeline sources hold no string literals, so
+# there is nothing else to search for. The 4 definitions are kept in the source
+# and marked UNUSED, so the object contributes no bytes.
+[[lib.object]]
+name = "ext/dolsdk2001/support/string.c"
+extra_cflags = ["-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/include/libc"]
+completed = true
