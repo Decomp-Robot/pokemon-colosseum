@@ -156,3 +156,6 @@ ext/dolsdk2001/support/HTable.c:
 
 ext/dolsdk2001/support/List.c:
 	.text       start:0x800CF708 end:0x800CF708
+
+ext/dolsdk2001/support/Tree.c:
+	.text       start:0x800CF708 end:0x800CF708

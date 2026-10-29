@@ -300,3 +300,22 @@ completed = true
 name = "ext/dolsdk2001/support/List.c"
 extra_cflags = ["-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/include/libc"]
 completed = true
+# Tree.o was dropped by the original link too: mwldeppc never extracted the
+# member from support.a because nothing in the retail image references the
+# charPipeline tree API. Binary evidence: all five bodies were compiled with
+# every vendored GC compiler (1.0 down to 3.0a5.2) at -O0/-O1/-O2/-O3/-O4,p/
+# -O4,s (120 objects) and no body -- nor any register/offset-agnostic
+# normalized form of it (register fields and branch targets masked) -- occurs
+# anywhere in the DOL image, .text or data. DSInitTree is the smallest and most
+# decisive witness: a 5-instruction leaf
+# (`li r0,0; stw r0,4(r3); subf r0,r4,r5; stw r0,0(r3); blr`) whose signature
+# matches 0 sites; the whole image contains only 16 `subf rD,r4,r5`
+# instructions, and no function anywhere ends with subf/stw/blr. Tree.o has no
+# data of its own (.text only) and the charPipeline sources hold no string
+# literals, so there is nothing else to search for. The 5 definitions are kept
+# in the source and marked UNUSED, so the object contributes no bytes -- exactly
+# like HTable.o and List.o.
+[[lib.object]]
+name = "ext/dolsdk2001/support/Tree.c"
+extra_cflags = ["-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/include/libc"]
+completed = true
