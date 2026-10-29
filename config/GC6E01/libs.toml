@@ -110,15 +110,42 @@ completed = true
 # variadic save-area prologue/epilogue (`stwu r1,-0x70`; cr1-gated stfd f1-f8;
 # stw r3-r10; `addi r1,r1,0x70`; blr) that GC/1.2.5n emits for a varargs
 # function, i.e. the release `void __DSP_debug_printf(const char *fmt, ...) {}`
-# compiles to exactly those bytes. The member also defines the four DSP task
-# list heads in .sbss 0x8047A960-0x8047A970 (see the source comment for the
-# declaration-order evidence). __DSPGetCurrentTask has no standalone body in
+# compiles to exactly those bytes. The member owns no data of its own: the DSP
+# task list heads it references live in dsp_task.o's .sbss block (see the
+# dsp_task.c entry below). __DSPGetCurrentTask has no standalone body in
 # the DOL (no `lwz r3, <0x8047A96C>@sda21; blr` window exists anywhere in the
 # image, and 0x8047A96C is only ever read by dsp.o's DSPAddTask and dsp_task.o's
 # __DSPHandler/task helpers), so the original link dead-stripped it; it is kept
 # in the source and marked UNUSED.
 [[lib.object]]
 name = "ext/dolsdk2001/dsp/dsp_debug.c"
+extra_cflags = ["-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/os", "-i src/ext/dolsdk2001/include/libc", "-i src/ext/dolsdk2001/dsp"]
+completed = true
+
+# dsp_task.o is the task-scheduler member of dsp.a from the same Sep  5 2002
+# Dolphin SDK drop: __DSPHandler/__DSP_exec_task are called from dsp.o's
+# DSPInit/DSPAddTask, and the handler body at 0x800AE9FC-0x800AF280 is exactly
+# the five functions below (0x424+0x1A0+0x18C+0xA0+0x94 = 0x884) as compiled
+# by GC/1.2.5n with the os-library flags. __DSP_boot_task at 0x800AEFC0 and
+# __DSP_remove_task at 0x800AF1EC are only reached through __DSPHandler and
+# DSPAddTask, yet both bodies exist, so they were live; __DSP_add_task has no
+# body anywhere in the image (DSPAddTask calls __DSP_insert_task instead) and
+# was dead-stripped, so it is marked UNUSED.
+# Data evidence: the member's .data block (the seven __DSP_debug_printf format
+# strings, 0x13B bytes) sits byte-identically at 0x80312668, right after dsp.o's
+# .data, and the retail image keeps even the "__DSP_add_task() : Added task"
+# string at 0x80312778 although the code that would print it is gone (the link
+# strips functions, not .data). Its .sbss block is 0x8047A958-0x8047A96C: the
+# handler reads the rude-task flag at 0x8047A958 (`lwz; cmpwi r0,0` at
+# 0x800AEAF0) and the rude-task pointer at 0x8047A95C (`cmplw r5,r0` against
+# __DSP_curr_task at 0x800AEAFC), and the four list heads follow at
+# 0x8047A960/64/68/6C, which is exactly the reverse declaration order
+# (__DSP_curr_task, __DSP_first_task, __DSP_last_task, __DSP_tmp_task,
+# __DSP_rude_task, __DSP_rude_task_pending) GC/1.2.5n emits for small data.
+# 0x8047A954 is left to whatever the retail archive put there; it is never
+# referenced by DSP code.
+[[lib.object]]
+name = "ext/dolsdk2001/dsp/dsp_task.c"
 extra_cflags = ["-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/os", "-i src/ext/dolsdk2001/include/libc", "-i src/ext/dolsdk2001/dsp"]
 completed = true
 
