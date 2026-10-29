@@ -37,6 +37,18 @@ name = "ext/dolsdk2001/mtx/mtx44.c"
 extra_cflags = ["-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/os", "-i src/ext/dolsdk2001/include/libc"]
 completed = true
 
+# mtxstack.o was dropped by the original link: nothing in the retail DOL calls
+# MTXInitStack/Push/PushFwd/PushInv/PushInvXpose/Pop/GetStackPtr, so all 7
+# definitions are marked UNUSED and the object contributes no bytes (the game
+# uses its own GSgfx/HSD matrix stack instead). Binary evidence: the mtx archive
+# occupies a contiguous DOL range (mtx.o 0x800A2D38-0x800A37CC, mtxvec.o
+# 0x800A37CC-0x800A3874, mtx44.o 0x800A3874-0x800A3A78) with no room for it, no
+# MTXStack code exists anywhere else in the DOL, and there are no MTX* strings.
+[[lib.object]]
+name = "ext/dolsdk2001/mtx/mtxstack.c"
+extra_cflags = ["-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/os", "-i src/ext/dolsdk2001/include/libc"]
+completed = true
+
 [[lib]]
 name = "os"
 mw_version = "GC/1.2.5n"
