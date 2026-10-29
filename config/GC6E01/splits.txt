@@ -173,6 +173,12 @@ ext/dolsdk2001/ar/ar.c:
 	.sdata      start:0x80478A30 end:0x80478A34
 	.sbss       start:0x8047A908 end:0x8047A928
 
+ext/dolsdk2001/ar/arq.c:
+	.text       start:0x800AE3F0 end:0x800AE794
+	.data       start:0x803125A0 end:0x803125E8
+	.sdata      start:0x80478A38 end:0x80478A40
+	.sbss       start:0x8047A928 end:0x8047A950
+
 ext/dolsdk2001/dsp/dsp.c:
 	.text       start:0x800AE794 end:0x800AE9AC
 	.data       start:0x803125E8 end:0x80312668

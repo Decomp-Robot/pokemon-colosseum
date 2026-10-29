@@ -549,3 +549,8 @@ progress_category = "sdk"
 name = "ext/dolsdk2001/ar/ar.c"
 extra_cflags = ["-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/os", "-i src/ext/dolsdk2001/include/libc", "-i src/ext/dolsdk2001/ar"]
 completed = true
+
+[[lib.object]]
+name = "ext/dolsdk2001/ar/arq.c"
+extra_cflags = ["-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/os", "-i src/ext/dolsdk2001/include/libc", "-i src/ext/dolsdk2001/ar"]
+completed = true
