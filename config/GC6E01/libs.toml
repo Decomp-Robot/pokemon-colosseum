@@ -133,3 +133,38 @@ completed = true
 name = "ext/dolsdk2001/os/time.dolphin.c"
 extra_cflags = ["-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/os", "-i src/ext/dolsdk2001/include/libc"]
 completed = true
+
+# stub.c is dolsdk2001's dummy link-satisfier TU: one-line bodies for 71 symbols
+# that the SDK archives expect some other object to provide. The retail DOL never
+# links it, so this object is registered as never-linked (completed = false); it
+# has no split range in config/GC6E01/splits.txt and dtk emits no compile or link
+# edge for it.
+# Binary evidence (powerpc-eabi-nm on a GC/1.2.5n build of stub.c and on
+# build/GC6E01/main.elf, objects listed by the build.ninja link rule):
+#   * the compiled object holds 71 definitions, .text = 0x11C bytes, all `blr`;
+#   * 43 of the 71 names are already defined by objects in the link: memcpy,
+#     memset and __init_registers in the .init slices, main at 0x800055E0, and
+#     the __div2i, __mod2i, __cvt_fp2unsigned, str/mem/printf families,
+#     DSPAddTask, the MetroTRK entries and the _savefpr/_restfpr helpers in the
+#     .text slice at 0x800A2B9C;
+#   * 8 more are provided without any object text: _stack_addr, _stack_end,
+#     __ArenaLo and __ArenaHi by build/GC6E01/ldscript.lcf, and _rom_copy_info,
+#     _bss_init_info, _ctors and _dtors by the DOL's own .init/.ctors/.dtors
+#     tables;
+#   * the remaining 20 are not in the DOL at all: DSPAssertTask, DSPCheckInit,
+#     DSPCheckMailToDSP, DSPGetDMAStatus, DSPHalt, DSPInit, DSPReset,
+#     DSPSendMailToDSP, __shl2i, __shr2i, __shr2u, _start, cosf, powf, sinf,
+#     tanf, rand, srand, tolower and vsprintf.
+# Linking this object would therefore be a 51-way duplicate-definition error plus
+# 0x11C bytes of stub text the DOL does not contain. The source is kept at the
+# dolsdk2001 revision and every definition carries an "// UNUSED:" mark.
+[[lib]]
+name = "stub"
+mw_version = "GC/1.2.5n"
+cflags_preset = "base"
+cflags_extra = ["-use_lmw_stmw on", "-common off", "-inline auto"]
+progress_category = "sdk"
+[[lib.object]]
+name = "ext/dolsdk2001/stub.c"
+extra_cflags = ["-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/os", "-i src/ext/dolsdk2001/include/libc"]
+completed = false
