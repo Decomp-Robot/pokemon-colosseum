@@ -140,12 +140,18 @@ ext/dolsdk2001/mtx/vec.c:
 	.text       start:0x800A3A78 end:0x800A3C54
 	.sdata2     start:0x8047C2C0 end:0x8047C2C8
 
-ext/dolsdk2001/amcstubs/AmcExi2Stubs.c:
-	.text       start:0x800CE79C end:0x800CE7CC
-
 ext/dolsdk2001/os/__start.c:
 	.init       start:0x80003100 end:0x80003400
 	.sbss       start:0x8047A770 end:0x8047A778
+
+ext/dolsdk2001/dsp/dsp.c:
+	.text       start:0x800AE794 end:0x800AE9AC
+	.data       start:0x803125E8 end:0x80312668
+	.sdata      start:0x80478A40 end:0x80478A44
+	.sbss       start:0x8047A950 end:0x8047A954
+
+ext/dolsdk2001/amcstubs/AmcExi2Stubs.c:
+	.text       start:0x800CE79C end:0x800CE7CC
 
 ext/dolsdk2001/os/OSUartExi.c:
 	.text       start:0x800CF47C end:0x800CF708

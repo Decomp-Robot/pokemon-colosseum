@@ -82,6 +82,27 @@ name = "ext/dolsdk2001/mtx/psmtx.c"
 extra_cflags = ["-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/os", "-i src/ext/dolsdk2001/include/libc"]
 completed = true
 
+# dsp.o is the DSP driver member of dsp.a, taken from the same Sep  5 2002
+# Dolphin SDK drop as the AI/AR/ARQ/VI/PAD/AMC members (see the DSP version
+# string at 0x803125E8), so it is built with the os-library compiler settings.
+# Binary evidence for the split: the dsp.o text range 0x800AE794-0x800AE9AC is
+# exactly filled by the 9 called definitions of dsp.c; DSPReadCPUToDSPMbox,
+# DSPAssertInt, DSPCheckInit, DSPUnhalt, DSPCancelTask and DSPAssertTask are
+# never called by the game (no DSPAssertInt body - `li r,-0xA9; and; ori ..,2` -
+# and no DSPUnhalt body - `li r,-0xAD; and` - exists anywhere in the DOL, and
+# DSPAssertTask calls DSPAssertInt), so the original link dead-stripped them and
+# they are marked UNUSED in the source.
+[[lib]]
+name = "dsp"
+mw_version = "GC/1.2.5n"
+cflags_preset = "base"
+cflags_extra = ["-use_lmw_stmw on", "-common off", "-inline auto"]
+progress_category = "sdk"
+[[lib.object]]
+name = "ext/dolsdk2001/dsp/dsp.c"
+extra_cflags = ["-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/os", "-i src/ext/dolsdk2001/include/libc", "-i src/ext/dolsdk2001/dsp"]
+completed = true
+
 [[lib]]
 name = "os"
 mw_version = "GC/1.2.5n"
