@@ -275,6 +275,17 @@ completed = true
 # no data of its own (.text only), and charPipeline sources contain no string
 # literals to look for. -use_lmw_stmw/-common are inert on a dropped object and
 # are kept consistent with the os/mtx entries of the same SDK release.
+# List.o was re-checked independently when its own unit was integrated: all five
+# bodies were compiled with every vendored GC compiler (1.0-3.0a3.2) at
+# -O0/-O1/-O2/-O3/-O4,p/-O4,s (52 objects) and no body appears verbatim in
+# either DOL text segment. The claim is also layout- and codegen-independent for
+# DSInitList: an instruction-level scan of the whole image finds no subf/subfc/
+# neg feeding two zero-stores into another word of the same r3-based 3-word
+# structure anywhere (its own compiled body is found by the same scan, so the
+# scanner is validated), and DSRemoveListObject's `li r0,0; stw r0,0(rX);
+# stw r0,4(rX); blr` link-clearing tail exists only once, in the unrelated
+# two-word memset helper at 0x8009A2C8. mwldeppc links a member as a unit, so
+# DSInitList's absence means the whole List.o member was dropped.
 [[lib]]
 name = "support"
 mw_version = "GC/1.2.5n"
@@ -283,5 +294,9 @@ cflags_extra = ["-use_lmw_stmw on", "-common off", "-inline auto"]
 progress_category = "sdk"
 [[lib.object]]
 name = "ext/dolsdk2001/support/HTable.c"
+extra_cflags = ["-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/include/libc"]
+completed = true
+[[lib.object]]
+name = "ext/dolsdk2001/support/List.c"
 extra_cflags = ["-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/include/libc"]
 completed = true
