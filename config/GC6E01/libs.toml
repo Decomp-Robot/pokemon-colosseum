@@ -260,3 +260,28 @@ progress_category = "sdk"
 name = "ext/dolsdk2001/amcstubs/AmcExi2Stubs.c"
 extra_cflags = ["-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/include/libc"]
 completed = true
+
+# Nothing from support.a survives in the retail DOL: all 6 HTable.o functions,
+# plus every member of the sibling List.o (DSInitList, DSInsertListObject,
+# DSRemoveListObject, DSAttachList, DSNextListObj), Tree.o and string.o, are
+# absent from the image. The archive is the charPipeline "structures" support
+# library; the game carries its own container code instead, so the original
+# link dead-stripped the whole archive and this member contributes no bytes.
+# Binary evidence: no window of any compiled body (searched as reloc-masked
+# byte patterns for GC/1.0 through GC/3.0a5.2 at -O2/-O3/-O4,p) occurs anywhere
+# in .text; in particular DSHTableIndex's `lwz r12,8(r3)` hash-pointer dispatch
+# and DSInitList's `subf rD,r4,r5` Offset computation do not exist in the DOL
+# (the only 16 `subf rD,r4,r5` sites are unrelated arithmetic). The member has
+# no data of its own (.text only), and charPipeline sources contain no string
+# literals to look for. -use_lmw_stmw/-common are inert on a dropped object and
+# are kept consistent with the os/mtx entries of the same SDK release.
+[[lib]]
+name = "support"
+mw_version = "GC/1.2.5n"
+cflags_preset = "base"
+cflags_extra = ["-use_lmw_stmw on", "-common off", "-inline auto"]
+progress_category = "sdk"
+[[lib.object]]
+name = "ext/dolsdk2001/support/HTable.c"
+extra_cflags = ["-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/include/libc"]
+completed = true
