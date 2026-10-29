@@ -28,6 +28,10 @@ cflags_preset = "base"
 cflags_extra = ["-use_lmw_stmw on", "-common off", "-inline auto"]
 progress_category = "sdk"
 [[lib.object]]
+name = "ext/dolsdk2001/os/__start.c"
+extra_cflags = ["-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/os", "-i src/ext/dolsdk2001/include/libc"]
+completed = true
+[[lib.object]]
 name = "ext/dolsdk2001/os/OS.c"
 extra_cflags = ["-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/os", "-i src/ext/dolsdk2001/include/libc"]
 completed = true
