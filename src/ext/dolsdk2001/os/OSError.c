@@ -29,7 +29,7 @@ void OSReport(char* msg, ...) {
 }
 
 // UNUSED: the game never calls this; dead-stripped at link.
-void OSPanic(char* file, int line, char* msg, ...) {
+static void OSPanic(char* file, int line, char* msg, ...) {
   va_list marker;
   u32 i;
   u32* p;

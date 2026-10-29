@@ -144,6 +144,12 @@ ext/dolsdk2001/os/__start.c:
 	.init       start:0x80003100 end:0x80003400
 	.sbss       start:0x8047A770 end:0x8047A778
 
+ext/dolsdk2001/dvd/dvdfs.c:
+	.text       start:0x800A4CF0 end:0x800A5620
+	.data       start:0x803118F0 end:0x80311A80
+	.sdata      start:0x804789C0 end:0x804789C8
+	.sbss       start:0x8047A7C8 end:0x8047A7E8
+
 ext/dolsdk2001/dsp/dsp.c:
 	.text       start:0x800AE794 end:0x800AE9AC
 	.data       start:0x803125E8 end:0x80312668

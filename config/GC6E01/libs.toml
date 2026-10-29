@@ -414,3 +414,48 @@ completed = true
 name = "ext/dolsdk2001/support/string.c"
 extra_cflags = ["-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/include/libc"]
 completed = true
+
+# dvdfs.o is the DVD filesystem member of dvd.a, from the same Sep  5 2002
+# Dolphin SDK drop as dvd.o/dvdlow.o/dvdqueue.o, so it is built with the
+# os-library compiler settings (GC/1.2.5n, base preset).
+# Binary evidence for the split: the dvdfs.o text range is the contiguous
+# 0x930-byte block 0x800A4CF0-0x800A5620 that sits between __DVDLowSetWAType
+# (dvdlow.o, ends 0x800A4CF0) and DVDInit (dvd.o, starts 0x800A5624, with the
+# 4-byte bss-only stub zz_800A5620_ before it). Its data is equally contiguous:
+# .data 0x803118F0-0x80311A80 holds exactly the five dvdfs assert/OSReport
+# strings (lbl_803118F0 "DVDConvertEntrynumToPath(possibly DVDOpen or ...",
+# lbl_803119B8 "Warning: DVDOpen(): file '%s' was not found under %s.", and the
+# DVDReadAsync/DVDRead/DVDSeek "specified area is out of the file" messages),
+# .sdata 0x804789C0 is the member's "__FILE__" string "dvdfs.c", and .sbss
+# 0x8047A7C8-0x8047A7E8 holds BootInfo/FstStart/FstStringStart/MaxEntryNum/
+# currentDirectory/__DVDLongFileNameFlag/__DVDThreadQueue, which are the
+# 8 words dvdfs.o declares.
+# Only 12 of the definitions in dvdfs.c are reachable from the retail image
+# (__DVDFSInit 0x800A4CF0, DVDConvertPathToEntrynum 0x800A4D28, DVDOpen
+# 0x800A501C, DVDClose 0x800A50E4, entryToPath 0x800A5108, DVDGetCurrentDir
+# 0x800A5268, DVDReadAsyncPrio 0x800A532C, cbForReadAsync 0x800A55F0,
+# DVDReadPrio 0x800A541C, cbForReadSync 0x800A5534, DVDSeekAsyncPrio
+# 0x800A5558, cbForSeekAsync 0x800A5568+), i.e. exactly the 0x930 bytes above.
+# isSame/myStrncpy/DVDConvertEntrynumToPath have no standalone body (they were
+# inlined into their only callers), and DVDFastOpen, DVDChangeDir, DVDSeekPrio,
+# cbForSeekSync, DVDGetFileInfoStatus, DVDOpenDir, DVDReadDir, DVDCloseDir,
+# DVDGetFSTLocation and DVDGetTransferredSize are never called by the game, so
+# the original link dead-stripped them and they are marked UNUSED in the
+# source. DVDPrepareStream/DVDPrepareStreamAsync/cbForPrepareStream[Async|Sync]
+# do not exist in this revision of the SDK member at all: the retail image has
+# no 32KB-aligned stream-prepare body and no "DVDPrepareStream" string, and the
+# assert line numbers baked into the retail code (`li r5, 0x17B` for the 8.3
+# panic, `0x2E6`/`0x2EC` in DVDReadAsyncPrio, `0x32C`/`0x332` in DVDReadPrio,
+# `0x383` in DVDSeekAsyncPrio) are 0x10 lower in the dolsdk2001 copy, i.e. the
+# retail member is a shorter revision, so those four definitions were removed
+# from the source instead of being kept.
+[[lib]]
+name = "dvd"
+mw_version = "GC/1.2.5n"
+cflags_preset = "base"
+cflags_extra = ["-use_lmw_stmw on", "-common off", "-inline auto"]
+progress_category = "sdk"
+[[lib.object]]
+name = "ext/dolsdk2001/dvd/dvdfs.c"
+extra_cflags = ["-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/os", "-i src/ext/dolsdk2001/include/libc", "-i src/ext/dolsdk2001/dvd"]
+completed = true
