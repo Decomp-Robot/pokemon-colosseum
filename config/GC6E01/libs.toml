@@ -168,3 +168,34 @@ progress_category = "sdk"
 name = "ext/dolsdk2001/stub.c"
 extra_cflags = ["-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/os", "-i src/ext/dolsdk2001/include/libc"]
 completed = false
+
+# amcstubs.a is dolsdk2001's stub implementation of the AMC/EXI2 debugger
+# interface. The retail DOL links the whole AmcExi2Stubs.o object because the
+# MetroTRK code calls into it, so all eight bodies are present in the binary, in
+# source declaration order, at .text 0x800CE79C..0x800CE7CC:
+#   0x800CE79C blr              EXI2_Init            (empty body)
+#   0x800CE7A0 blr              EXI2_EnableInterrupts(empty body)
+#   0x800CE7A4 li r3,0; blr     EXI2_Poll            (return 0)
+#   0x800CE7AC li r3,0; blr     EXI2_ReadN           (return AMC_EXI_NO_ERROR)
+#   0x800CE7B4 li r3,0; blr     EXI2_WriteN          (return AMC_EXI_NO_ERROR)
+#   0x800CE7BC blr              EXI2_Reserve         (empty body)
+#   0x800CE7C0 blr              EXI2_Unreserve       (empty body)
+#   0x800CE7C4 li r3,1; blr     AMC_IsStub           (return 1)
+# The callers are the MetroTRK slices (e.g. bl at 0x800C3EF8 EXI2_Init,
+# 0x800C3C0C EXI2_EnableInterrupts, 0x800C3C34 EXI2_Poll, 0x800C3C50 EXI2_ReadN,
+# 0x800C3D60 EXI2_WriteN, 0x800C3CA0 EXI2_Reserve, 0x800C3CC4 EXI2_Unreserve,
+# 0x800C3864 AMC_IsStub), which is why the archive member was pulled in whole.
+# Flags follow the dolsdk2001 release recipe (-O4,p -inline auto, char unsigned
+# by default); the bodies contain no prologue or char access, so the
+# -use_lmw_stmw/-common settings are inert here and are kept consistent with the
+# os entries of the same SDK release.
+[[lib]]
+name = "amcstubs"
+mw_version = "GC/2.6"
+cflags_preset = "base"
+cflags_extra = ["-use_lmw_stmw on", "-common off", "-inline auto"]
+progress_category = "sdk"
+[[lib.object]]
+name = "ext/dolsdk2001/amcstubs/AmcExi2Stubs.c"
+extra_cflags = ["-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/include/libc"]
+completed = true
