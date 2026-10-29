@@ -480,7 +480,36 @@ progress_category = "sdk"
 name = "ext/dolsdk2001/dvd/dvdlow.c"
 extra_cflags = ["-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/os", "-i src/ext/dolsdk2001/include/libc", "-i src/ext/dolsdk2001/dvd"]
 completed = true
+# dvdqueue.o is the DVD wait-queue member of dvd.a from the same Sep  5 2002
+# Dolphin SDK drop as dvdlow.o/dvdfs.o (os-library settings: GC/1.2.5n, base
+# preset). Binary evidence for the split: its text is the contiguous 0x1F8-byte
+# block 0x800A7DE8-0x800A7FE0 that ends exactly where ErrorCode2Num (dvd.o)
+# starts, and holds precisely __DVDClearWaitingQueue (0x38),
+# __DVDPushWaitingQueue (0x68), __DVDPopWaitingQueue (0xA0),
+# __DVDCheckWaitingQueue (0x58) and __DVDDequeueWaitingQueue (0x60) in source
+# order, with PopWaitingQueuePrio inlined into __DVDPopWaitingQueue (the
+# out-of-line body the dolsdk2001 source declares has no bytes in the image).
+# Its data is WaitingQueue in .bss 0x803FC3F8-0x803FC418 (4 entries of
+# {next, prev}); nothing else of the member survives.
+# Revision differences proved by the binary: the retail member restores
+# interrupts before returning from the early-exit paths of
+# __DVDPopWaitingQueue (0x800A7EBC calls OSRestoreInterrupts and then re-enters
+# PopWaitingQueuePrio, which disables them again) and of
+# __DVDCheckWaitingQueue (0x800A7F54), where the dolsdk2001 copy returns
+# straight away. __DVDIsBlockInWaitingQueue has no bytes in the image (the
+# 0x1F8-byte block is fully accounted for by the five functions above and no
+# call site references it), so the link dead-stripped it and it is marked
+# UNUSED in the source. DVDDumpWaitingQueue (and with it the static
+# CommandNames table it is the only user of) is likewise absent: the image has
+# no such body and none of its strings ("==== DVD Waiting Queue Status ====",
+# "CHANGE_DISK", "BS_CHANGE_DISK", ... appear nowhere in the DOL and there is
+# no "dvdqueue.c" __FILE__ string), so it was removed from the source instead
+# of being kept.
 [[lib.object]]
 name = "ext/dolsdk2001/dvd/dvdfs.c"
+extra_cflags = ["-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/os", "-i src/ext/dolsdk2001/include/libc", "-i src/ext/dolsdk2001/dvd"]
+completed = true
+[[lib.object]]
+name = "ext/dolsdk2001/dvd/dvdqueue.c"
 extra_cflags = ["-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/os", "-i src/ext/dolsdk2001/include/libc", "-i src/ext/dolsdk2001/dvd"]
 completed = true
