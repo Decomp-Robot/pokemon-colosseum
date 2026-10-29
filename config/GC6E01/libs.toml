@@ -415,6 +415,27 @@ name = "ext/dolsdk2001/support/string.c"
 extra_cflags = ["-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/include/libc"]
 completed = true
 
+# dvdlow.o is the low-level DVD-interface member of dvd.a. The retail member is
+# a shorter revision than the dolsdk2001/dolsdk2004 copies: its text is the
+# contiguous 0xE00-byte block 0x800A3EB0-0x800A4CF0 that starts right after
+# vec.o (PSVECAdd ends 0x800A3EB0) and ends where dvdfs.o starts. The block holds
+# exactly the queue dispatcher (inlined into __DVDInterruptHandler, with the
+# 0x84-byte out-of-line copy at 0x800A41D0 used as the work-around alarm), the
+# timeout handler, Read, SeekTwiceBeforeRead and the 12 DVDLow* command entry
+# points plus DVDLowBreak/DVDLowClearCallback/__DVDLowSetWAType, i.e. every
+# definition that the game reaches. The member's other data is equally
+# contiguous: .bss 0x803FC290-0x803FC360 (CommandList 0x803FC290 size 0x3C,
+# AlarmForWA 0x803FC2D0, AlarmForTimeout 0x803FC2F8 size 0x28, AlarmForBreak
+# 0x803FC320, Prev 0x803FC348, Curr 0x803FC354, followed by dvd.o's BB2 at
+# 0x803FC360), .sdata 0x804789B8 (FirstRead = 1) and .sbss 0x8047A780-0x8047A7C8
+# (StopAtNextInt..NextCommandNumber, the 18 words the member declares).
+# DVDLowSetResetCoverCallback, DVDLowGetCoverStatus and __DVDLowTestAlarm have no
+# bytes in the image, so the original link dead-stripped them (nothing in the
+# game calls them) and they are marked UNUSED in the source; the internal
+# helpers (ProcessNextCommand, AudioBufferOn, HitCache, DoJustRead,
+# WaitBeforeRead, SetTimeoutAlarm, AudioBufferOn, DoBreak, SetBreakAlarm and
+# AlarmHandlerForBreak) have no standalone bodies because they were inlined into
+# their callers.
 # dvdfs.o is the DVD filesystem member of dvd.a, from the same Sep  5 2002
 # Dolphin SDK drop as dvd.o/dvdlow.o/dvdqueue.o, so it is built with the
 # os-library compiler settings (GC/1.2.5n, base preset).
@@ -455,6 +476,10 @@ mw_version = "GC/1.2.5n"
 cflags_preset = "base"
 cflags_extra = ["-use_lmw_stmw on", "-common off", "-inline auto"]
 progress_category = "sdk"
+[[lib.object]]
+name = "ext/dolsdk2001/dvd/dvdlow.c"
+extra_cflags = ["-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/os", "-i src/ext/dolsdk2001/include/libc", "-i src/ext/dolsdk2001/dvd"]
+completed = true
 [[lib.object]]
 name = "ext/dolsdk2001/dvd/dvdfs.c"
 extra_cflags = ["-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/os", "-i src/ext/dolsdk2001/include/libc", "-i src/ext/dolsdk2001/dvd"]
