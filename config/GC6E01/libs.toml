@@ -513,3 +513,28 @@ completed = true
 name = "ext/dolsdk2001/dvd/dvdqueue.c"
 extra_cflags = ["-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/os", "-i src/ext/dolsdk2001/include/libc", "-i src/ext/dolsdk2001/dvd"]
 completed = true
+# fstload.o is the FST-bootstrap member of dvd.a from the same Sep  5 2002
+# Dolphin SDK drop as dvdlow.o/dvdfs.o/dvdqueue.o (os-library settings:
+# GC/1.2.5n, base preset). Binary evidence for the split: cb (0x800A839C,
+# 0xD8 bytes) and __fstLoad (0x800A8474, 0x168 bytes) form the contiguous
+# 0x240-byte block 0x800A839C-0x800A85DC that ends exactly where the VI
+# function zz_800A85DC_ starts; the code before it belongs to dvd.o.
+# Its data is equally contiguous and self-contained: .data
+# 0x80312078-0x803120E8 holds exactly the five __fstLoad OSReport format
+# strings ("  Game Name ... %c%c%c%c\n" at 0x80312078, then the Company /
+# Disk # / Game ver / Streaming lines up to 0x803120E8, where vi.c's
+# "<< Dolphin SDK - VI ..." string begins), .sdata 0x804789E8 is fstload.o's
+# string pool ("\n" 0x804789E8, "OFF" 0x804789EC, "ON" 0x804789F0, padded to
+# the 8-aligned 0x804789F8 where vi.c's .sdata resumes), .bss
+# 0x803FC418-0x803FC488 holds bb2Buf (0x3F -> aligned 0x803FC458) and the
+# function-local block (0x30), and .sbss 0x8047A838-0x8047A844 holds
+# status/bb2/idTmp, which are exactly the five objects fstload.o declares.
+# Revision difference proved by the binary: the retail member resets the DVD
+# state machine on result == -4 (0x800A8438 `cmpwi r3, -0x4`); the dolsdk2001
+# copy this unit was seeded from tests result == -2. The rest of cb/__fstLoad
+# (including the DVDGetDriveStatus busy-wait and its dead switch) compiles to
+# the retail bytes unchanged with GC/1.2.5n at -O4,p.
+[[lib.object]]
+name = "ext/dolsdk2001/dvd/fstload.c"
+extra_cflags = ["-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/os", "-i src/ext/dolsdk2001/include/libc", "-i src/ext/dolsdk2001/dvd"]
+completed = true
