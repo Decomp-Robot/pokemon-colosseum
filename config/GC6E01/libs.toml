@@ -42,6 +42,20 @@ name = "ext/dolsdk2001/mtx/mtx44.c"
 extra_cflags = ["-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/os", "-i src/ext/dolsdk2001/include/libc"]
 completed = true
 
+# vec.o is the last mtx member present in the DOL: its text starts right after
+# mtx44.o at 0x800A3A78 and runs to 0x800A3C54, where the quaternion member
+# begins (PSQUATMultiply at 0x800A3C54, C_QUATRotAxisRad at 0x800A3CB0,
+# C_QUATSlerp at 0x800A3D3C). Its two float constants follow mtx44.o's in
+# .sdata2 (0x8047C2C0 = 0.5f, 0x8047C2C4 = 3.0f). Only 10 of the 20 definitions
+# occupy that range (PSVECAdd 0x800A3A78 ... VECDistance 0x800A3C00); the debug
+# C_* twins and VECHalfAngle/VECReflect are never called by the game, so the
+# linker dead-strips them and they are marked UNUSED in the source, as in
+# mtxstack.c and psmtx.c.
+[[lib.object]]
+name = "ext/dolsdk2001/mtx/vec.c"
+extra_cflags = ["-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/os", "-i src/ext/dolsdk2001/include/libc"]
+completed = true
+
 # mtxstack.o was dropped by the original link: nothing in the retail DOL calls
 # MTXInitStack/Push/PushFwd/PushInv/PushInvXpose/Pop/GetStackPtr, so all 7
 # definitions are marked UNUSED and the object contributes no bytes (the game
