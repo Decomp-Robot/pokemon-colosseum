@@ -22,6 +22,17 @@ extra_cflags = ["-i src/ext/dolsdk2001/include"]
 completed = true
 
 [[lib]]
+name = "mtx"
+mw_version = "GC/1.2.5n"
+cflags_preset = "base"
+cflags_extra = ["-use_lmw_stmw on", "-common off", "-inline auto", "-fp_contract off"]
+progress_category = "sdk"
+[[lib.object]]
+name = "ext/dolsdk2001/mtx/mtx.c"
+extra_cflags = ["-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/os", "-i src/ext/dolsdk2001/include/libc"]
+completed = true
+
+[[lib]]
 name = "os"
 mw_version = "GC/1.2.5n"
 cflags_preset = "base"
