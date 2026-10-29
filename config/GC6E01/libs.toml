@@ -103,6 +103,25 @@ name = "ext/dolsdk2001/dsp/dsp.c"
 extra_cflags = ["-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/os", "-i src/ext/dolsdk2001/include/libc", "-i src/ext/dolsdk2001/dsp"]
 completed = true
 
+# dsp_debug.o is the debug-print member of dsp.a from the same Sep  5 2002
+# Dolphin SDK drop as dsp.o. Its text is the single 0x50-byte body at
+# 0x800AE9AC-0x800AE9FC, which starts where dsp.o ends (DSPAddTask ends at
+# 0x800AE9AC) and ends where dsp_task.o's __DSPHandler begins. The body is the
+# variadic save-area prologue/epilogue (`stwu r1,-0x70`; cr1-gated stfd f1-f8;
+# stw r3-r10; `addi r1,r1,0x70`; blr) that GC/1.2.5n emits for a varargs
+# function, i.e. the release `void __DSP_debug_printf(const char *fmt, ...) {}`
+# compiles to exactly those bytes. The member also defines the four DSP task
+# list heads in .sbss 0x8047A960-0x8047A970 (see the source comment for the
+# declaration-order evidence). __DSPGetCurrentTask has no standalone body in
+# the DOL (no `lwz r3, <0x8047A96C>@sda21; blr` window exists anywhere in the
+# image, and 0x8047A96C is only ever read by dsp.o's DSPAddTask and dsp_task.o's
+# __DSPHandler/task helpers), so the original link dead-stripped it; it is kept
+# in the source and marked UNUSED.
+[[lib.object]]
+name = "ext/dolsdk2001/dsp/dsp_debug.c"
+extra_cflags = ["-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/os", "-i src/ext/dolsdk2001/include/libc", "-i src/ext/dolsdk2001/dsp"]
+completed = true
+
 [[lib]]
 name = "os"
 mw_version = "GC/1.2.5n"

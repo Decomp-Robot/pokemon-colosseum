@@ -150,6 +150,10 @@ ext/dolsdk2001/dsp/dsp.c:
 	.sdata      start:0x80478A40 end:0x80478A44
 	.sbss       start:0x8047A950 end:0x8047A954
 
+ext/dolsdk2001/dsp/dsp_debug.c:
+	.text       start:0x800AE9AC end:0x800AE9FC
+	.sbss       start:0x8047A960 end:0x8047A970
+
 ext/dolsdk2001/amcstubs/AmcExi2Stubs.c:
 	.text       start:0x800CE79C end:0x800CE7CC
 
