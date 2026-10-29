@@ -129,6 +129,9 @@ ext/dolsdk2001/mtx/mtxvec.c:
 ext/dolsdk2001/mtx/mtxstack.c:
 	.text       start:0x800A3874 end:0x800A3874
 
+ext/dolsdk2001/mtx/psmtx.c:
+	.text       start:0x800A3874 end:0x800A3874
+
 ext/dolsdk2001/mtx/mtx44.c:
 	.text       start:0x800A3874 end:0x800A3A78
 	.sdata2     start:0x8047C2A8 end:0x8047C2C0

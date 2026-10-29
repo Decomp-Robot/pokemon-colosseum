@@ -54,6 +54,20 @@ name = "ext/dolsdk2001/mtx/mtxstack.c"
 extra_cflags = ["-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/os", "-i src/ext/dolsdk2001/include/libc"]
 completed = true
 
+# psmtx.o was dropped by the original link as well: the retail DOL contains no
+# PSMTXReorder/PSMTXROMultVecArray/PSMTXROSkin2VecArray/PSMTXROMultS16VecArray/
+# PSMTXMultS16VecArray code, so all 5 definitions are marked UNUSED and the
+# object contributes no bytes. These are hand-written asm functions, so they can
+# not be inlined into a caller and the absence of any byte of them proves the
+# member was never extracted. Binary evidence: the whole mtx archive text range
+# is contiguous and fully claimed (mtx.o 0x800A2D38-0x800A37CC, mtxvec.o
+# 0x800A37CC-0x800A3874, mtx44.o 0x800A3874-0x800A3A78), and no window of any of
+# the 5 bodies (nor any 16-byte window) occurs anywhere in the DOL.
+[[lib.object]]
+name = "ext/dolsdk2001/mtx/psmtx.c"
+extra_cflags = ["-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/os", "-i src/ext/dolsdk2001/include/libc"]
+completed = true
+
 [[lib]]
 name = "os"
 mw_version = "GC/1.2.5n"
