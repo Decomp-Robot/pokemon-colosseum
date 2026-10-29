@@ -115,6 +115,9 @@ ext/dolsdk2001/os/OSTime.c:
 ext/dolsdk2001/os/OSTimer.c:
 	.text       start:0x800A2B9C end:0x800A2B9C
 
+ext/dolsdk2001/os/time.dolphin.c:
+	.text       start:0x800A2B9C end:0x800A2B9C
+
 ext/dolsdk2001/os/__start.c:
 	.init       start:0x80003100 end:0x80003400
 	.sbss       start:0x8047A770 end:0x8047A778
