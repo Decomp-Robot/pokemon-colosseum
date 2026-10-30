@@ -235,6 +235,9 @@ ext/dolsdk2001/card/CARDCreate.c:
 ext/dolsdk2001/card/CARDRead.c:
 	.text       start:0x800B4994 end:0x800B4E50
 
+ext/dolsdk2001/card/CARDWrite.c:
+	.text       start:0x800B4E50 end:0x800B5184
+
 ext/dolsdk2001/card/CARDDelete.c:
 	.text       start:0x800B5184 end:0x800B5338
 

@@ -640,6 +640,30 @@ name = "ext/dolsdk2001/card/CARDRead.c"
 extra_cflags = ["-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/os", "-i src/ext/dolsdk2001/include/libc", "-i src/ext/dolsdk2001/card", "-i src/ext/dolsdk2001"]
 completed = true
 
+# CARDWrite.o is one contiguous member in the retail link: WriteCallback
+# (0x800B4E50, 0x170) + EraseCallback (0x800B4FC0, 0xB0) + CARDWriteAsync
+# (0x800B5070, 0x114) fill 0x800B4E50-0x800B5184 exactly, where CARDDelete.o
+# (DeleteCallback at 0x800B5184) begins. The auto split left the two static
+# callbacks unnamed (zz_800B4E50_/zz_800B4FC0_, fixed in symbols.txt): the
+# 0x800B4E50 body walks __CARDBlock[chan].fileInfo, decrements length by
+# card->sectorSize, finishes through __CARDUpdateDir with the saved
+# apiCallback or else follows fat[iBlock] and calls __CARDEraseSector with the
+# callback at 0x800B4FC0, and that 0x800B4FC0 body calls __CARDWrite with the
+# callback at 0x800B4E50 - so 0x800B4E50 is WriteCallback and 0x800B4FC0 is
+# EraseCallback. CARDWrite itself is never called by the game and has no body
+# anywhere in the image (no `bl CARDWrite`/`__CARDSync` user, see the
+# CARDBios.o note on __CARDSync being stripped), so the original link
+# dead-stripped it; it stays in the source marked UNUSED.
+# This is the newer SDK revision of CARDOpen.c's note: __CARDAccess takes the
+# slot's CARDControl, so CARDWriteAsync passes (card, ent) - see the bl at
+# 0x800B50EC. WriteCallback's OSGetTime()/(__OSBusClock/4) division is the
+# reference form: the body loads __OSBusClock at 0x800000F8 (`lis r4,0x8000;
+# lwz r0,0xf8(r4)`) and divides through __div2i at 0x800B4EE4.
+[[lib.object]]
+name = "ext/dolsdk2001/card/CARDWrite.c"
+extra_cflags = ["-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/os", "-i src/ext/dolsdk2001/include/libc", "-i src/ext/dolsdk2001/card", "-i src/ext/dolsdk2001"]
+completed = true
+
 [[lib.object]]
 name = "ext/dolsdk2001/card/CARDDelete.c"
 extra_cflags = ["-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/os", "-i src/ext/dolsdk2001/include/libc", "-i src/ext/dolsdk2001/card", "-i src/ext/dolsdk2001"]
