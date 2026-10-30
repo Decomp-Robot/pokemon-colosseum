@@ -603,3 +603,18 @@ completed = true
 name = "ext/dolsdk2001/card/CARDDir.c"
 extra_cflags = ["-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/os", "-i src/ext/dolsdk2001/include/libc", "-i src/ext/dolsdk2001/card", "-i src/ext/dolsdk2001"]
 completed = true
+
+# CARDFormat.o is one contiguous member in the retail link: FormatCallback
+# (0x800B3A24, 0x144) + __CARDFormatRegionAsync (0x800B3B68, 0x658) +
+# CARDFormatAsync (0x800B41C0, 0x48) fill 0x800B3A24-0x800B4208 exactly, and the
+# next body (0x800B4208) is __CARDCompareFileName of the following gap member.
+# __CARDFormatRegionAsync is the Sep 2002 revision of CARDFormat.c: this game's
+# drop had already split the formatter out of CARDFormatAsync (CARDFormatAsync
+# is the thin `__CARDFormatRegionAsync(chan, __CARDGetFontEncode(), cb)` wrapper
+# at 0x800B41C0), so the implementation follows the newer member layout.
+# CARDFormat itself is never called and has no body in the image; it is kept in
+# the source marked UNUSED.
+[[lib.object]]
+name = "ext/dolsdk2001/card/CARDFormat.c"
+extra_cflags = ["-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/os", "-i src/ext/dolsdk2001/include/libc", "-i src/ext/dolsdk2001/card", "-i src/ext/dolsdk2001"]
+completed = true
