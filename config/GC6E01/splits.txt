@@ -209,6 +209,10 @@ ext/dolsdk2001/card/CARDDir.c:
 ext/dolsdk2001/card/CARDCheck.c:
 	.text       start:0x800B2070 end:0x800B2FAC
 
+ext/dolsdk2001/card/CARDMount.c:
+	.text       start:0x800B3078 end:0x800B3A24
+	.data       start:0x80312960 end:0x803129A0
+
 ext/dolsdk2001/card/CARDFormat.c:
 	.text       start:0x800B3A24 end:0x800B4208
 
