@@ -203,6 +203,9 @@ ext/dolsdk2001/card/CARDBios.c:
 ext/dolsdk2001/card/CARDRaw.c:
 	.text       start:0x800B1788 end:0x800B1788
 
+ext/dolsdk2001/card/CARDRdwr.c:
+	.text       start:0x800B1788 end:0x800B1A08
+
 ext/dolsdk2001/card/CARDBlock.c:
 	.text       start:0x800B1A08 end:0x800B1E0C
 

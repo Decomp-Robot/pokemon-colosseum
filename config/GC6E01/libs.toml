@@ -676,3 +676,23 @@ completed = true
 name = "ext/dolsdk2001/card/CARDRaw.c"
 extra_cflags = ["-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/os", "-i src/ext/dolsdk2001/include/libc", "-i src/ext/dolsdk2001/card", "-i src/ext/dolsdk2001"]
 completed = true
+
+# CARDRdwr.o is one contiguous member in the retail link:
+# BlockReadCallback (0x800B1788, 0xDC) + __CARDRead (0x800B1864, 0x64) +
+# BlockWriteCallback (0x800B18C8, 0xDC) + __CARDWrite (0x800B19A4, 0x64) fill
+# 0x800B1788-0x800B1A08 exactly, where CARDBlock.o (__CARDGetFatBlock at
+# 0x800B1A08) begins. The auto split had the two callback names swapped
+# (fingerprint matched "BlockReadCallback" onto 0x800B18C8): the 0x800B1788 body
+# adds 0x200 to xferred/addr/buffer and recurses through __CARDReadSegment, the
+# 0x800B18C8 body adds 0x80 and recurses through __CARDWritePage, and __CARDRead
+# passes 0x800B1788 to __CARDReadSegment while __CARDWrite passes 0x800B18C8 to
+# __CARDWritePage - so 0x800B1788 is BlockReadCallback and 0x800B18C8 is
+# BlockWriteCallback (fixed in symbols.txt). CARDGetXferredBytes has no body
+# anywhere in the image and nothing references it (no read of
+# __CARDBlock[chan].xferred outside this member, no CARDGetXferredBytes name in
+# the disassembly), so the original link dead-stripped it; it stays in the
+# source marked UNUSED, like CARDBios.o's stripped APIs.
+[[lib.object]]
+name = "ext/dolsdk2001/card/CARDRdwr.c"
+extra_cflags = ["-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/os", "-i src/ext/dolsdk2001/include/libc", "-i src/ext/dolsdk2001/card", "-i src/ext/dolsdk2001"]
+completed = true
