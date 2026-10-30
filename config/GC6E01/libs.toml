@@ -819,3 +819,14 @@ completed = true
 name = "ext/dolsdk2001/card/CARDStatEx.c"
 extra_cflags = ["-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/os", "-i src/ext/dolsdk2001/include/libc", "-i src/ext/dolsdk2001/card", "-i src/ext/dolsdk2001"]
 completed = true
+
+[[lib]]
+name = "db"
+mw_version = "GC/1.2.5n"
+cflags_preset = "base"
+cflags_extra = ["-use_lmw_stmw on", "-common off", "-inline auto"]
+progress_category = "sdk"
+[[lib.object]]
+name = "ext/dolsdk2001/db/db.c"
+extra_cflags = ["-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/os", "-i src/ext/dolsdk2001/include/libc"]
+completed = true
