@@ -660,3 +660,19 @@ completed = true
 name = "ext/dolsdk2001/card/CARDOpen.c"
 extra_cflags = ["-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/os", "-i src/ext/dolsdk2001/include/libc", "-i src/ext/dolsdk2001/card", "-i src/ext/dolsdk2001"]
 completed = true
+
+# CARDRaw.o was dropped by the original link: the retail image contains neither
+# __CARDRawRead nor __CARDRawReadAsync. Binary evidence: __CARDRawRead takes the
+# address of __CARDSyncCallback and calls __CARDSync, and neither has a body
+# anywhere in the image (see the CARDBios.o note above), so any link that kept
+# __CARDRawRead would have kept them; "RawRead" occurs nowhere in the
+# disassembly, so nothing references either entry point; and the whole card
+# .text span is exactly tiled by the other members - CARDUnlock.o
+# (0x800B0528-0x800B1464), the 0x800B1464 body, CARDRdwr.o (0x800B1788-0x800B1A08)
+# and CARDBlock.o beginning at 0x800B1A08 - leaving no standalone body for
+# either raw-read function. Both stay in the source marked UNUSED and the link
+# strips the member again, like HTable.o/List.o.
+[[lib.object]]
+name = "ext/dolsdk2001/card/CARDRaw.c"
+extra_cflags = ["-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/os", "-i src/ext/dolsdk2001/include/libc", "-i src/ext/dolsdk2001/card", "-i src/ext/dolsdk2001"]
+completed = true
