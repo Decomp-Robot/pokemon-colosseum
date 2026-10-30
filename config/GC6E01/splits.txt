@@ -200,6 +200,9 @@ ext/dolsdk2001/card/CARDBios.c:
 	.sdata      start:0x80478A48 end:0x80478A4C
 	.sbss       start:0x8047A970 end:0x8047A978
 
+ext/dolsdk2001/card/CARDBlock.c:
+	.text       start:0x800B1A08 end:0x800B1E0C
+
 ext/dolsdk2001/amcstubs/AmcExi2Stubs.c:
 	.text       start:0x800CE79C end:0x800CE7CC
 
