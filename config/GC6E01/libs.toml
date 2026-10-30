@@ -639,3 +639,24 @@ completed = true
 name = "ext/dolsdk2001/card/CARDFormat.c"
 extra_cflags = ["-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/os", "-i src/ext/dolsdk2001/include/libc", "-i src/ext/dolsdk2001/card", "-i src/ext/dolsdk2001"]
 completed = true
+
+# CARDOpen.o is one contiguous member in the retail link:
+# __CARDCompareFileName (0x800B4208, 0x68) + __CARDAccess (0x800B4270, 0x98) +
+# __CARDIsPublic (0x800B4308, 0x30) + __CARDGetFileNo (0x800B4338, 0x150) +
+# CARDFastOpen (0x800B4488, 0x160) + CARDClose (0x800B45E8, 0x54) +
+# __CARDIsOpened (0x800B463C, 0x8) fill 0x800B4208-0x800B4644 exactly, where
+# CARDCreate.o (CreateCallbackFat at 0x800B4644) begins. CARDOpen is never
+# called by the game and has no body anywhere in the image, so the original
+# link dead-stripped it; it is kept in the source marked UNUSED.
+# This is a newer SDK revision than the reference drop: the active disk ID is
+# per slot (CARDControl.diskID at 0x10C, set by __CARDSetDiskIDForChan in
+# CARDBios.c) instead of the single __CARDDiskID pointer, so __CARDAccess takes
+# the slot's CARDControl and every live call site passes (card, ent) in
+# (r3, r4) - see the bl targets at 0x800B4CF0, 0x800B50EC, 0x800B5590,
+# 0x800B5700, 0x800B5830 and 0x800B590C. The two memcmps are 4 and 2 bytes,
+# matching sizeof(gameName)/sizeof(company), and the file-number loop bounds
+# are CARD_MAX_FILE = 127 in this header revision (cmpwi .., 0x7F).
+[[lib.object]]
+name = "ext/dolsdk2001/card/CARDOpen.c"
+extra_cflags = ["-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/os", "-i src/ext/dolsdk2001/include/libc", "-i src/ext/dolsdk2001/card", "-i src/ext/dolsdk2001"]
+completed = true
