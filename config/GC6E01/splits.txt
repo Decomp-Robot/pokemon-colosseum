@@ -234,6 +234,9 @@ ext/dolsdk2001/card/CARDRead.c:
 ext/dolsdk2001/card/CARDDelete.c:
 	.text       start:0x800B5184 end:0x800B5338
 
+ext/dolsdk2001/card/CARDRename.c:
+	.text       start:0x800B5C5C end:0x800B5C5C
+
 ext/dolsdk2001/amcstubs/AmcExi2Stubs.c:
 	.text       start:0x800CE79C end:0x800CE7CC
 

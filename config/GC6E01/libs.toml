@@ -721,3 +721,22 @@ completed = true
 name = "ext/dolsdk2001/card/CARDRdwr.c"
 extra_cflags = ["-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/os", "-i src/ext/dolsdk2001/include/libc", "-i src/ext/dolsdk2001/card", "-i src/ext/dolsdk2001"]
 completed = true
+
+# CARDRename.o was dropped by the original link: the retail image contains
+# neither CARDRename nor CARDRenameAsync. Binary evidence: CARDRenameAsync's
+# distinctive calls (strlen on both names, the gameName/company disk-ID
+# memcmps, __CARDCompareFileName twice, strncpy into ent->fileName) appear in
+# no card body - the only card-region callers of __CARDCompareFileName,
+# strncpy and strlen are CARDCreate.o's CARDCreateAsync (0x800B4774) already
+# accounted for - and the card .text span is exactly tiled through
+# CARDStatEx.o (ending 0x800B5C5C, where GX code begins) leaving no standalone
+# body for the >=0x150-byte CARDRenameAsync or the small sync wrapper
+# CARDRename (whose only calls would be CARDRenameAsync and __CARDSync; no
+# such wrapper exists in the region). Nothing references either entry point,
+# so the original link never pulled CARDRename.o from card.a; both stay in
+# the source marked UNUSED and the link strips the member again, like
+# CARDRaw.o.
+[[lib.object]]
+name = "ext/dolsdk2001/card/CARDRename.c"
+extra_cflags = ["-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/os", "-i src/ext/dolsdk2001/include/libc", "-i src/ext/dolsdk2001/card", "-i src/ext/dolsdk2001"]
+completed = true
