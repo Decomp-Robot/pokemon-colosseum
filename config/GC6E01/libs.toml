@@ -579,6 +579,27 @@ name = "ext/dolsdk2001/card/CARDBios.c"
 extra_cflags = ["-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/os", "-i src/ext/dolsdk2001/include/libc", "-i src/ext/dolsdk2001/card", "-i src/ext/dolsdk2001"]
 completed = true
 
+# CARDUnlock.o is one contiguous member in the retail link: bitrev
+# (0x800B0528, 0x16C) + ReadArrayUnlock (0x800B0694, 0x144) + DummyLen
+# (0x800B07D8, 0xC4) + __CARDUnlock (0x800B089C, 0xB58) + InitCallback
+# (0x800B13F4, 0x70) + DoneCallback (0x800B1464, 0x324) fill
+# 0x800B0528-0x800B1788 exactly, where CARDRdwr.o begins; its only .data is
+# the 0x160-byte CardData DSP microcode at 0x80312800, ahead of CARDMount.o's
+# SectorSizeTable. exnor, exnor_1st and GetInitVal have no standalone bodies:
+# the retail compiler inlined all three into their callers (the exnor
+# shift-loop pattern repeats through the 0x800B0958-0x800B1308 unrolled body
+# of __CARDUnlock, and GetInitVal's OSGetTick + srand/rand expansion sits at
+# 0x800B08DC). The MSL srand/rand pair is likewise inlined at every use in
+# this game - the DOL has no standalone bodies for either (see the stub.c
+# note) - and each use rounds through the MSL _Randseed in .sdata at
+# 0x80478A50, outside every claimed split like CARDMount.c's lbl_80478A58;
+# the source references it through its dtk label so the original bytes stay,
+# volatile so the compiler keeps the retail store/load pattern.
+[[lib.object]]
+name = "ext/dolsdk2001/card/CARDUnlock.c"
+extra_cflags = ["-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/os", "-i src/ext/dolsdk2001/include/libc", "-i src/ext/dolsdk2001/card", "-i src/ext/dolsdk2001"]
+completed = true
+
 [[lib.object]]
 name = "ext/dolsdk2001/card/CARDBlock.c"
 extra_cflags = ["-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/os", "-i src/ext/dolsdk2001/include/libc", "-i src/ext/dolsdk2001/card", "-i src/ext/dolsdk2001"]

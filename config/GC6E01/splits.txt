@@ -200,6 +200,10 @@ ext/dolsdk2001/card/CARDBios.c:
 	.sdata      start:0x80478A48 end:0x80478A4C
 	.sbss       start:0x8047A970 end:0x8047A978
 
+ext/dolsdk2001/card/CARDUnlock.c:
+	.text       start:0x800B0528 end:0x800B1788
+	.data       start:0x80312800 end:0x80312960
+
 ext/dolsdk2001/card/CARDRaw.c:
 	.text       start:0x800B1788 end:0x800B1788
 
