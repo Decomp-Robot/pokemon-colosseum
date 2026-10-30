@@ -740,3 +740,17 @@ completed = true
 name = "ext/dolsdk2001/card/CARDRename.c"
 extra_cflags = ["-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/os", "-i src/ext/dolsdk2001/include/libc", "-i src/ext/dolsdk2001/card", "-i src/ext/dolsdk2001"]
 completed = true
+# CARDStat.c: UpdateIconOffsets/CARDGetStatus/CARDSetStatusAsync tile
+# 0x800B5338..0x800B57D0 exactly (0x1F8+0x12C+0x174); __CARDGetStatusEx
+# follows immediately at 0x800B57D0, so this revision of CARDStat.o carries
+# no CARDSetStatus - nothing references it and __CARDSync was never linked.
+# The drop is newer than the reference dolsdk2001 file: CARDSetStatusAsync
+# validates stat->iconAddr (0xffffffff or < 0x200) and stat->commentAddr
+# (0xffffffff or (addr & 0x1fff) <= 0x1fc0) before GetControlBlock, forces
+# iconSpeed bits for icon 0 to FAST when the entry's iconAddr is 0xffffffff
+# after UpdateIconOffsets, and __CARDAccess takes the slot's CARDControl
+# (see CARDOpen.c).
+[[lib.object]]
+name = "ext/dolsdk2001/card/CARDStat.c"
+extra_cflags = ["-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/os", "-i src/ext/dolsdk2001/include/libc", "-i src/ext/dolsdk2001/card", "-i src/ext/dolsdk2001"]
+completed = true
