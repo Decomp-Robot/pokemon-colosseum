@@ -754,3 +754,23 @@ completed = true
 name = "ext/dolsdk2001/card/CARDStat.c"
 extra_cflags = ["-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/os", "-i src/ext/dolsdk2001/include/libc", "-i src/ext/dolsdk2001/card", "-i src/ext/dolsdk2001"]
 completed = true
+
+# CARDStatEx.o is one contiguous member in the retail link: __CARDGetStatusEx
+# (0x800B57D0, 0xBC) + __CARDSetStatusExAsync (0x800B588C, 0x254) fill
+# 0x800B57D0-0x800B5AE0, immediately after CARDStat.o; the member continues
+# with three further live bodies (0x800B5AE0-0x800B5C5C) that the reference
+# dolsdk2001 CARDStatEx.c does not define - they are called from the game's
+# memcard code (bl at 0x801CDE30/0x801CE1FC/0x801CE220/0x801CF128/0x801CF344)
+# and stay in the auto disassembly (zz_800B5AE0_/zz_800B5BA4_/zz_800B5BE4_),
+# like IsCard for CARDMount.o - so the split ends at 0x800B5AE0. __CARDGetStatusEx
+# pulled in the member: nothing in the image references __CARDSetStatusEx, and
+# its only body would call __CARDSync, which has no body anywhere in the image
+# (see the CARDBios.o note), so it was dead-stripped by the original link; it
+# stays in the source marked UNUSED. This is a newer SDK revision than the
+# reference drop: __CARDAccess takes the slot's CARDControl and every live call
+# site passes (card, ent) - see the bl at 0x800B5830/0x800B590C and the
+# CARDOpen.c note.
+[[lib.object]]
+name = "ext/dolsdk2001/card/CARDStatEx.c"
+extra_cflags = ["-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/os", "-i src/ext/dolsdk2001/include/libc", "-i src/ext/dolsdk2001/card", "-i src/ext/dolsdk2001"]
+completed = true

@@ -237,6 +237,9 @@ ext/dolsdk2001/card/CARDDelete.c:
 ext/dolsdk2001/card/CARDStat.c:
 	.text       start:0x800B5338 end:0x800B57D0
 
+ext/dolsdk2001/card/CARDStatEx.c:
+	.text       start:0x800B57D0 end:0x800B5AE0
+
 ext/dolsdk2001/card/CARDRename.c:
 	.text       start:0x800B5C5C end:0x800B5C5C
 
