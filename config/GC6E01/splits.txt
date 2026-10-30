@@ -273,3 +273,6 @@ ext/dolsdk2001/support/Tree.c:
 
 ext/dolsdk2001/support/string.c:
 	.text       start:0x800CF708 end:0x800CF708
+
+ext/dolsdk2001/fileCache/fileCache.c:
+	.text       start:0x800CF708 end:0x800CF708

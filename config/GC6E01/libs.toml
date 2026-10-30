@@ -830,3 +830,31 @@ progress_category = "sdk"
 name = "ext/dolsdk2001/db/db.c"
 extra_cflags = ["-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/os", "-i src/ext/dolsdk2001/include/libc"]
 completed = true
+
+# fileCache.o was dropped by the original link: the retail image contains no
+# body for any of its eleven functions and neither of its data objects. Binary
+# evidence: every one of the fileCache entry points except the 8-byte
+# DSSetCachePurgeFlag (stb r3,4(r3); blr) calls into support/List.o or
+# support/string.o (DSInitList/DSInsertListObject/DSRemoveListObject via
+# DSAddCacheNode/DSEmptyCache/DSInitCache/DSPurgeCache/DSReleaseCacheObj,
+# Strcpy/Strlen/Strcmp via DSAddCacheNode/FindCacheNode), and
+# CSHInitDisplayCache reaches DSInitList through its DSInitCache call - so any
+# link that kept any fileCache member would have kept those List.o/string.o
+# bodies, which are already proven absent (support's zero-length splits at
+# 0x800CF708). A wildcard byte-scan of the DOL with the member compiled by the
+# project compiler (GC/1.2.5n, db.c flags) finds no full-body match for any of
+# the ten non-trivial functions, and the 8-byte stub matches only generic game
+# code far outside the SDK span - nothing references DSInitCache/DODisplayCache/
+# DOCacheInitialized anywhere in the disassembly or symbols. So the whole
+# member is dead-stripped; every function stays in the source marked UNUSED,
+# like HTable.o/List.o, and the link strips it again.
+[[lib]]
+name = "fileCache"
+mw_version = "GC/1.2.5n"
+cflags_preset = "base"
+cflags_extra = ["-use_lmw_stmw on", "-common off", "-inline auto"]
+progress_category = "sdk"
+[[lib.object]]
+name = "ext/dolsdk2001/fileCache/fileCache.c"
+extra_cflags = ["-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/os", "-i src/ext/dolsdk2001/include/libc"]
+completed = true
