@@ -206,6 +206,9 @@ ext/dolsdk2001/card/CARDBlock.c:
 ext/dolsdk2001/card/CARDCheck.c:
 	.text       start:0x800B2070 end:0x800B2FAC
 
+ext/dolsdk2001/card/CARDCreate.c:
+	.text       start:0x800B4644 end:0x800B4994
+
 ext/dolsdk2001/amcstubs/AmcExi2Stubs.c:
 	.text       start:0x800CE79C end:0x800CE7CC
 
