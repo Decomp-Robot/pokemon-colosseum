@@ -554,3 +554,27 @@ completed = true
 name = "ext/dolsdk2001/ar/arq.c"
 extra_cflags = ["-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/os", "-i src/ext/dolsdk2001/include/libc", "-i src/ext/dolsdk2001/ar"]
 completed = true
+
+# card.a is the memory-card library. card.o (CARDBios.c) is the member the game
+# reaches through EXI: its handlers are installed as EXI/EXI-unlock callbacks,
+# and the retail version string at 0x803127A8 ("... Dolphin SDK - CARD\trelease
+# build: Sep  5 2002 05:35:20 (0x2301) ...") is the same Sep  5 2002 SDK drop as
+# the AI/AR/ARQ/DSP/VI/PAD members, so it uses the os-library compiler settings.
+# Binary evidence for the split: 0x800AF280-0x800B0528 is exactly filled by the
+# 25 definitions of CARDBios.c the original link kept (a 4-byte `blr` for
+# __CARDDefaultApiCallback first, OnReset last), and the next body at 0x800B0528
+# belongs to card/Unlock.c (bitrev). CARDGetEncoding, CARDGetMemSize,
+# CARDGetSectorSize, __CARDSync, __CARDErase, __CARDReadNintendoID, __CARDSleep,
+# __CARDWakeup and __CARDSyncCallback have no body anywhere in the image and
+# were dead-stripped by the original link; they are kept in the source marked
+# UNUSED.
+[[lib]]
+name = "card"
+mw_version = "GC/1.2.5n"
+cflags_preset = "base"
+cflags_extra = ["-use_lmw_stmw on", "-common off", "-inline auto"]
+progress_category = "sdk"
+[[lib.object]]
+name = "ext/dolsdk2001/card/CARDBios.c"
+extra_cflags = ["-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/os", "-i src/ext/dolsdk2001/include/libc", "-i src/ext/dolsdk2001/card", "-i src/ext/dolsdk2001"]
+completed = true

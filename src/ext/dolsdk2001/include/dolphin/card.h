@@ -81,7 +81,9 @@ typedef struct CARDControl
     CARDCallback xferCallback;
     CARDCallback eraseCallback;
     CARDCallback unlockCallback;
-    OSAlarm alarm;
+    /*0x0E0*/ OSAlarm alarm;
+    /*0x108*/ u32 cid;
+    /*0x10C*/ DVDDiskID *diskID;
 } CARDControl;
 
 typedef struct CARDDecParam {

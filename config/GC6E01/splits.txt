@@ -193,6 +193,13 @@ ext/dolsdk2001/dsp/dsp_task.c:
 	.data       start:0x80312668 end:0x803127A8
 	.sbss       start:0x8047A958 end:0x8047A970
 
+ext/dolsdk2001/card/CARDBios.c:
+	.text       start:0x800AF280 end:0x800B0528
+	.data       start:0x803127A8 end:0x80312800
+	.bss        start:0x803FC620 end:0x803FC860
+	.sdata      start:0x80478A48 end:0x80478A4C
+	.sbss       start:0x8047A970 end:0x8047A978
+
 ext/dolsdk2001/amcstubs/AmcExi2Stubs.c:
 	.text       start:0x800CE79C end:0x800CE7CC
 
