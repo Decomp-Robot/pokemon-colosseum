@@ -858,3 +858,42 @@ progress_category = "sdk"
 name = "ext/dolsdk2001/fileCache/fileCache.c"
 extra_cflags = ["-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/os", "-i src/ext/dolsdk2001/include/libc"]
 completed = true
+
+# DOLLoader.o was dropped by the original link: the retail image contains no
+# body for any of its three functions (DOLLoadImage, DOLRunApp, bzero).
+# Binary evidence:
+# - DOLLoadImage compiled with the project compiler (GC/1.2.5n, db.c flags,
+#   0x280-byte body, relocations masked) has no byte-match anywhere in the DOL,
+#   and its unique verbose string literals ("DOLLoadImage header :\n",
+#   "Loading TEXT...", "Loading DATA...", "ENTRY POINT -> VA 0x%x\n",
+#   "BSS segment length %d -> VA 0x%x\n") appear nowhere in the image; strings
+#   cannot be pooled away, so the verbose block was never linked.
+# - ICFlashInvalidate (.text:0x8009B3E8) has zero bl callers in the whole
+#   binary, but DOLLoadImage ends with ICFlashInvalidate(); ICSync(); - no
+#   function with that tail exists. (ICSync itself is also dead: its only
+#   "sync; isync; blr" byte match at 0x8009B3DC is the tail of
+#   ICInvalidateRange.)
+# - bzero compiled the same way (0x78-byte body, fully position independent)
+#   has no byte-match in the DOL; MWCC keeps global function bodies in the
+#   object, so it would be present had DOLLoader.o been linked.
+# - DOLRunApp's body (mtlr r3; blr) occurs only twice, both embedded in other
+#   functions (zz_8009FADC_ = sync;isync;mtlr r3;blr reboot helper tail, and
+#   game code at 0x800EEF1C) - never as a standalone 8-byte function.
+# - Struct-walk scans for DolImage field displacements (bss +0xD8 / bssLen
+#   +0xDC / entry +0xE0, text[] +0x48 with textLen[] +0x90) find only epilogue
+#   register restores and unrelated game accessors - no DOL loader exists.
+# So the whole member is dead-stripped; every function stays in the source
+# marked UNUSED, like fileCache.o, and the link strips it again. Its externals
+# (DBPrintf, memcpy, DCFlushRange, ICFlashInvalidate, ICSync) all resolve
+# against already-integrated completed objects, so no symbols.txt entry is
+# needed for this unit.
+[[lib]]
+name = "dolformat"
+mw_version = "GC/1.2.5n"
+cflags_preset = "base"
+cflags_extra = ["-use_lmw_stmw on", "-common off", "-inline auto"]
+progress_category = "sdk"
+[[lib.object]]
+name = "ext/dolsdk2001/dolformat/DOLLoader.c"
+extra_cflags = ["-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/os", "-i src/ext/dolsdk2001/include/libc"]
+completed = true
