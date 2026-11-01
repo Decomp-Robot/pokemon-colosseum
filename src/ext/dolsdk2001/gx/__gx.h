@@ -181,9 +181,10 @@ void __GXSetGenMode(void);
 
 struct __GXData_struct {
     // total size: 0x4F4
-    unsigned short vNum; // offset 0x0, size 0x2
+    unsigned short unk_00; // offset 0x0, size 0x2
     unsigned short bpSent; // offset 0x2, size 0x2
-    unsigned long vLim; // offset 0x4, size 0x4
+    unsigned short vNum; // offset 0x4, size 0x2
+    unsigned short vLim; // offset 0x6, size 0x2
     unsigned long cpEnable; // offset 0x8, size 0x4
     unsigned long cpStatus; // offset 0xC, size 0x4
     unsigned long cpClr; // offset 0x10, size 0x4
@@ -252,13 +253,14 @@ struct __GXData_struct {
     GXPerf0 perf0; // offset 0x4E0, size 0x4
     GXPerf1 perf1; // offset 0x4E4, size 0x4
     unsigned long perfSel; // offset 0x4E8, size 0x4
-    unsigned char inDispList; // offset 0x4EC, size 0x1
-    unsigned char dlSaveContext; // offset 0x4ED, size 0x1
-    unsigned char dirtyVAT; // offset 0x4EE, size 0x1
-    unsigned long dirtyState; // offset 0x4F0, size 0x4
-}; // size = 0x4F4
+    unsigned char unk_4EC[5]; // offset 0x4EC, size 0x5 (this game's gx.a revision; dirtyVAT/dirtyState proved at 0x4F3/0x4F4)
+    unsigned char inDispList; // offset 0x4F1, size 0x1
+    unsigned char dlSaveContext; // offset 0x4F2, size 0x1
+    unsigned char dirtyVAT; // offset 0x4F3, size 0x1
+    unsigned long dirtyState; // offset 0x4F4, size 0x4
+}; // size = 0x4F8
 
-extern struct __GXData_struct *gx;
+extern struct __GXData_struct *const gx;
 extern u16 *__memReg;
 extern u16 *__peReg;
 extern u16 *__cpReg;

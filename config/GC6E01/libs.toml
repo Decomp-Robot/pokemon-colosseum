@@ -897,3 +897,21 @@ progress_category = "sdk"
 name = "ext/dolsdk2001/dolformat/DOLLoader.c"
 extra_cflags = ["-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/os", "-i src/ext/dolsdk2001/include/libc"]
 completed = true
+
+# GXAttr.o (gx.a): text 0x800B771C-0x800B888C (12 linked definitions, from
+# __GXXfVtxSpecs through GXSetNumTexGens), switch jumptables in .data
+# 0x80312AE0-0x80312C40, and the __GXCalculateVLim lookup tables tbl1/tbl2/tbl3
+# in .sdata 0x80478A68-0x80478A78 (tbl3 is 8 bytes, zero-filled). GXSetVtxDescv,
+# GXGetVtxDesc, GXGetVtxDescv, GXGetVtxAttrFmt and GXGetVtxAttrFmtv are never
+# called by the game, so the original link dead-stripped them and they are
+# marked UNUSED in the source.
+[[lib]]
+name = "gx"
+mw_version = "GC/1.2.5n"
+cflags_preset = "base"
+cflags_extra = ["-use_lmw_stmw on", "-common off", "-inline auto"]
+progress_category = "sdk"
+[[lib.object]]
+name = "ext/dolsdk2001/gx/GXAttr.c"
+extra_cflags = ["-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/os", "-i src/ext/dolsdk2001/include/libc", "-i src/ext/dolsdk2001/gx"]
+completed = true

@@ -255,6 +255,11 @@ ext/dolsdk2001/card/CARDStatEx.c:
 ext/dolsdk2001/card/CARDRename.c:
 	.text       start:0x800B5C5C end:0x800B5C5C
 
+ext/dolsdk2001/gx/GXAttr.c:
+	.text       start:0x800B771C end:0x800B888C
+	.data       start:0x80312AE0 end:0x80312C40
+	.sdata      start:0x80478A68 end:0x80478A78
+
 ext/dolsdk2001/amcstubs/AmcExi2Stubs.c:
 	.text       start:0x800CE79C end:0x800CE7CC
 
