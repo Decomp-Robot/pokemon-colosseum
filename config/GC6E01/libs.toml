@@ -923,3 +923,26 @@ completed = true
 name = "ext/dolsdk2001/gx/GXDisplayList.c"
 extra_cflags = ["-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/os", "-i src/ext/dolsdk2001/include/libc", "-i src/ext/dolsdk2001/gx"]
 completed = true
+
+# GXDraw.o (gx.a) is the SDK demo-geometry member: cube/sphere/torus helpers
+# intended for sample code. The retail DOL links none of it. Binary evidence
+# (GC/1.2.5n build of the pristine dolsdk2001 GXDraw.c, scanned against
+# orig/GC6E01/sys/main.dol):
+#   * the compiled object holds all 23 definitions, .text = 0x2580 bytes,
+#     plus .data 0x30C (the idata/odata/index/ondex subdivision tables) and
+#     .sdata2 0x60 of constants;
+#   * the project builds with NDEBUG=1, so ASSERTMSGLINE compiles the three
+#     assert strings out (confirmed absent from the built object as well);
+#   * the longest instruction-aligned run of any function body found anywhere
+#     in the DOL is 44 bytes (bodies are 52-1740 bytes), and of the 780-byte
+#     table data only 24 bytes (generic float constants); no symbol of the 23
+#     names exists in build/GC6E01/main.elf and dtk emits no asm slice;
+#   * every definition is uncalled, so the original link dead-stripped the
+#     whole member and the game's GX code never references any of it.
+# The object therefore contributes no bytes and all 23 definitions carry the
+# "// UNUSED:" mark; it still compiles and links (all members unreferenced), as
+# with mtxstack.o and psmtx.o in the mtx archive.
+[[lib.object]]
+name = "ext/dolsdk2001/gx/GXDraw.c"
+extra_cflags = ["-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/os", "-i src/ext/dolsdk2001/include/libc", "-i src/ext/dolsdk2001/gx"]
+completed = true

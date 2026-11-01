@@ -267,6 +267,9 @@ ext/dolsdk2001/gx/GXBump.c:
 ext/dolsdk2001/gx/GXDisplayList.c:
 	.text       start:0x800BD0FC end:0x800BD16C
 
+ext/dolsdk2001/gx/GXDraw.c:
+	.text       start:0x800BD16C end:0x800BD16C
+
 ext/dolsdk2001/amcstubs/AmcExi2Stubs.c:
 	.text       start:0x800CE79C end:0x800CE7CC
 
