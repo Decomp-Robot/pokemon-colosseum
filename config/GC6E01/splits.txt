@@ -260,6 +260,10 @@ ext/dolsdk2001/gx/GXAttr.c:
 	.data       start:0x80312AE0 end:0x80312C40
 	.sdata      start:0x80478A68 end:0x80478A78
 
+ext/dolsdk2001/gx/GXBump.c:
+	.text       start:0x800BB780 end:0x800BC114
+	.sdata2     start:0x8047C370 end:0x8047C388
+
 ext/dolsdk2001/amcstubs/AmcExi2Stubs.c:
 	.text       start:0x800CE79C end:0x800CE7CC
 
