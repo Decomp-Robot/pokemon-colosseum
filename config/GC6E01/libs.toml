@@ -955,3 +955,26 @@ completed = true
 name = "ext/dolsdk2001/gx/GXFrameBuf.c"
 extra_cflags = ["-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/os", "-i src/ext/dolsdk2001/include/libc", "-i src/ext/dolsdk2001/gx"]
 completed = true
+
+# GXGeometry.o (gx.a): text 0x800B91EC-0x800B959C, nine linked definitions in
+# source order (__GXSetDirtyState 0x800B91EC, GXBegin 0x800B928C,
+# __GXSendFlushPrim 0x800B937C, GXSetLineWidth 0x800B9404, GXSetPointSize
+# 0x800B944C, GXEnableTexOffsets 0x800B9494, GXSetCullMode 0x800B94F0,
+# GXSetCoPlanar 0x800B953C, __GXSetGenMode 0x800B9578); the span ends exactly
+# at GXSetDispCopySrc (GXFrameBuf.o). GXGetLineWidth, GXGetPointSize and
+# GXGetCullMode are never called by the game, so the original link
+# dead-stripped them and they are marked UNUSED in the source.
+# This game's gx.a revision differs from the dolsdk2001 reference copy:
+#  * __GXSetDirtyState (and its inline copy in GXBegin) also tests
+#    dirtyState & 0x18 and calls __GXCalculateVLim (checked at 0x800B925C /
+#    0x800B931C against dirtyState 0x80478xxxx+0x4F4);
+#  * GXBegin and the setters store the inverted bpSent polarity: the
+#    flush-prim check reads *(u32*)&gx->unk_00 == 0 before calling
+#    __GXSendFlushPrim (as in GXDisplayList.c), __GXSendFlushPrim sets
+#    bpSent = 1 (0x800B93FC) and GXSetLineWidth/GXSetPointSize/
+#    GXEnableTexOffsets/__GXSetGenMode set bpSent = 0 (0x800B9444/0x800B948C/
+#    0x800B94E8/0x800B9594).
+[[lib.object]]
+name = "ext/dolsdk2001/gx/GXGeometry.c"
+extra_cflags = ["-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/os", "-i src/ext/dolsdk2001/include/libc", "-i src/ext/dolsdk2001/gx"]
+completed = true

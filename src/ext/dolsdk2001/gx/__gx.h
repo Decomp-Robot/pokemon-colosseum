@@ -176,6 +176,7 @@ void __GXCleanGPFifo(void);
 void __GXSetDirtyState(void);
 void __GXSendFlushPrim(void);
 void __GXSetGenMode(void);
+void __GXCalculateVLim(void);
 
 /* GXInit.c */
 
