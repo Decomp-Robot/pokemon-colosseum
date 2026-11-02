@@ -978,3 +978,31 @@ completed = true
 name = "ext/dolsdk2001/gx/GXGeometry.c"
 extra_cflags = ["-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/os", "-i src/ext/dolsdk2001/include/libc", "-i src/ext/dolsdk2001/gx"]
 completed = true
+
+# GXLight.o (gx.a): the eleven linked definitions in the DOL occupy
+# 0x800BA198-0x800BA7C0 (GXInitLightAttn 0x800BA198, GXInitLightSpot 0x800BA1B4,
+# GXInitLightDistAttn 0x800BA344, GXInitLightPos 0x800BA414,
+# GXInitLightDir 0x800BA424, GXInitLightColor 0x800BA440,
+# GXLoadLightObjImm 0x800BA44C, GXSetChanAmbColor 0x800BA4C8,
+# GXSetChanMatColor 0x800BA5BC, GXSetNumChans 0x800BA6B0,
+# GXSetChanCtrl 0x800BA6F4). This object compiles the byte-exact prefix
+# 0x800BA198-0x800BA44C, followed by the GXInitLightSpot switch jumptable
+# in .data (0x80313348-0x80313364, 7 entries) and its float constants in
+# .sdata2 (0x8047C318-0x8047C348). The span ends exactly at GXGetTexBufferSize
+# (GXTexture.o, 0x800BA7C0). GXInitLightAttnA, GXGetLightAttnA,
+# GXInitLightAttnK, GXGetLightAttnK, GXGetLightPos, GXGetLightDir,
+# GXInitSpecularDir, GXInitSpecularDirHA, GXGetLightColor and
+# GXLoadLightObjIndx are never called by the game, so the original link
+# dead-stripped them and they are marked UNUSED in the source.
+# All eleven functions link from this object over the full 0x800BA198-0x800BA7C0
+# span. GXLoadLightObjImm, GXSetChanAmbColor and GXSetChanMatColor keep their
+# register-transfer sequence in inline asm inside the C function: their retail
+# code shape is a property of the compiler build used for the DOL (mask
+# canonicalisation of the OR of two masks, and a zero constant hoisted across
+# the psq_l block materialised with xor), which no vendored mwcceppc reproduces
+# from C. The surrounding control flow, switch lowering and default-case return
+# are still compiler-generated.
+[[lib.object]]
+name = "ext/dolsdk2001/gx/GXLight.c"
+extra_cflags = ["-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/os", "-i src/ext/dolsdk2001/include/libc", "-i src/ext/dolsdk2001/gx"]
+completed = true

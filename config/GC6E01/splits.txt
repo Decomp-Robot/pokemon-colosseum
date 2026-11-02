@@ -272,6 +272,11 @@ ext/dolsdk2001/gx/GXFrameBuf.c:
 	.data       start:0x80312C40 end:0x803131E0
 	.sdata2     start:0x8047C308 end:0x8047C318
 
+ext/dolsdk2001/gx/GXLight.c:
+	.text       start:0x800BA198 end:0x800BA7C0
+	.data       start:0x80313348 end:0x80313364
+	.sdata2     start:0x8047C318 end:0x8047C348
+
 ext/dolsdk2001/gx/GXBump.c:
 	.text       start:0x800BB780 end:0x800BC114
 	.sdata2     start:0x8047C370 end:0x8047C388
