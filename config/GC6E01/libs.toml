@@ -1112,3 +1112,31 @@ completed = true
 name = "ext/dolsdk2001/gx/GXPixel.c"
 extra_cflags = ["-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/os", "-i src/ext/dolsdk2001/include/libc", "-i src/ext/dolsdk2001/gx", "-fp_contract off"]
 completed = true
+
+# GXSave.o (gx.a): the whole member is #if DEBUG, and the retail build compiles
+# with NDEBUG=1 (compile_commands.json shows -DNDEBUG=1 and no DEBUG define),
+# so the translation unit produces no sections and the member contributes no
+# bytes to the DOL. Binary evidence that the game links none of it:
+#   * the DOL contains none of the member's distinctive data: the assert
+#     format "GX DisplayList: Invalid CP Stream Register Address 0x%x", the
+#     report blocks ("Raster Registers State:\n", "\tRAS_REG[0x%x] = 0x%x\n")
+#     and the vtxCompSize/clrCompSize tables are all absent from
+#     orig/GC6E01/sys/main.dol (strings -a);
+#   * no symbol of __GXShadowDispList / __GXShadowIndexState /
+#     __GXPrintShadowState (or their static helpers) exists in
+#     config/GC6E01/symbols.txt or build/GC6E01/asm, and dtk emits no slice for
+#     this source; the retail DOL region where the member would sit
+#     (0x800BD16C-0x800BD91C) holds GXProject and the GXTransform/GXTexture
+#     members instead.
+# The split is therefore a zero-length .text range and the object links
+# nothing, like GXDraw.o. The functions stay in the source untouched because
+# they are compiled out by the SDK's own DEBUG guard rather than dead-stripped
+# by the link, so no "// UNUSED:" marks (which would falsely claim a link-time
+# strip) are added. The object needs no symbols.txt entry: every name it would
+# reference (gx, __gxVerif, the shadow state tables, OSReport, sprintf) only
+# exists inside the disabled block.
+[[lib.object]]
+name = "ext/dolsdk2001/gx/GXSave.c"
+extra_cflags = ["-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/os", "-i src/ext/dolsdk2001/include/libc", "-i src/ext/dolsdk2001/gx"]
+completed = true
+
