@@ -264,6 +264,10 @@ ext/dolsdk2001/gx/GXAttr.c:
 	.data       start:0x80312AE0 end:0x80312C40
 	.sdata      start:0x80478A68 end:0x80478A78
 
+ext/dolsdk2001/gx/GXMisc.c:
+	.text       start:0x800B888C end:0x800B91EC
+	.sbss       start:0x8047A9C0 end:0x8047A9D4
+
 ext/dolsdk2001/gx/GXGeometry.c:
 	.text       start:0x800B91EC end:0x800B959C
 

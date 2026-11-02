@@ -979,6 +979,38 @@ name = "ext/dolsdk2001/gx/GXGeometry.c"
 extra_cflags = ["-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/os", "-i src/ext/dolsdk2001/include/libc", "-i src/ext/dolsdk2001/gx"]
 completed = true
 
+# GXMisc.o (gx.a): text 0x800B888C-0x800B91EC (GXSetMisc, GXFlush, __GXAbort,
+# GXAbortFrame, GXSetDrawSync, GXSetDrawDone, GXWaitDrawDone, GXDrawDone,
+# GXPixModeSync, GXPoke*, GXSetDrawSyncCallback, GXTokenInterruptHandler,
+# GXSetDrawDoneCallback, GXFinishInterruptHandler, __GXPEInit).
+# GXResetWriteGatherPipe, GXReadDrawSync, GXTexModeSync, GXPeekARGB,
+# GXPokeARGB, GXPeekZ, GXPokeZ, GXCompressZ16 and GXDecompressZ16 are never
+# called by the game, so the original link dead-stripped them and they are
+# marked UNUSED in the source.
+# This game's gx.a revision differs from the dolsdk2001 reference copy:
+#  * __GXAbort (and the inlined copy in GXAbortFrame) writes the PI reset
+#    register through the fixed-address hw_regs.h array __PIRegs[6]
+#    (0xCC003018: lis r3,0xcc00 / addi rX,r3,0x3000 / stwu rX,0x18(rX) at
+#    0x800B8A48-0x800B8A54) instead of the __piReg pointer the reference
+#    loads from .sdata, and drains the FIFO with explicit count/prev locals
+#    around __GXGetFifoCount();
+#  * GXAbortFrame is a real function that tail-calls the separately linked
+#    __GXAbort (the reference emits the abort sequence inline), and __GXAbort
+#    skips its PE-copy drain when the 0x4F2 flag byte is clear;
+#  * GXSetMisc handles an extra token 3 (besides GX_MT_NULL/XF_FLUSH/
+#    DL_SAVE_CONTEXT) that stores a second boolean. Binary evidence for the
+#    __GXData tail therefore differs from the reference __gx.h: GXInit stores
+#    FALSE at 0x4F0 and TRUE at 0x4F1 (0x800B5EC0/0x800B5ECC -- the reference
+#    source's inDispList/dlSaveContext pair) plus TRUE at 0x4F2
+#    (0x800B5ED0; __GXShutdown 0x800B5E6C too), GXSetMisc stores its token 2
+#    and token 3 booleans at 0x4F1/0x4F2 (0x800B8900/0x800B8918) and __GXAbort
+#    tests 0x4F2 (0x800B8990), so ext/dolsdk2001/gx/__gx.h declares the extra
+#    byte (unk_4F2) and places inDispList/dlSaveContext at 0x4F0/0x4F1.
+[[lib.object]]
+name = "ext/dolsdk2001/gx/GXMisc.c"
+extra_cflags = ["-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/os", "-i src/ext/dolsdk2001/include/libc", "-i src/ext/dolsdk2001/gx"]
+completed = true
+
 # GXLight.o (gx.a): the eleven linked definitions in the DOL occupy
 # 0x800BA198-0x800BA7C0 (GXInitLightAttn 0x800BA198, GXInitLightSpot 0x800BA1B4,
 # GXInitLightDistAttn 0x800BA344, GXInitLightPos 0x800BA414,

@@ -254,9 +254,17 @@ struct __GXData_struct {
     GXPerf0 perf0; // offset 0x4E0, size 0x4
     GXPerf1 perf1; // offset 0x4E4, size 0x4
     unsigned long perfSel; // offset 0x4E8, size 0x4
-    unsigned char unk_4EC[5]; // offset 0x4EC, size 0x5 (this game's gx.a revision; dirtyVAT/dirtyState proved at 0x4F3/0x4F4)
-    unsigned char inDispList; // offset 0x4F1, size 0x1
-    unsigned char dlSaveContext; // offset 0x4F2, size 0x1
+    unsigned char unk_4EC[4]; // offset 0x4EC, size 0x4 (this game's gx.a revision; dirtyVAT/dirtyState proved at 0x4F3/0x4F4)
+    // This game's revision keeps three adjacent flag bytes at 0x4F0-0x4F2, one
+    // more than the dolsdk2001 reference copy:
+    //   GXInit 0x800B5EC0/0x800B5ECC store FALSE then TRUE (the reference source's
+    //   `gx->inDispList = FALSE; gx->dlSaveContext = TRUE;` pair, in that order),
+    //   GXInit 0x800B5ED0 and __GXShutdown 0x800B5E6C store TRUE into the extra byte,
+    //   GXSetMisc 0x800B8900/0x800B8918 store its token 2 and token 3 values there,
+    //   and __GXAbort 0x800B8990 (plus the GXAbortFrame copy 0x800B8AFC) tests 0x4F2.
+    unsigned char inDispList; // offset 0x4F0, size 0x1
+    unsigned char dlSaveContext; // offset 0x4F1, size 0x1
+    unsigned char unk_4F2; // offset 0x4F2, size 0x1 (extra revision flag; see above)
     unsigned char dirtyVAT; // offset 0x4F3, size 0x1
     unsigned long dirtyState; // offset 0x4F4, size 0x4
 }; // size = 0x4F8
