@@ -1086,3 +1086,29 @@ completed = true
 name = "ext/dolsdk2001/gx/GXPerf.c"
 extra_cflags = ["-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/os", "-i src/ext/dolsdk2001/include/libc", "-i src/ext/dolsdk2001/gx"]
 completed = true
+
+# GXPixel.o (gx.a): eleven linked definitions from 0x800BCCDC to 0x800BD0F8
+# (GXSetFogRangeAdj 0x800BCCDC, GXSetBlendMode 0x800BCDDC, GXSetColorUpdate
+# 0x800BCE30, GXSetAlphaUpdate 0x800BCE5C, GXSetZMode 0x800BCE88,
+# GXSetZCompLoc 0x800BCEBC, GXSetPixelFmt 0x800BCEF4, GXSetDither
+# 0x800BCFDC, GXSetDstAlpha 0x800BD008, GXSetFieldMask 0x800BD044,
+# GXSetFieldMode 0x800BD07C), plus the static pixel-format table that retail
+# stores at lbl_80313608 (0x80313608-0x80313628, .data). The span ends at
+# GXCallDisplayList (GXDisplayList.o). GXSetFog (0x800BC8F8) and
+# GXInitFogAdjTable (0x800BCB14) are not defined here: their bytes stay
+# original. GXSetFog's retail body decodes a bit-coded GXFogType
+# (type & 8 / type & 7, i.e. the later GX_FOG_PERSP_*/GX_FOG_ORTHO_* enum) that
+# this source revision does not have, and the shared .sdata2 constant pool at
+# 0x8047C388 is ordered by the constants GXSetFog introduces (0.0f, 1.0f, then
+# the 1.0/2.0/0.5 doubles), so it is only reproducible together with that
+# function. GXInitFogAdjTable is the only remaining function that needs that
+# pool (sqrtf + float literals), so it is left to the disassembly as well and
+# this object emits no .sdata2 section at all.
+# -fp_contract off: proved necessary by GXInitFogAdjTable's retail body, which
+# keeps `fmul` and `fsub` separate where -fp_contract on folds them into one
+# `fnmsub`; no function left in this object emits floating-point code, so the
+# flag no longer changes the output but records the verified setting.
+[[lib.object]]
+name = "ext/dolsdk2001/gx/GXPixel.c"
+extra_cflags = ["-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/os", "-i src/ext/dolsdk2001/include/libc", "-i src/ext/dolsdk2001/gx", "-fp_contract off"]
+completed = true

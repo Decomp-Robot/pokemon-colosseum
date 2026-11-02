@@ -285,6 +285,10 @@ ext/dolsdk2001/gx/GXBump.c:
 	.text       start:0x800BB780 end:0x800BC114
 	.sdata2     start:0x8047C370 end:0x8047C388
 
+ext/dolsdk2001/gx/GXPixel.c:
+	.text       start:0x800BCCDC end:0x800BD0F8
+	.data       start:0x80313608 end:0x80313628
+
 ext/dolsdk2001/gx/GXDisplayList.c:
 	.text       start:0x800BD0FC end:0x800BD16C
 
