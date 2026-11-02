@@ -1038,3 +1038,51 @@ completed = true
 name = "ext/dolsdk2001/gx/GXLight.c"
 extra_cflags = ["-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/os", "-i src/ext/dolsdk2001/include/libc", "-i src/ext/dolsdk2001/gx"]
 completed = true
+
+# GXPerf.o (gx.a): text 0x800BD91C-0x800BE348 with four linked definitions in
+# source order: GXSetGPMetric 0x800BD91C (0x848), GXReadGPMetric 0x800BE164
+# (0x1A8), GXClearGPMetric 0x800BE30C (0x10), GXReadGP0Metric 0x800BE31C
+# (0x2C). The other eleven definitions (GXClearMemMetric, GXClearPixMetric,
+# GXClearVCacheMetric, GXInitXfRasMetric, GXReadClksPerVtx, GXReadGP1Metric,
+# GXReadMemMetric, GXReadPixMetric, GXReadVCacheMetric, GXReadXfRasMetric,
+# GXSetVCacheMetric) are never called by the game, so the original link
+# dead-stripped them and they are marked UNUSED in the source. The object's
+# .data (0x80313628-0x80313770) holds GXSetGPMetric's two enable switch
+# tables (perf1 at 0x80313628, perf0 at 0x80313684) and GXReadGPMetric's
+# perf1 arm table at 0x80313714.
+# This game's gx.a revision differs from the dolsdk2001 reference copy:
+#  * GXSetGPMetric's enable-switch case order: GX_PERF0_CLOCKS sits between
+#    GX_PERF0_XF_REGRD_CLKS and GX_PERF0_CLIP_RATIO, and GX_PERF0_CLIP_RATIO
+#    precedes GX_PERF0_TRIANGLES (jumptable_80313684[34] = +0x278 is the
+#    CLOCK arm; the arm block runs CLOCK, CLIP_RATIO, TRIANGLES, ...). On the
+#    perf1 side GX_PERF1_TC_MISS and GX_PERF1_CLOCKS sit between
+#    GX_PERF1_TX_MEMSTALL and GX_PERF1_TC_CHECK1_2 (jumptable_80313628[8] =
+#    +0x5D4, [21] = +0x5F0), leaving GX_PERF1_CP_ALL_REQ as the last case,
+#    whose arm falls through to the join instead of branching.
+#  * the sixteen GX_PERF0_TRIANGLES_*/TRIANGLES-family RAS metric constants
+#    are 0x2300xxxx/0x2301xxxx (each arm loads lis r3,0x2300/0x2301) instead
+#    of the reference's 0x2303xxxx/0x2304xxxx: the BP value's bits 16-17
+#    differ from the dolsdk2001 reference revision.
+#  * GXSetGPMetric ends with gx->bpSent = 0 (the instruction at
+#    0x800BD91C+0x83C loads 0 before the sth), where the reference stores 1.
+#  * GXReadGPMetric keeps its whole body as inline asm (nofralloc): the four
+#    CP-counter wait loops use a register rotation (counters r6-r9, ctrl r5,
+#    prev r0) that no reachable C form reproduces with GC/1.2.5n, and the
+#    perf1 switch dispatches through a .data table of absolute arm addresses
+#    (lit_GXReadGPMetric at 0x80313714), transcribed from the DOL.
+#  * shared definition dependency: the perf triplet sits one word higher in
+#    this revision's __GXData_struct, so ext/dolsdk2001/gx/__gx.h gains the
+#    extra word unk_4E0 at 0x4E0 and moves perf0/perf1/perfSel to
+#    0x4E4/0x4E8/0x4EC (total struct size unchanged at 0x4F8, all later
+#    offsets untouched). Evidence: GXSetGPMetric 0x800BD920 reads perf0 at
+#    0x4E4, 0x800BDA2C writes the new perf0 there, 0x800BD9A4 reads perf1 at
+#    0x4E8 and the SET_REG_FIELD updates of perfSel appear at
+#    0x800BDF98/0x800BDFAC as lwz/stw 0x4EC; GXReadGPMetric 0x800BE20C
+#    (perf0) and 0x800BE268 (perf1, range-checked against 0x16) agree; GXInit
+#    0x800B5ED8 clears the 0x4E0 word next to tcsManEnab (0x800B5ED4, 0x4DC).
+#    No other integrated unit reads the perf fields, and the flag bytes at
+#    0x4F0-0x4F4 that GXMisc documents stay where they are.
+[[lib.object]]
+name = "ext/dolsdk2001/gx/GXPerf.c"
+extra_cflags = ["-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/os", "-i src/ext/dolsdk2001/include/libc", "-i src/ext/dolsdk2001/gx"]
+completed = true
