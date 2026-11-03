@@ -1889,3 +1889,68 @@ completed = true
 name = "ext/dolsdk2001/ax/AXSPB.c"
 extra_cflags = ["-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/os", "-i src/ext/dolsdk2001/include/libc", "-i src/ext/dolsdk2001/ax"]
 completed = true
+
+# AXVPB.o (ax.a) was dropped by the original link too: not one of its thirty-two
+# functions occurs in the retail image. Binary evidence:
+#   * Compiling this source with the ax library flags (GC/1.2.5n, -O4,p,
+#     -inline auto, -DNDEBUG=1 so the ASSERTMSGLINE/#ifdef DEBUG text compiles
+#     out) produces 0x170C bytes of .text holding the 32 bodies in source order
+#     (__AXGetNumVoices 0x8, __AXServiceVPB 0x6C4, __AXDumpVPB 0x84,
+#     __AXSyncPBs 0x248, __AXGetPBs 0xC, __AXSetPBDefault 0x3C, __AXVPBInit
+#     0x180, __AXVPBQuit 0x4, AXSetVoiceSrcType 0xC4 ... AXGetDspCycles 0x8),
+#     0x94 bytes of .data (__AXSrcCycles[5] = DF8/F78/14B8/19F8/19F8 followed by
+#     __AXMixCycles[32] = 5BE/B7C/.../21E3), 0xFE00 of .bss (__AXPB 0x3000,
+#     __AXITD 0x1000, __AXUpdates 0x4000, __AXVPB 0x7E00) and 0xC of .sbss.
+#   * A masked full-body search over the whole 3,779,808-byte DOL - the
+#     instruction word of each of the object's 92 .rela.text entries
+#     (EMB_SDA21 small-data offsets, ADDR16_HA/LO pairs, REL24 calls) wildcarded,
+#     every other byte compared - finds no match (0 hits) for every body large
+#     enough to be informative. The only "hits" are the trivial ones:
+#     __AXVPBQuit is a bare `blr` under -DNDEBUG (9961 hits, all `blr` words) and
+#     __AXGetNumVoices is an 8-byte SDA accessor whose only distinctive bytes are
+#     the wildcarded offset. The 0x170C-byte block as a whole, which a live
+#     member would have to occupy contiguously, has 0 hits.
+#   * The method is not blind: the identical harness run over the already
+#     integrated ai.a member finds its bodies at their real addresses (AIStartDMA
+#     0x800AC0F8, AIStopDMA 0x800AC110, AIGetStreamPlayState 0x800AC200,
+#     AIGetDSPSampleRate 0x800AC2F0, AIGetStreamData 0x800AC3D8,
+#     AISetStreamVolLeft 0x800AC3E8, AIGetStreamVolLeft 0x800AC404,
+#     AISetStreamVolRight 0x800AC414, AIGetStreamVolRight 0x800AC430), exactly
+#     the addresses in symbols.txt.
+#   * The member is absent by data fingerprint as well, independently of body
+#     layout and compiler revision: neither the 5-word __AXSrcCycles table, nor
+#     the 32-word __AXMixCycles table, nor any 8-word run of the pair, nor the
+#     0x94-byte .data block occurs anywhere in the DOL (0 hits each). AXVPB's
+#     only .data is those two tables, so the member has no other data footprint
+#     to hide behind.
+#   * It is absent by instruction constant too: __AXServiceVPB/__AXSyncPBs index
+#     the voice tables with `mulli rX,rY,0x1F8` (sizeof(AXVPB) = 504, the
+#     __AXVPB/__AXPB stride) and __AXVPBInit clears the 0x7E00-byte __AXVPB
+#     array. The DOL contains no mulli with immediate 0x1F8 and no addi with
+#     immediate 0x7E00 anywhere (0 hits each), so not even an inlined or
+#     re-scheduled copy of the indexing survives in another caller.
+#   * No string either: "Initializing AXVPB code module", "Shutting down AXVPB
+#     code module", "PB updates cannot exceed 5ms", "PB update block exceeded 128
+#     words", the three "*** ... on ADPCM frame header! ***" lines and "unknown
+#     addr->formaqt in PB" (0 hits each, as expected for a -DNDEBUG build), and
+#     the raw "AXVPB", "__AXSyncPBs" and "AXSetVoice" text is absent as well.
+#   * Nothing could pull the member in: its only SDK callers are AX.c, AXOut.c,
+#     AXCL.c, AXAlloc.c and AXSPB.c (__AXVPBInit/__AXVPBQuit, __AXSyncPBs,
+#     __AXGetPBs, __AXSetPBDefault), all ax.a members the original link never
+#     took (see the ax.a note above), and symbols.txt names no AX function.
+#   * There is no room for it either: dsp/dsp_task.c ends at 0x800AF280 exactly
+#     where card/CARDBios.c starts, the address where an ax.a member linked
+#     between dsp.a and card.a would have sat.
+# The member therefore contributes no bytes and takes the conventional
+# zero-length slot at 0x800CF708 shared by the other dropped dolsdk2001 members.
+# All thirty-two definitions stay in the source, each marked with the single
+# "// UNUSED:" line. The object needs no symbols.txt entry: the twelve names it
+# references (DCFlushRange, DCInvalidateRange, OSDisableInterrupts,
+# OSRestoreInterrupts, memset, __cvt_fp2unsigned, __AXClMode, __AXDepopVoice,
+# __AXGetCommandListCycles, __AXGetStackHead, __AXPushCallbackStack,
+# __AXPushFreeStack) are either defined by an already-linked unit or only
+# reachable from the stripped bodies, and its statics are .data/.bss/.sbss.
+[[lib.object]]
+name = "ext/dolsdk2001/ax/AXVPB.c"
+extra_cflags = ["-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/os", "-i src/ext/dolsdk2001/include/libc", "-i src/ext/dolsdk2001/ax"]
+completed = true
