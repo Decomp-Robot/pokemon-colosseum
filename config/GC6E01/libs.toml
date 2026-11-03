@@ -1108,6 +1108,20 @@ completed = true
 # keeps `fmul` and `fsub` separate where -fp_contract on folds them into one
 # `fnmsub`; no function left in this object emits floating-point code, so the
 # flag no longer changes the output but records the verified setting.
+# GXTev.o (gx.a): text 0x800BC1A0-0x800BC8F8, data 0x803135E0-0x80313608.
+# GXSetTevOp (0x800BC114-0x800BC1A0) stays in the disassembly: the retail body
+# selects its TevColorIn/TevAlphaIn row with `add r5,r0,r4` / `add r9,r0,r4`
+# / `addi r5,r5,20` / `addi r9,r9,60` (base+index first, constants folded
+# afterwards), while this compiler always folds the +20 into the index
+# (`addi r5,r4,20; add r4,r0,r4; add r5,r0,r5; addi r9,r4,60`) for every
+# source spelling tried (2-D table + constant row, flat table + offset, pointer
+# incremented in two statements). The remaining 15 functions of the member are
+# byte-identical to the retail bodies and are linked from this object.
+[[lib.object]]
+name = "ext/dolsdk2001/gx/GXTev.c"
+extra_cflags = ["-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/os", "-i src/ext/dolsdk2001/include/libc", "-i src/ext/dolsdk2001/gx"]
+completed = true
+
 [[lib.object]]
 name = "ext/dolsdk2001/gx/GXPixel.c"
 extra_cflags = ["-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/os", "-i src/ext/dolsdk2001/include/libc", "-i src/ext/dolsdk2001/gx", "-fp_contract off"]
