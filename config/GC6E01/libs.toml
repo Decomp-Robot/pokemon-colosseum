@@ -1732,3 +1732,67 @@ completed = true
 name = "ext/dolsdk2001/ax/AXCL.c"
 extra_cflags = ["-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/os", "-i src/ext/dolsdk2001/include/libc", "-i src/ext/dolsdk2001/ax"]
 completed = true
+
+# AXOut.o (ax.a) was dropped by the original link too: not one of its nine
+# functions occurs in the retail image. Binary evidence:
+#   * Compiling this source with the project flags (GC/1.2.5n, the sibling
+#     dolsdk2001 settings used here, -DNDEBUG=1 so the #ifdef DEBUG OSReport
+#     lines compile out) produces 0x3F8 bytes of .text holding, in order,
+#     __AXOutNewFrame (0x14C), __AXOutAiCallback (0x68), __AXDSPInitCallback
+#     (0xC), __AXDSPResumeCallback (0x58), __AXDSPDoneCallback (0xC),
+#     __AXOutInitDSP (0xC4), __AXOutInit (0xB4), __AXOutQuit (0x54) and
+#     AXRegisterCallback (0x8), plus .bss 0x4808 (__AXOutBuffer 0x500,
+#     __AXOutSBuffer 0x280, __AXLocalProfile 0x38, task 0x50, ax_dram_image
+#     0x4000) and .sbss 0x1C for the six frame/bookkeeping words.
+#   * A masked full-body search over the whole 3,779,808-byte DOL - only the
+#     operands of the object's 93 .rela.text entries (REL24 bl/call sites,
+#     ADDR16_HA/LO address pairs and EMB_SDA21 SDA offsets) are wildcarded,
+#     every other byte is compared - finds no match (0 hits) for each of the
+#     nine bodies and none for the 0x3F8-byte block as a whole, which a live
+#     member would have to occupy contiguously. The method is not blind: run
+#     over the already-integrated ai.a object it finds that member's bodies at
+#     their real addresses (AIInitDMA at 0x800AC070, AIStartDMA at 0x800AC0F8,
+#     AIStopDMA at 0x800AC110, AISetStreamPlayState at 0x800AC128,
+#     AISetDSPSampleRate at 0x800AC210, AIGetDSPSampleRate at 0x800AC2F0, ...).
+#   * The member is also absent by constant, independently of body layout and
+#     compiler revision: __AXOutNewFrame sends the DSP the mail word 0xBABE0180
+#     (lis r4,0xbabe = 0x3C80BABE, addi r3,r4,0x180 = 0x38640180, and the raw
+#     data word 0xBABE0180), __AXOutInitDSP seeds the DSP task with
+#     dsp_init_vector 0x10 / dsp_resume_vector 0x30 (li r7,0x10 ... li r6,0x30
+#     with the lhz axDspSlaveLength between them) and dram_length 0x2000, and
+#     __AXOutInit indexes __AXOutBuffer with mulli r0,r0,0x280. The DOL
+#     contains no 0xBABE0180 in any encoding (0 hits each), no such 0x10/0x30
+#     vector pair, and no stw r3,0x780(r31)/stw r4,0x784(r31) AXPROFILE
+#     frame-start store pair (0 hits each). The three mulli r0,r0,0x280 words
+#     the DOL does contain (0x80163F1C, 0x80164078, 0x8016413C) are the game
+#     snd library's own strides: each is followed by an add with a different
+#     index register, never AXOut's add r3,r30,r0; bl AIInitDMA shape.
+#   * The member carries no data fingerprint to look for: a -DNDEBUG build
+#     emits no .rodata at all ("Initializing AXOut code module"/"Shutting down
+#     AXOut code module" are absent), every static is zero-initialized
+#     .bss/.sbss, ax_dram_image is .bss filled at runtime from axDspSlave, and
+#     that 3264-word axDspSlave ucode itself does not occur in the DOL (see the
+#     ax.a note above).
+#   * AXOut.o can only have been pulled in by AX.c (__AXOutInit/__AXOutQuit)
+#     or by the game registering an AX frame callback, and AX.c is itself
+#     absent (see the ax.a note above). There is also no room for the member:
+#     its natural link position is between dsp.a and card.a, and dsp/dsp_task.c
+#     ends at 0x800AF280 exactly where card/CARDBios.c starts.
+#   * The game's audio stack is its own snd/musyx library, not AX: it drives
+#     the AI DMA itself and symbols.txt names no AX* function.
+# The member therefore contributes no bytes and takes the conventional
+# zero-length slot at 0x800CF708 shared by the other dropped dolsdk2001 members.
+# All nine definitions stay in the source, each marked with the single
+# "// UNUSED:" line. The object needs no symbols.txt entry: the thirty names it
+# references (OSGetTime, __AXSyncPBs, __AXPrintStudio, __AXGetCommandListAddress,
+# DSPSendMailToDSP, DSPCheckMailToDSP, OSEnableInterrupts,
+# __AXServiceCallbackStack, __AXProcessAux, __AXNextFrame, AIInitDMA,
+# __AXGetNumVoices, __AXGetCurrentProfile, memcpy, OSRestoreInterrupts,
+# DSPAssertTask, axDspSlave, axDspSlaveLength, DSPCheckInit, DSPInit, DSPAddTask,
+# memset, DCFlushRange, AIRegisterDMACallback, AIStartDMA, OSDisableInterrupts,
+# AIStopDMA, DSPHalt, DSPGetDMAStatus, DSPReset) are either defined by an
+# already-linked unit or only reachable from the stripped bodies.
+[[lib.object]]
+name = "ext/dolsdk2001/ax/AXOut.c"
+extra_cflags = ["-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/os", "-i src/ext/dolsdk2001/include/libc", "-i src/ext/dolsdk2001/ax"]
+completed = true
