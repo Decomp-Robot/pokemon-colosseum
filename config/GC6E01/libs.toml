@@ -1514,3 +1514,52 @@ progress_category = "sdk"
 name = "ext/dolsdk2001/texPalette/texPalette.c"
 extra_cflags = ["-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/os", "-i src/ext/dolsdk2001/include/libc"]
 completed = true
+
+# ax.a is the Dolphin AX audio library. Its AX.c member holds only the two
+# library entry points AXInit/AXQuit, and the original link dropped them: not
+# one of the twelve __AX*Init/__AX*Quit bodies they call exists anywhere in the
+# retail image. Binary evidence:
+#   * Compiling this source with the project flags (GC/1.2.5n, the sibling
+#     dolsdk2001 settings used here, -DNDEBUG=1 so the #ifdef DEBUG OSReport
+#     lines compile out) gives AXInit at .text+0x0 and AXQuit at +0x34, each
+#     0x34 bytes: `mflr r0; stw r0,4(r1); stwu r1,-8(r1)`, six `bl` calls, then
+#     `lwz r0,12(r1); addi r1,r1,8; mtlr r0; blr`.
+#   * A masked full-body search over the whole 3,779,808-byte DOL - the operands
+#     of the six REL24 `bl` words wildcarded, every other byte compared - finds
+#     no match (0 hits), and neither does the looser variant with 3..7 calls
+#     between the same prologue and epilogue. The method is not blind: the same
+#     search with the ai.a source finds AIInit at 0x800AC440 (0x800AC464 in
+#     symbols.txt, past the revision's OSRegisterVersion call) and
+#     AIGetDSPSampleRate at 0x800AC2F0.
+#   * The DOL's .text has no room for the member: dsp_task.c ends at
+#     0x800AF280 and card/CARDBios.c starts at exactly 0x800AF280, the address
+#     where an ax.a member linked between dsp.a and card.a would have sat.
+#   * ax.a's distinctive data is missing too: the 3264-word axDspSlave image
+#     (DSPCode.c) does not occur in the DOL, and the .data slot between
+#     dsp_task.c (ends 0x80312668) and CARDBios.c (starts 0x803127A8) holds
+#     nothing but dsp.c's debug strings, while ax.a would need 0x1980 bytes
+#     there. The only DSP ucode in the image is at 0x8036a520, inside the game's
+#     own data, and it differs from dolsdk2001's axDspSlave in 2054 of 3264
+#     words: that is the game audio library's own AX-family ucode (snd/musyx,
+#     e.g. sndStreamDeactivate at 0x80150564), not ax.a's.
+#   * None of AXVPB.c's assert messages ("PB updates cannot exceed 5ms",
+#     "*** loop address on ADPCM frame header! ***") occurs in the DOL, and
+#     symbols.txt names no AX function.
+# The member therefore contributes no bytes and takes the conventional
+# zero-length slot at 0x800CF708 shared by the other dropped dolsdk2001 members.
+# Both definitions stay in the source, each marked with the single "// UNUSED:"
+# line. The object needs no symbols.txt entry: the twelve names it references
+# (__AXAllocInit, __AXVPBInit, __AXSPBInit, __AXAuxInit, __AXClInit,
+# __AXOutInit and the matching Quit functions) live in ax.a members that the
+# original link never pulled in, so they are reachable only from the stripped
+# bodies.
+[[lib]]
+name = "ax"
+mw_version = "GC/1.2.5n"
+cflags_preset = "base"
+cflags_extra = ["-use_lmw_stmw on", "-common off", "-inline auto"]
+progress_category = "sdk"
+[[lib.object]]
+name = "ext/dolsdk2001/ax/AX.c"
+extra_cflags = ["-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/os", "-i src/ext/dolsdk2001/include/libc", "-i src/ext/dolsdk2001/ax"]
+completed = true
