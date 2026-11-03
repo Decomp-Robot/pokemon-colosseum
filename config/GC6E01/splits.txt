@@ -388,3 +388,6 @@ ext/dolsdk2001/ax/AXSPB.c:
 
 ext/dolsdk2001/ax/AXVPB.c:
 	.text       start:0x800CF708 end:0x800CF708
+
+ext/dolsdk2001/ax/DSPCode.c:
+	.text       start:0x800CF708 end:0x800CF708

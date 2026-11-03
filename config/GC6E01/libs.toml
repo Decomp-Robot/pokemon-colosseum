@@ -1954,3 +1954,38 @@ completed = true
 name = "ext/dolsdk2001/ax/AXVPB.c"
 extra_cflags = ["-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/os", "-i src/ext/dolsdk2001/include/libc", "-i src/ext/dolsdk2001/ax"]
 completed = true
+
+# DSPCode.o (ax.a) is the ucode data member: axDspSlaveLength (u16) plus the
+# 3264-word / 0x1980-byte axDspSlave image (AX_DSP_SLAVE_LENGTH*2, 32-byte
+# aligned). It is data only - DSPCode.c defines no function - and it was dropped
+# by the original link together with the rest of ax.a. Binary evidence:
+#   * Decoding the 3264 words straight from this source and searching the whole
+#     3,779,808-byte DOL finds the 0x1980-byte image nowhere: 0 hits. Neither
+#     does its distinctive head, 0000 0000 029F 0BDB 029F 0BEA 029F 0C06 029F
+#     0C15 ... (the ucode branch table, 0x1C-byte window): 0 hits.
+#   * The DOL does hold one AX-family ucode, but it is the game's own, not this
+#     revision's: symbols.txt already names it lbl_8036A520 (.data:0x8036A520,
+#     size 0x19E0), i.e. 0x60 bytes larger than this revision's 0x1980 image, and
+#     it differs from this source's image in 2054 of the first 3264 words. That
+#     is the game audio library's own ucode (snd/musyx, e.g. sndStreamDeactivate
+#     at 0x80150564) inside the game's .data, not an ax.a contribution; no
+#     lis/addi pair in the DOL .text forms an address into that ucode window and
+#     no pointer word points at it, so it is driven by the game's own DSP task
+#     setup rather than by ax.a's.
+#   * The member has no .text and no other data footprint, so there is nothing
+#     else to look for.
+#   * Nothing could pull it in: axDspSlave/axDspSlaveLength are referenced only
+#     by AXOut.c's __AXOutInitDSP (task.iram_mmem_addr / task.iram_length), and
+#     __AXOutInitDSP is never called by the game (see the AXOut.c note above), so
+#     the linker dead-strips it together with both data symbols. The object
+#     therefore contributes no bytes and takes the conventional zero-length slot
+#     at 0x800CF708 shared by the other dropped dolsdk2001 members, and
+#     symbols.txt needs no entry: axDspSlave is defined here rather than an
+#     undefined reference, and it is stripped.
+# Both definitions stay in the source as shipped by the SDK; the "// UNUSED:"
+# mark is reserved for functions, so no annotation applies to this data-only
+# unit.
+[[lib.object]]
+name = "ext/dolsdk2001/ax/DSPCode.c"
+extra_cflags = ["-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/os", "-i src/ext/dolsdk2001/include/libc", "-i src/ext/dolsdk2001/ax"]
+completed = true
