@@ -311,6 +311,10 @@ ext/dolsdk2001/gx/GXDraw.c:
 ext/dolsdk2001/gx/GXSave.c:
 	.text       start:0x800BD16C end:0x800BD16C
 
+ext/dolsdk2001/gx/GXTransform.c:
+	.text       start:0x800BD16C end:0x800BD91C
+	.sdata2     start:0x8047C3E0 end:0x8047C400
+
 ext/dolsdk2001/gx/GXPerf.c:
 	.text       start:0x800BD91C end:0x800BE348
 	.data       start:0x80313628 end:0x80313770

@@ -928,6 +928,42 @@ name = "ext/dolsdk2001/gx/GXFifo.c"
 extra_cflags = ["-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/os", "-i src/ext/dolsdk2001/include/libc", "-i src/ext/dolsdk2001/gx"]
 completed = true
 
+# GXTransform.o (gx.a): text 0x800BD16C-0x800BD91C, 15 linked definitions in
+# source order (GXProject 0x800BD16C, GXSetProjection 0x800BD2E0,
+# GXSetProjectionv 0x800BD394, GXGetProjectionv 0x800BD454, GXLoadPosMtxImm
+# 0x800BD4B4, GXLoadNrmMtxImm 0x800BD504, GXSetCurrentMtx 0x800BD554,
+# GXLoadTexMtxImm 0x800BD58C, GXSetViewportJitter 0x800BD640, GXSetViewport
+# 0x800BD744, GXGetViewportv 0x800BD768, GXSetScissor 0x800BD7A0,
+# GXSetScissorBoxOffset 0x800BD830, GXSetClipMode 0x800BD870,
+# __GXSetMatrixIndex 0x800BD898), which covers the span exactly; GXPerf.o
+# follows at 0x800BD91C. GXLoadPosMtxIndx, GXLoadNrmMtxImm3x3,
+# GXLoadNrmMtxIndx3x3, GXLoadTexMtxIndx and GXGetScissor are never called, so
+# the original link dead-stripped them; they carry the "// UNUSED:" mark.
+# WriteMTXPS3x3/3x3from3x4/4x2/4x3 have no body in the DOL because this gx
+# revision inlines them into their callers. mwcc refuses to inline
+# function-level assembler ("function level assembler can not be inlined"),
+# so the four writers are written as inline functions holding an asm block;
+# the DOL's paired-single sequence fills f5 first (GXLoadPosMtxImm at
+# 0x800BD4D0), hence the reversed register numbering.
+# This gx revision differs from the dolsdk2001 reference copy:
+#  * the scissor/viewport origin offset is 342, not 340: GXSetScissor and
+#    GXSetScissorBoxOffset use `addi rX, rY, 0x156` (0x800BD7A4/0x800BD7A8,
+#    0x800BD830/0x800BD838) and GXSetViewportJitter adds the float 342.0f
+#    (0x43AB0000 in .sdata2 at 0x8047C3F8, loaded at 0x800BD680);
+#  * as in GXGeometry.c and GXDisplayList.c, the stored bpSent polarity is
+#    inverted relative to the reference: GXSetProjection/GXSetProjectionv/
+#    GXSetViewportJitter/GXSetClipMode/__GXSetMatrixIndex store 1
+#    (0x800BD38C, 0x800BD43C, 0x800BD6CC, 0x800BD890, 0x800BD914) while
+#    GXSetScissor/GXSetScissorBoxOffset store 0 (0x800BD828, 0x800BD868);
+#  * -fp_contract off: GXProject's retail body keeps every product and sum as
+#    separate fmuls/fadds, while -fp_contract on folds them into fnmadds
+#    (verified against 0x800BD178-0x800BD1EC); the object builds
+#    byte-identically with the flag off.
+[[lib.object]]
+name = "ext/dolsdk2001/gx/GXTransform.c"
+extra_cflags = ["-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/os", "-i src/ext/dolsdk2001/include/libc", "-i src/ext/dolsdk2001/gx", "-fp_contract off"]
+completed = true
+
 # GXDraw.o (gx.a) is the SDK demo-geometry member: cube/sphere/torus helpers
 # intended for sample code. The retail DOL links none of it. Binary evidence
 # (GC/1.2.5n build of the pristine dolsdk2001 GXDraw.c, scanned against
