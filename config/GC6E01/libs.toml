@@ -1242,6 +1242,38 @@ name = "ext/dolsdk2001/gx/GXSave.c"
 extra_cflags = ["-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/os", "-i src/ext/dolsdk2001/include/libc", "-i src/ext/dolsdk2001/gx"]
 completed = true
 
+# GXVerifXF.o (gx.a) is DEBUG-only as well: the whole member sits inside a
+# single `#if DEBUG` block that opens at line 1 and closes on the last line, so
+# with the project's release flags (-DNDEBUG=1, no DEBUG define -- see
+# config/default.toml cflags_release and the mwcc_sjis edge in build.ninja) the
+# translation unit produces no sections and the member contributes no bytes.
+# Binary evidence that the retail DOL links none of it:
+#   * none of the member's distinctive data exists in orig/GC6E01/sys/main.dol
+#     (`strings -a`): the light-register name table ("Light Color RGBA",
+#     "Cosine Attenuation A0/A1/A2", "Distance Attenuation K0/K1/K2",
+#     "X/Y/Z Light Position ..."), the XF error strings ("Internal error
+#     register", "Power savings register", "Viewport Scale X/Y/Z",
+#     "Projection matrix 'A' value", ...) and the sprintf labels
+#     ("Geometry/Texture Matrix ram address 0x%04x",
+#     "Light %d %s (address 0x%04x)") are all absent; the only GX assert text
+#     in the DOL belongs to the GXAttr/GXGeometry members, not this one;
+#   * no __GXVerifyXF / __GXVertexPacketHas / CheckFloatingPointRanges symbol
+#     (or any of the other static helpers) exists in config/GC6E01/symbols.txt,
+#     and dtk emits no slice for this source under build/GC6E01/asm;
+#   * __GXVerifyXF is only reachable from __GXVerifyState (GXVerify.o), which the
+#     game also does not link.
+# The split is therefore a zero-length .text range and the object links
+# nothing, exactly like the already-verified GXDraw.o and GXSave.o members.
+# The functions stay in the source untouched because the SDK's own DEBUG guard
+# compiles them out; they are not dead-stripped by the link, so no
+# "// UNUSED:" marks are added. The object needs no symbols.txt entry: every
+# name it would reference (gx, __gxVerif, __GX_WARNF/__GX_WARN2F, OSReport,
+# sprintf) only exists inside the disabled block.
+[[lib.object]]
+name = "ext/dolsdk2001/gx/GXVerifXF.c"
+extra_cflags = ["-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/os", "-i src/ext/dolsdk2001/include/libc", "-i src/ext/dolsdk2001/gx"]
+completed = true
+
 # GXStubs.o (gx.a) is the one-definition member __GXSetRange, an empty
 # (4-byte "blr") stub. It is live in this DOL: GXSetViewportJitter -- the
 # function at 0x800BD640 in the still-disassembled GXTransform span
