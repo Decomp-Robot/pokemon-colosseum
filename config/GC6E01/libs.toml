@@ -539,6 +539,52 @@ name = "ext/dolsdk2001/dvd/fstload.c"
 extra_cflags = ["-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/os", "-i src/ext/dolsdk2001/include/libc", "-i src/ext/dolsdk2001/dvd"]
 completed = true
 
+# ai.o is the AI-interface member of ai.a from the same Sep  5 2002 Dolphin SDK
+# drop as ar/arq/dsp (the retail version string at 0x80312510 reads
+# "<< Dolphin SDK - AI\trelease build: Sep  5 2002 05:34:25 (0x2301) >>"), so it
+# is built with the os-library compiler settings.
+# Binary evidence for the split: the member's text is the contiguous
+# 0x800AC02C-0x800AC910 block that starts right where __PADDisableRecalibration
+# ends and ends where ar.o's ARGetSize begins; the 19 functions whose bodies
+# occupy it are, in source order, AIRegisterDMACallback 0x800AC02C,
+# AIInitDMA 0x800AC070, AIStartDMA 0x800AC0F8, AIStopDMA 0x800AC110,
+# AISetStreamPlayState 0x800AC128, AIGetStreamPlayState 0x800AC200,
+# AISetDSPSampleRate 0x800AC210, AIGetDSPSampleRate 0x800AC2F0,
+# __AI_set_stream_sample_rate 0x800AC304, AIGetStreamSampleRate 0x800AC3D8,
+# AISetStreamVolLeft 0x800AC3E8, AIGetStreamVolLeft 0x800AC404,
+# AISetStreamVolRight 0x800AC414, AIGetStreamVolRight 0x800AC430,
+# AIInit 0x800AC440, __AISHandler 0x800AC5AC, __AIDHandler 0x800AC628,
+# __AICallbackStackSwitch 0x800AC6D4 and __AI_SRC_INIT 0x800AC72C.
+# The remaining definitions are never called by the game and were dead-stripped
+# by the original link (no standalone body exists for any of them: the small
+# getters and setters are inlined into their only callers, and the debug entry
+# points compile to nothing in a release build), so they are marked UNUSED in
+# the source.
+# Its data is contiguous too: .data 0x80312510-0x80312554 is the member's
+# version string (0x44 bytes, followed by 4 bytes of alignment padding before
+# ar.o's string at 0x80312558), .sdata 0x80478A28 is __AIVersion (the 4 bytes
+# at 0x80478A2C are ar.o's 8-byte .sdata alignment padding), and .sbss
+# 0x8047A8C8-0x8047A908 holds exactly the member's five callback/stack/flag
+# words (0x8047A8C8-0x8047A8DC) and its five OSTime bounds
+# (0x8047A8E0-0x8047A908), which is where AIInit's OSNanosecondsToTicks results
+# and the handlers' sda21 accesses point. The DEBUG-only profile/__ai_src_time_*
+# globals sit in .bss and, being unreferenced, are stripped by the link.
+# Revision differences proved by the binary: the retail AIInit (0x800AC464)
+# calls OSRegisterVersion(__AIVersion) before programming the AI timer bounds,
+# and the retail __AIDHandler (0x800AC674-0x800AC6AC) guards the callback with a
+# re-entrancy flag word at 0x8047A8DC that the dolsdk2001 copy lacks, so both
+# were added to the source.
+[[lib]]
+name = "ai"
+mw_version = "GC/1.2.5n"
+cflags_preset = "base"
+cflags_extra = ["-use_lmw_stmw on", "-common off", "-inline auto"]
+progress_category = "sdk"
+[[lib.object]]
+name = "ext/dolsdk2001/ai/ai.c"
+extra_cflags = ["-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/os", "-i src/ext/dolsdk2001/include/libc", "-i src/ext/dolsdk2001/gx"]
+completed = true
+
 [[lib]]
 name = "ar"
 mw_version = "GC/1.2.5n"
