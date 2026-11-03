@@ -2035,3 +2035,36 @@ progress_category = "sdk"
 name = "ext/dolsdk2001/axfx/chorus.c"
 extra_cflags = ["-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/os", "-i src/ext/dolsdk2001/include/libc"]
 completed = true
+
+# delay.o (axfx.a) was dropped by the original link, like chorus.o before it:
+# not one of its four functions occurs in the retail image. Binary evidence:
+#   * The member is code-only: its GC/1.2.5n object has exactly one content
+#     section beyond .comment - .text (0x490 bytes) - and no .data/.bss/
+#     .sdata/.rodata at all, so there is no data footprint to search for.
+#   * A masked full-body search over the whole DOL - only the operands of the
+#     object's .rela.text entries (REL24 branch words and the EMB_SDA21
+#     __OSCurrHeap rA nibble + 16-bit offset) wildcarded, every other byte
+#     compared - finds no match for any of the four bodies: AXFXDelayCallback
+#     (0x1d0 bytes, zero relocations, so a pure exact-byte search),
+#     AXFXDelaySettings (0x1f8), AXFXDelayInit (0x48) and AXFXDelayShutdown
+#     (0x80) when built with GC/1.2.5n. The same search is empty with GC/2.6
+#     (0x408 bytes of .text) and GC/3.0a5 (0x3f4) builds, so the result is not
+#     an artifact of the compiler revision chosen here. The search method was
+#     validated with positive controls compiled the same way: OSAllocFromHeap,
+#     OSFreeToHeap and OSCreateHeap bodies each match their symbols.txt
+#     addresses exactly (0x8009A9D8 / 0x8009AAD4 / 0x8009ABD0).
+#   * Nothing could pull the member in: symbols.txt names no AXFX symbol, no
+#     AXFX-family data or strings are in the image, and the game's audio
+#     library is MusyX (snd), not AX/AXFX - as established for chorus.o.
+#     AXFXDelayInit references AXFXDelaySettings, but nothing anywhere
+#     references AXFXDelayInit, so the whole group dead-strips.
+# The object therefore contributes no bytes and takes the conventional
+# zero-length slot at 0x800CF708 shared by the other dropped dolsdk2001
+# members. All four definitions stay in the source as shipped by the SDK,
+# each marked with the single "// UNUSED:" line; the object needs no
+# symbols.txt entry because nothing references AXFXDelayCallback, so the
+# linker strips it (and, with it, the other three bodies) again.
+[[lib.object]]
+name = "ext/dolsdk2001/axfx/delay.c"
+extra_cflags = ["-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/os", "-i src/ext/dolsdk2001/include/libc"]
+completed = true
