@@ -1274,6 +1274,42 @@ name = "ext/dolsdk2001/gx/GXVerifXF.c"
 extra_cflags = ["-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/os", "-i src/ext/dolsdk2001/include/libc", "-i src/ext/dolsdk2001/gx"]
 completed = true
 
+# GXVerify.o (gx.a) is DEBUG-only too: the entire member is inside a single
+# `#if DEBUG` block that opens on line 1 and closes on the last line, so with
+# the project's release flags (-DNDEBUG=1 and no DEBUG define -- see the
+# mwcc_sjis edge for this object in build.ninja) the translation unit emits no
+# sections and the member contributes no bytes to the DOL.
+# Binary evidence that the retail DOL links none of it:
+#   * none of the member's distinctive data exists in orig/GC6E01/sys/main.dol:
+#     all 113 entries of the __gxvWarnings string table are absent from the
+#     binary (checked each quoted literal >= 8 bytes against the raw DOL image:
+#     "Invalid Vertex Format. Normal count must be set GX_NRM_NBT", "Texture
+#     size %ld not initialized.", "Left edge of scissor rectangle is less than
+#     %d.", "Number of all texgens (%d) > max allowed %d", "gen_mode register
+#     not initialized", "Register (0x%04x) (%s) is not initialized", ... -- 0 of
+#     113 present);
+#   * no __GXVerifyState / __GXVerifyGlobal / __GXVerifyCP / GXSetVerifyLevel /
+#     GXSetVerifyCallback symbol and no __gxVerif / __gxvWarnings data symbol
+#     exists in config/GC6E01/symbols.txt, and dtk emits no slice for this
+#     source under build/GC6E01/asm;
+#   * the only link-time references to __GXVerifyState (GXGeometry.c's GXBegin,
+#     GXSave.c's __GXShadowDispList) sit inside `#if DEBUG` blocks themselves, and
+#     GXInit.o is still linked from its disassembly slice, so nothing in the
+#     release link pulls this member in.
+# The split is therefore a zero-length .text range and the object links
+# nothing, exactly like the already-verified GXDraw.o, GXSave.o and
+# GXVerifXF.o members. The functions stay in the source untouched because the
+# SDK's own DEBUG guard compiles them out; they are not dead-stripped by the
+# link, so no "// UNUSED:" marks are added. The object needs no symbols.txt
+# entry: every name it would reference (gx, __gxVerif, __gxvWarnings,
+# __GXVerifyXF/__GXVerifySU/__GXVerifyBUMP/__GXVerifyTEX/__GXVerifyTEV/
+# __GXVerifyPE, GET_REG_FIELD, SET_REG_FIELD) only exists inside the disabled
+# block.
+[[lib.object]]
+name = "ext/dolsdk2001/gx/GXVerify.c"
+extra_cflags = ["-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/os", "-i src/ext/dolsdk2001/include/libc", "-i src/ext/dolsdk2001/gx"]
+completed = true
+
 # GXStubs.o (gx.a) is the one-definition member __GXSetRange, an empty
 # (4-byte "blr") stub. It is live in this DOL: GXSetViewportJitter -- the
 # function at 0x800BD640 in the still-disassembled GXTransform span
