@@ -1842,3 +1842,50 @@ completed = true
 name = "ext/dolsdk2001/ax/AXProf.c"
 extra_cflags = ["-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/os", "-i src/ext/dolsdk2001/include/libc", "-i src/ext/dolsdk2001/ax"]
 completed = true
+
+# AXSPB.o (ax.a) was dropped by the original link too: not one of its six
+# functions occurs in the retail image. Binary evidence:
+#   * Compiling this source with the ax library flags (GC/1.2.5n, -O4,p,
+#     -inline auto, -DNDEBUG=1 so the #ifdef DEBUG OSReport lines compile out)
+#     produces 0x53C bytes of .text holding __AXGetStudio (0xC),
+#     __AXDepopFade (0x74), __AXPrintStudio (0x3F8), __AXSPBInit (0x2C),
+#     __AXSPBQuit (0x4) and __AXDepopVoice (0x94), plus 68 .rela.text entries.
+#   * A masked full-body search over the whole 3,779,808-byte DOL - the bytes of
+#     every .rela.text entry (ADDR16_HA/LO pairs and EMB_SDA21 SDA offsets and
+#     the one REL24 call to DCFlushRange) wildcarded, every other byte compared -
+#     finds no match (0 hits) for __AXGetStudio, __AXDepopFade, __AXPrintStudio,
+#     __AXSPBInit and __AXDepopVoice. __AXDepopFade carries no relocation at all,
+#     so its search is a plain 0x74-byte literal compare and still misses.
+#     __AXSPBQuit is a bare `blr` under -DNDEBUG and therefore matches
+#     everywhere; it is uninformative in either direction.
+#   * The method is not blind, nor is the miss a revision artifact: the same
+#     harness run over the already-integrated ai.a member finds AIStartDMA at
+#     0x800AC0F8, AIGetStreamPlayState at 0x800AC200, AIGetDSPSampleRate at
+#     0x800AC2F0 and AISetStreamVolLeft at 0x800AC3E8, their real addresses.
+#     A looser structural search that wildcards the low 16 bits of every
+#     instruction (keeping only opcode/register fields) also returns 0 hits for
+#     __AXDepopFade, __AXDepopVoice and __AXPrintStudio, while still locating
+#     those same ai.a bodies, so no differently-revised variant of these
+#     functions exists in the image.
+#   * The member carries no data fingerprint to look for: its only statics are
+#     zero-initialized (__AXStudio, 0x36 bytes, ALIGN(32).bss, and the nine
+#     __AXSpb* longs in .sbss), it emits no .rodata, and the DOL contains no
+#     "AXSPB", "Initializing AXSPB code module", "Shutting down AXSPB code
+#     module" or "__AXStudio" bytes (0 hits each).
+#   * Nothing could pull the member in: its only callers are __AXSPBInit /
+#     __AXSPBQuit from AX.c and __AXGetStudio / __AXPrintStudio / __AXDepopVoice
+#     from AXOut/AXVPB, all ax.a members the original link never took (see the
+#     ax.a note above), and symbols.txt names no AX function.
+#   * There is no room for it either: dsp/dsp_task.c ends at 0x800AF280 exactly
+#     where card/CARDBios.c starts, the address where an ax.a member linked
+#     between dsp.a and card.a would have sat.
+# The member therefore contributes no bytes and takes the conventional
+# zero-length slot at 0x800CF708 shared by the other dropped dolsdk2001 members.
+# All six definitions stay in the source, each marked with the single
+# "// UNUSED:" line. The object needs no symbols.txt entry: the name it
+# references outside its own bodies (DCFlushRange) is defined by an
+# already-linked unit and its statics are zero-initialized .bss/.sbss.
+[[lib.object]]
+name = "ext/dolsdk2001/ax/AXSPB.c"
+extra_cflags = ["-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/os", "-i src/ext/dolsdk2001/include/libc", "-i src/ext/dolsdk2001/ax"]
+completed = true

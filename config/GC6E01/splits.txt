@@ -382,3 +382,6 @@ ext/dolsdk2001/ax/AXOut.c:
 
 ext/dolsdk2001/ax/AXProf.c:
 	.text       start:0x800CF708 end:0x800CF708
+
+ext/dolsdk2001/ax/AXSPB.c:
+	.text       start:0x800CF708 end:0x800CF708
