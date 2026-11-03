@@ -289,6 +289,9 @@ ext/dolsdk2001/gx/GXPixel.c:
 	.text       start:0x800BCCDC end:0x800BD0F8
 	.data       start:0x80313608 end:0x80313628
 
+ext/dolsdk2001/gx/GXStubs.c:
+	.text       start:0x800BD0F8 end:0x800BD0FC
+
 ext/dolsdk2001/gx/GXDisplayList.c:
 	.text       start:0x800BD0FC end:0x800BD16C
 

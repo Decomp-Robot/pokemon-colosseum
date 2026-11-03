@@ -1140,3 +1140,17 @@ name = "ext/dolsdk2001/gx/GXSave.c"
 extra_cflags = ["-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/os", "-i src/ext/dolsdk2001/include/libc", "-i src/ext/dolsdk2001/gx"]
 completed = true
 
+# GXStubs.o (gx.a) is the one-definition member __GXSetRange, an empty
+# (4-byte "blr") stub. It is live in this DOL: GXSetViewportJitter -- the
+# function at 0x800BD640 in the still-disassembled GXTransform span
+# 0x800BD16C-0x800BD91C -- calls it at 0x800BD6DC (`bl 0x800BD0F8`) under the
+# `if (gx->fgRange != 0)` guard, and the 4-byte `blr` body sits at 0x800BD0F8
+# in the 4-byte gap between GXPixel.o (ends 0x800BD0F8) and GXDisplayList.o
+# (GXCallDisplayList at 0x800BD0FC). The pristine dolsdk2001 source matches
+# the binary exactly, so the object is linked as-is; no symbols.txt data
+# definitions are required.
+[[lib.object]]
+name = "ext/dolsdk2001/gx/GXStubs.c"
+extra_cflags = ["-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/os", "-i src/ext/dolsdk2001/include/libc", "-i src/ext/dolsdk2001/gx"]
+completed = true
+
