@@ -352,3 +352,6 @@ ext/dolsdk2001/fileCache/fileCache.c:
 
 ext/dolsdk2001/dolformat/DOLLoader.c:
 	.text       start:0x800CF708 end:0x800CF708
+
+ext/dolsdk2001/G2D/G2D.c:
+	.text       start:0x800CF708 end:0x800CF708

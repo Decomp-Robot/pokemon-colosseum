@@ -1374,3 +1374,48 @@ name = "ext/dolsdk2001/gx/GXVert.c"
 extra_cflags = ["-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/os", "-i src/ext/dolsdk2001/include/libc", "-i src/ext/dolsdk2001/gx"]
 completed = true
 
+
+# G2D.o (G2D.a) was dropped by the original link: nothing in the retail image
+# references the G2D sprite/layer API, so mwldeppc never extracted the member.
+# Binary evidence: the DOL contains no "g2d" string, no G2D name appears in
+# symbols.txt/splits.txt, and none of the 7 definitions in the source survives
+# in the image. The source was compiled with the project flags (-O4,p,
+# -inline auto) under GC/2.6 and GC/1.2.5n; the exact register+mnemonic
+# sequence of every body occurs 0 times in the 4,671,418-instruction retail
+# .text, a 24-instruction mnemonic-window index over the same text returns 0
+# windows, and the longest common mnemonic run is 4 instructions for the
+# smallest body (G2DInitSprite, 0x140 bytes) and 7 for the largest
+# (G2DDrawLayer, 6760 bytes) -- no signal at all. The two large bodies are also
+# excluded by their call graph: G2DDrawLayer issues GXBegin 3x,
+# GXSetChanMatColor/GXSetArray 1x each and GXSetTevOp/GXSetTevOrder, but the
+# only function in the whole image that calls both GXSetTevOp and
+# GXSetChanMatColor is __GXInitGX (0x800B671C, 0 GXBegin calls), and the only
+# game function combining GXSetChanMatColor+GXSetArray+GXBegin is
+# zz_8016AB94_ (0x8016AB94, 3716 bytes) which never calls GXSetTevOp;
+# G2DSetCamera calls MTXLookAt immediately followed by GXLoadPosMtxImm, yet
+# MTXLookAt's 4 call sites (0x800E0224 inside the 0x20-byte forwarder
+# zz_800E0218_, 0x8019505C and 0x80195728 followed by MTXMultVecSR, and
+# 0x80196064 followed by a lwz/cmplwi/rlwinm bit-clear) contain no
+# GXLoadPosMtxImm; G2DInitWorld brackets MTXOrtho between
+# GXSetZMode(0,GX_ALWAYS,1) and GXSetProjection(GX_ORTHOGRAPHIC) and none of
+# MTXOrtho's 6 call sites has that bracket; G2DSetViewport's distinctive
+# 8-instruction body (four clrlwi + sh/sthu pairs then `bl GXSetScissor`)
+# matches 0 sites of any length. The member's only data (glob, 0x28 bytes in
+# .bss, and the float constants in .sdata2, 0x70 bytes) is read solely by those
+# stripped bodies, so it goes with them. The 6 external definitions are kept in
+# the source and marked UNUSED, leaving the file-static inline helper
+# FillSection (inlined into G2DDrawLayer, no standalone body in the image)
+# untouched; the object contributes no bytes and takes the conventional
+# zero-length slot at 0x800CF708 shared by the other dropped members. The
+# library settings mirror the sibling dolsdk2001 archives (gx.a, support.a);
+# the compiler choice is checksum-neutral here because no byte of G2D.o links.
+[[lib]]
+name = "G2D"
+mw_version = "GC/1.2.5n"
+cflags_preset = "base"
+cflags_extra = ["-use_lmw_stmw on", "-common off", "-inline auto"]
+progress_category = "sdk"
+[[lib.object]]
+name = "ext/dolsdk2001/G2D/G2D.c"
+extra_cflags = ["-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/os", "-i src/ext/dolsdk2001/include/libc", "-i src/ext/dolsdk2001/gx"]
+completed = true
