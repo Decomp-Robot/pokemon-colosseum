@@ -1324,3 +1324,53 @@ name = "ext/dolsdk2001/gx/GXStubs.c"
 extra_cflags = ["-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/os", "-i src/ext/dolsdk2001/include/libc", "-i src/ext/dolsdk2001/gx"]
 completed = true
 
+# GXVert.o (gx.a) is the vertex-attribute FIFO writer member: GXCmd1*,
+# GXParam1*, GXPosition*, GXNormal*, GXColor*, GXTexCoord* and GXMatrixIndex1u8
+# (48 definitions in the reference source). In the dolsdk2001 release
+# configuration every one of them is a one-line GXWGFifo store and the SDK keeps
+# two spellings of the same list: an extern declaration in
+# include/dolphin/gx/GXVert.h under `#if DEBUG` plus this out-of-line
+# definition file, and a `static inline` definition of the identical macro list
+# in the header's `#else` branch. The retail game was built without DEBUG, so it
+# used the inline spellings; GXVert.c is wrapped end to end in a single
+# `#if DEBUG` (line 1 `#if DEBUG`, last line `#endif  // DEBUG`) and, with the
+# project's release flags (-DNDEBUG=1 and no -DDEBUG -- see the mwcc_sjis edge
+# for the gx objects in build.ninja), the translation unit emits no sections at
+# all. The member therefore contributes no bytes to the DOL.
+# Binary evidence that the retail link pulled in none of it:
+#   * the gx.a text range is fully attributable to other members and the only
+#     unclaimed spans inside it belong to still-unintegrated SDK functions, not
+#     to a block of ~45 tiny writers: GXFifo.o 0x800B7114-0x800B771C, GXAttr.o
+#     0x800B771C-0x800B888C, GXMisc.o 0x800B888C-0x800B91EC, GXGeometry.o
+#     0x800B91EC-0x800B959C, GXFrameBuf.o 0x800B959C-0x800BA198, GXLight.o
+#     0x800BA198-0x800BA7C0, GXTexture.o 0x800BA7C0-0x800BB540, GXBump.o
+#     0x800BB780-0x800BC114, GXTev.o 0x800BC1A0-0x800BC8F8, GXPixel.o
+#     0x800BCCDC-0x800BD0F8, GXStubs.o 0x800BD0F8-0x800BD0FC, GXDisplayList.o
+#     0x800BD0FC-0x800BD16C, GXTransform.o 0x800BD16C-0x800BD91C, GXPerf.o
+#     0x800BD91C-0x800BE348; the three gaps (0x800BB540-0x800BB780,
+#     0x800BC114-0x800BC1A0, 0x800BC8F8-0x800BCCDC) are exactly
+#     __GXSetTmemConfig (0x800BB540 size 0x240), GXSetTevOp (0x800BC114 size
+#     0x8C) and GXSetFog/GXInitFogAdjTable (0x800BC8F8 size 0x21C,
+#     0x800BCB14 size 0x1C8), i.e. members owned by units still linked from
+#     disassembly -- there is no contiguous run of 12-16 byte FIFO writers
+#     anywhere in the DOL;
+#   * config/GC6E01/symbols.txt contains no GXPosition*/GXNormal*/GXTexCoord*/
+#     GXColor[0-9]*/GXCmd*/GXParam*/GXMatrixIndex* function at any address, and
+#     dtk emits no asm slice for this source under build/GC6E01/asm;
+#   * the writers really are inlined in the retail binary: 502 words of the DOL
+#     image form the FIFO base address (`addis rX, r0, 0xCC00`/0xCC01, e.g.
+#     the four consecutive `stw r31, -0x8000(r3)` FIFO stores at 0x800B5E2C in
+#     build/GC6E01/asm/auto_01_8009A92C_text.s), which is what the header's
+#     `static inline` branch produces at the call sites.
+# The split is a zero-length .text range at the GXDraw.o/GXSave.o/GXVerify.o
+# anchor 0x800BD16C and the object links nothing, exactly like those
+# already-verified DEBUG-only members. The definitions stay in the source
+# untouched because the SDK's own DEBUG guard compiles them out; they are not
+# dead-stripped by the link, so no "// UNUSED:" marks are added. The object
+# needs no symbols.txt entry: its only reference (GXWGFifo, the fixed FIFO
+# address 0xCC008000) lives inside the disabled block.
+[[lib.object]]
+name = "ext/dolsdk2001/gx/GXVert.c"
+extra_cflags = ["-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/os", "-i src/ext/dolsdk2001/include/libc", "-i src/ext/dolsdk2001/gx"]
+completed = true
+
