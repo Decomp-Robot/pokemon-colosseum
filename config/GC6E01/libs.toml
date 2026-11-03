@@ -1563,3 +1563,57 @@ progress_category = "sdk"
 name = "ext/dolsdk2001/ax/AX.c"
 extra_cflags = ["-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/os", "-i src/ext/dolsdk2001/include/libc", "-i src/ext/dolsdk2001/ax"]
 completed = true
+
+# AXAlloc.o (ax.a) was dropped by the original link too: not one of its fifteen
+# functions occurs in the retail image. Binary evidence:
+#   * Compiling this source with the project flags (GC/1.2.5n, the sibling
+#     dolsdk2001 settings used here, -DNDEBUG=1 so the ASSERTLINE calls compile
+#     out) produces 0x708 bytes of .text holding, in order, __AXGetStackHead
+#     (0x18), __AXServiceCallbackStack (0x80), __AXInitVoiceStacks (0xB4),
+#     __AXAllocInit (0xB4), __AXAllocQuit (0xB4), __AXPushFreeStack (0x14),
+#     __AXPopFreeStack (0x24), __AXPushCallbackStack (0x10),
+#     __AXPopCallbackStack (0x1C), __AXRemoveFromStack (0x94),
+#     __AXPushStackHead (0x58), __AXPopStackFromBottom (0x70), AXFreeVoice
+#     (0x78), AXAcquireVoice (0x174) and AXSetVoicePriority (0xA8).
+#   * A masked full-body search over the whole 3,779,808-byte DOL - only the
+#     operands of the object's 61 .rela.text entries (REL24 bl/call sites,
+#     ADDR16_HA/LO pairs and EMB_SDA21 SDA offsets) are wildcarded, every other
+#     byte is compared - finds no match (0 hits) for fourteen of the fifteen
+#     bodies, and also no match for the 0x708-byte block as a whole, which a
+#     live member would have to occupy contiguously. Dropping the ADDR16
+#     wildcards and masking only the branch words still yields 0 hits. The
+#     method is not blind: run over the already-integrated ai.a object it finds
+#     that member's bodies at their real addresses (AIInitDMA at 0x800AC070,
+#     AIStartDMA at 0x800AC0F8, AIStopDMA at 0x800AC110,
+#     AISetDSPSampleRate at 0x800AC210, AIGetDSPSampleRate at 0x800AC2F0, ...).
+#   * The one hit, __AXGetStackHead at 0x801A679C, is a false positive: it is the
+#     tail of the unrelated game function zz_801A678C_ (0x801A678C-0x801A67BC),
+#     preceded by `cmpwi r3,0 / blt` and `cmpwi r3,8 / bge` bounds checks and
+#     indexing the game's own table at 0x804655E0. The SDK body is a bare
+#     unchecked `__AXStackHead[priority]` accessor (lis; slwi r3,r3,2; addi;
+#     add; lwz r3,0(r3); blr), so only that six-instruction shape coincides.
+#   * The member carries no data fingerprint to look for: its only statics
+#     (__AXStackHead[32], __AXStackTail[32], __AXCallbackStack) are
+#     zero-initialized .bss/.sbss, it emits no .rodata, and the DOL contains no
+#     "AXAlloc" text at all (0 hits, as expected for a -DNDEBUG build).
+#   * AXAlloc.o can only have been pulled in by another ax.a member, and AX.c is
+#     itself absent (see the ax.a note above), so nothing in the image could
+#     reference these functions. There is also no room for the member: its
+#     natural link position is between dsp.a and card.a, and dsp/dsp_task.c ends
+#     at 0x800AF280 exactly where card/CARDBios.c starts.
+#   * The game's audio stack is its own musyx/snd library, not AX: its voice
+#     allocator, salActivateVoice (0x8015D44C), drives a 188-byte-stride voice
+#     table at 0x80447E60 through byte state flags at offsets 0xEC-0xEF, not AX's
+#     32-priority __AXStackHead/__AXStackTail stack lists, and symbols.txt names
+#     no AX* function.
+# The member therefore contributes no bytes and takes the conventional
+# zero-length slot at 0x800CF708 shared by the other dropped dolsdk2001 members.
+# All fifteen definitions stay in the source, each marked with the single
+# "// UNUSED:" line. The object needs no symbols.txt entry: the three names it
+# references (OSDisableInterrupts, OSRestoreInterrupts, __AXSetPBDefault) are
+# either defined by an already-linked unit or only reachable from the stripped
+# bodies.
+[[lib.object]]
+name = "ext/dolsdk2001/ax/AXAlloc.c"
+extra_cflags = ["-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/os", "-i src/ext/dolsdk2001/include/libc", "-i src/ext/dolsdk2001/ax"]
+completed = true
