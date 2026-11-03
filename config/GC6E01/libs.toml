@@ -1796,3 +1796,49 @@ completed = true
 name = "ext/dolsdk2001/ax/AXOut.c"
 extra_cflags = ["-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/os", "-i src/ext/dolsdk2001/include/libc", "-i src/ext/dolsdk2001/ax"]
 completed = true
+
+# AXProf.o (ax.a) was dropped by the original link too: none of its three
+# functions occurs in the retail image. Binary evidence:
+#   * Compiling this source with the project flags (GC/1.2.5n, the sibling
+#     dolsdk2001 settings used here, -DNDEBUG=1 so the ASSERTLINE calls compile
+#     out) produces 0xB0 bytes of .text holding, in order, __AXGetCurrentProfile
+#     (0x48), AXInitProfile (0x1C) and AXGetProfile (0x4C), plus .sbss 0x10 for
+#     the four zero-initialized statics __AXProfile, __AXMaxProfiles,
+#     __AXCurrentProfile and __AXProfileInitialized, and no .rodata/.data at
+#     all, so the member carries no data fingerprint to look for.
+#   * A masked full-body search over the whole 3,779,808-byte DOL - every
+#     operand of the object's 15 .rela.text entries (the 13 EMB_SDA21
+#     small-data offsets and the 2 REL24 bl call sites, whose opcode and
+#     26-bit displacement interleave across all four bytes) wildcarded, the
+#     other 144 of the block's 176 bytes compared exactly - finds no match
+#     (0 hits) for any of the three bodies, each searched individually, nor
+#     for the 0xB0-byte block as a whole, which a live member would have to
+#     occupy contiguously.
+#   * The search method is not blind: the identical machinery run over the
+#     already-integrated ai.a member finds those bodies at their real
+#     addresses (AIInitDMA 0x800AC070, AIStartDMA 0x800AC0F8, AIStopDMA
+#     0x800AC110, AISetDSPSampleRate 0x800AC210, AIGetDSPSampleRate
+#     0x800AC2F0), one hit each, first candidate only.
+#   * Nothing could pull the member in. Within the SDK the only reference to
+#     any AXProf symbol is AXOut.c:54's call to __AXGetCurrentProfile, and
+#     AXOut.o is itself absent (see its note above); AXInitProfile and
+#     AXGetProfile are application-facing. The game's audio stack is its own
+#     musyx/snd library, not AX (see the AXAlloc.o note), symbols.txt names no
+#     AX* function, and the DOL contains no AX identifier string at all: the
+#     five raw "AX" byte-pairs in the image are substrings of MATCH_MAX,
+#     HSD_INIT_HEAP_MAX_NUM / HSD_TEXP_MAX_NUM assert text and float data.
+#   * There is no room for it either: OSUartExi.c ends at 0x800CF708 exactly
+#     where the ax group's zero-length slot sits, and the bytes from there on
+#     belong to the auto_01_800CF708_text range owned by other units, so the
+#     member could only occupy 0x800CF708..0x800CF7B8 - which the masked
+#     search proves it does not.
+# The member therefore contributes no bytes and takes the conventional
+# zero-length slot at 0x800CF708 shared by the other dropped dolsdk2001
+# members. All three definitions stay in the source, each marked with the
+# single "// UNUSED:" line. The object needs no symbols.txt entry: the two
+# names it references (OSDisableInterrupts, OSRestoreInterrupts) are defined by
+# an already-linked unit, and its four statics are zero-initialized .sbss.
+[[lib.object]]
+name = "ext/dolsdk2001/ax/AXProf.c"
+extra_cflags = ["-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/os", "-i src/ext/dolsdk2001/include/libc", "-i src/ext/dolsdk2001/ax"]
+completed = true
