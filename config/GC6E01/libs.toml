@@ -1617,3 +1617,57 @@ completed = true
 name = "ext/dolsdk2001/ax/AXAlloc.c"
 extra_cflags = ["-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/os", "-i src/ext/dolsdk2001/include/libc", "-i src/ext/dolsdk2001/ax"]
 completed = true
+
+# AXAux.o (ax.a) was dropped by the original link too: not one of its nine
+# functions occurs in the retail image. Binary evidence:
+#   * Compiling this source with the project flags (GC/1.2.5n, the sibling
+#     dolsdk2001 settings used here, -DNDEBUG=1 so the #ifdef DEBUG OSReport
+#     lines compile out) produces 0x304 bytes of .text holding, in order,
+#     __AXAuxInit (0xDC), __AXAuxQuit (0x10), __AXGetAuxAInput (0x1C),
+#     __AXGetAuxAOutput (0x1C), __AXGetAuxBInput (0x1C), __AXGetAuxBOutput
+#     (0x1C), __AXProcessAux (0x190), AXRegisterAuxACallback (0xC) and
+#     AXRegisterAuxBCallback (0xC), plus .bss 0x2D00 for the two 3x480-long
+#     aux buffers and .sbss 0x2C for the eleven bookkeeping words.
+#   * A masked full-body search over the whole 3,779,808-byte DOL - only the
+#     operands of the object's 62 .rela.text entries (the REL24 calls to
+#     DCInvalidateRange/DCFlushRangeNoSync, the ADDR16_HA/LO buffer pairs and
+#     the EMB_SDA21 SDA offsets) are wildcarded, every other byte is compared
+#     - finds no match (0 hits) for any of the nine bodies, and none for the
+#     0x304-byte block as a whole, which a live member would have to occupy
+#     contiguously. The method is not blind: run over the already-integrated
+#     ai.a object it finds that member's bodies at their real addresses
+#     (AIInitDMA at 0x800AC070, AIStartDMA at 0x800AC0F8, AISetDSPSampleRate at
+#     0x800AC210, AIGetDSPSampleRate at 0x800AC2F0, AISetStreamPlayState at
+#     0x800AC128, ...).
+#   * The member is also absent by constant, independently of body layout and
+#     compiler revision: all four __AXGetAux* getters index the buffers with
+#     `mulli rX,rY,1920` (3 * 480 * sizeof(long)), and __AXProcessAux adds the
+#     0x1680 offset between __AXBufferAuxA and __AXBufferAuxB. The DOL contains
+#     no mulli with immediate 0x780 and no addi with immediate 0x1680 anywhere
+#     (0 hits each), so not even an inlined or re-scheduled copy of the getters
+#     survives in some other caller.
+#   * The seven `li rX,0x780` words the DOL does contain are the musyx/snd
+#     library's own 0x780-byte voice flushes, not AX aux buffers: they feed
+#     memset over the 188-byte-stride voice table at 0x80447E60
+#     (salActivateStudio, 0x8015A950) or DCFlushRangeNoSync over that table's
+#     per-voice windows (zz_8015D678_, 0x8015D678-0x8015D7D0). Neither touches
+#     a 3x480-long buffer pair at a 32-byte-aligned .bss address.
+#   * The member carries no data fingerprint to look for: the two aux buffers
+#     are zero-initialized .bss, the eleven statics are zero-initialized
+#     .sbss, and no string is emitted at all in a -DNDEBUG build.
+#   * AXAux.o can only have been pulled in by another ax.a member (AX.c's
+#     __AXAuxInit/__AXAuxQuit) or by AXCl/AXOut's use of __AXProcessAux and the
+#     getters, and AX.c is itself absent (see the ax.a note above). There is
+#     also no room for the member: its natural link position is between dsp.a
+#     (dsp/dsp_task.c ends at 0x800AF280) and card.a (card/CARDBios.c starts at
+#     exactly 0x800AF280).
+# The member therefore contributes no bytes and takes the conventional
+# zero-length slot at 0x800CF708 shared by the other dropped dolsdk2001 members.
+# All nine definitions stay in the source, each marked with the single
+# "// UNUSED:" line. The object needs no symbols.txt entry: the three names it
+# references (DCInvalidateRange, DCFlushRangeNoSync, __AXClMode) are either
+# defined by an already-linked unit or only reachable from the stripped bodies.
+[[lib.object]]
+name = "ext/dolsdk2001/ax/AXAux.c"
+extra_cflags = ["-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/os", "-i src/ext/dolsdk2001/include/libc", "-i src/ext/dolsdk2001/ax"]
+completed = true
