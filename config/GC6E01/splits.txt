@@ -281,6 +281,12 @@ ext/dolsdk2001/gx/GXLight.c:
 	.data       start:0x80313348 end:0x80313364
 	.sdata2     start:0x8047C318 end:0x8047C348
 
+ext/dolsdk2001/gx/GXTexture.c:
+	.text       start:0x800BA7C0 end:0x800BB540
+	.data       start:0x80313368 end:0x8031358C
+	.sdata      start:0x80478A78 end:0x80478AB8
+	.sdata2     start:0x8047C348 end:0x8047C370
+
 ext/dolsdk2001/gx/GXBump.c:
 	.text       start:0x800BB780 end:0x800BC114
 	.sdata2     start:0x8047C370 end:0x8047C388

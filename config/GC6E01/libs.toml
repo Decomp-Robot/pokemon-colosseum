@@ -1039,6 +1039,58 @@ name = "ext/dolsdk2001/gx/GXLight.c"
 extra_cflags = ["-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/os", "-i src/ext/dolsdk2001/include/libc", "-i src/ext/dolsdk2001/gx"]
 completed = true
 
+# GXTexture.o (gx.a): text 0x800BA7C0-0x800BB540, eighteen linked definitions
+# in source order: GXGetTexBufferSize 0x800BA7C0 (0x15C), __GetImageTileCount
+# 0x800BA91C (0xC8), GXInitTexObj 0x800BA9E4 (0x274), GXInitTexObjCI
+# 0x800BAC58 (0x48), GXInitTexObjLOD 0x800BACA0 (0x194), GXInitTexObjWrapMode
+# 0x800BAE34 (0x28), GXGetTexObjFmt 0x800BAE5C (0x8), GXLoadTexObjPreLoaded
+# 0x800BAE64 (0x198), GXLoadTexObj 0x800BAFFC (0x54), GXInitTlutObj
+# 0x800BB050 (0x48), GXLoadTlut 0x800BB098 (0x9C), GXInitTexCacheRegion
+# 0x800BB134 (0x120), GXInitTlutRegion 0x800BB254 (0x48), GXInvalidateTexAll
+# 0x800BB29C (0x48), GXSetTexRegionCallback 0x800BB2E4 (0x14),
+# GXSetTlutRegionCallback 0x800BB2F8 (0x14), __SetSURegs 0x800BB30C (0xB8)
+# and __GXSetSUTexRegs 0x800BB3C4 (0x17C); those sizes sum to exactly the
+# 0xD80-byte span, whose end is __GXSetTmemConfig 0x800BB540 (another member).
+# The other 35 definitions of the file (the GXGetTexObj*/GXGetTlutObj*/
+# GXGetTexRegion*/GXGetTlutRegion* getters, GXInitTexObjData/Tlut/UserData,
+# GXInitTexPreLoadRegion, GXPreLoadEntireTexture, GXInvalidateTexRegion,
+# GXSetTexCoord*, __GXGetSUTexSize and the standalone __GXGetTexTileShift body,
+# which every caller inlines) are never called by the game, so the original
+# link dead-stripped them; they are marked UNUSED in the source.
+# Data: .data 0x80313368-0x8031358C holds three switch tables --
+# jumptable_80313368 and jumptable_8031345C are the 61-entry GXTexFmt tile
+# tables of GXGetTexBufferSize and __GetImageTileCount (__GXGetTexTileShift
+# inlined into each), and jumptable_80313550 is the 15-entry (0x3C) format
+# table of GXInitTexObj. The object also emits a fourth table for the dead
+# standalone __GXGetTexTileShift body; the DOL lacks it, which independently
+# shows the linker stripped that function. .sdata 0x80478A78-0x80478AB8
+# holds GXTexMode0Ids..GXTexTlutIds (8 bytes each) plus the static
+# GX2HWFiltConv table (6 bytes; HW2GXFiltConv follows it in the object but is
+# only read by the dead getters, and retail's next .sdata word belongs to
+# another member, so GX2HWFiltConv's symbols.txt size is 0x6, not the 0x8
+# gap-derived default). .sdata2 0x8047C348-0x8047C370 holds the float/double
+# literals GXInitTexObjLOD and GXInitTexObj use.
+# This game's gx.a revision differs from the dolsdk2001 reference copy:
+#  * GXInitTexObj's mipmap arm picks the mode0 min-filter bits by texture
+#    format: at 0x800BAA78-0x800BAA94 the retail body subtracts 8 from the
+#    format and range-tests it against 2 (addi/cmplwi), storing 0xA0 for
+#    GX_TF_C4/C8/C14X2 and 0xC0 otherwise, while the reference always stores
+#    0xC0. Written as (u32)(format - GX_TF_C4) <= (GX_TF_C14X2 - GX_TF_C4).
+#  * __GXSetSUTexRegs' per-stage loop adds one more gate before calling
+#    __SetSURegs: after the tcsManEnab test it loads gx+0x4E0 and tests bit i
+#    (slw r0,r4,r31 / and.) and only calls when that bit is set. gx+0x4E0 is
+#    the extra revision word already documented in ext/dolsdk2001/gx/__gx.h
+#    (unk_4E0), so the reference condition becomes
+#    `(tmap != 0xFF) && !(gx->tcsManEnab & (1 << coord)) &&
+#    (gx->unk_4E0 & (1 << i))`.
+#  * Both GXLoadTexObjPreLoaded and __SetSURegs end with `gx->bpSent = 0;`
+#    (li r0,0 before the sth to gx+0x2 at 0x800BAFB8 / 0x800BB3A0); the
+#    reference stores 1.
+[[lib.object]]
+name = "ext/dolsdk2001/gx/GXTexture.c"
+extra_cflags = ["-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/os", "-i src/ext/dolsdk2001/include/libc", "-i src/ext/dolsdk2001/gx"]
+completed = true
+
 # GXPerf.o (gx.a): text 0x800BD91C-0x800BE348 with four linked definitions in
 # source order: GXSetGPMetric 0x800BD91C (0x848), GXReadGPMetric 0x800BE164
 # (0x1A8), GXClearGPMetric 0x800BE30C (0x10), GXReadGP0Metric 0x800BE31C
