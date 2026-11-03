@@ -1419,3 +1419,52 @@ progress_category = "sdk"
 name = "ext/dolsdk2001/G2D/G2D.c"
 extra_cflags = ["-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/os", "-i src/ext/dolsdk2001/include/libc", "-i src/ext/dolsdk2001/gx"]
 completed = true
+
+# texPalette.o (texPalette.a) was dropped by the original link: not one of its
+# eight functions is present in the retail image. Binary evidence:
+#   * Compiling the reference source with the project flags (GC/1.2.5n, the
+#     sibling dolsdk2001 settings used here) produces a 0x4CC-byte .text holding
+#     TEXGetPalette (0xB4), LoadTexPalette (0x7C), UnpackTexPalette (0x12C),
+#     TEXGet (0x10), TexFreeFunc (0x28), TEXReleasePalette (0x5C),
+#     TEXGetGXTexObjFromPalette (0xD4) and TEXGetGXTexObjFromPaletteCI (0x108).
+#     A masked full-body search over the whole DOL - only the operands of the 38
+#     .rela.text entries (bl/REL24, ADDR16_HA, ADDR16_LO, SDA21) are wildcarded,
+#     every other byte is compared - finds no match for any of the eight bodies.
+#     The same search does find the already-integrated GXTexture.o members
+#     (GXInitTexObjCI at 0x800BAC58, GXInitTlutObj at 0x800BB050) and vec.o's
+#     PSVECAdd (0x800A3A78), so the method is not blind.
+#   * UnpackTexPalette is not assert-only code: its OSPanic(__FILE__, 0x53,
+#     "invalid version number for texture palette") always compiles, so the
+#     member's .data would hold "texPalette.c" followed by "invalid version
+#     number for texture palette" (0x3B bytes with the source's padding).
+#     Neither string occurs anywhere in the 3,779,808-byte DOL (0 hits each).
+#   * symbols.txt has no TEX*/Tex* function and the game's texture-object setup
+#     is its own code: GXInitTexObjCI (0x800BAC58) has exactly two callers,
+#     0x8016B790 and 0x801BC280, and both sit inside large game routines that
+#     drive GXInitTlutObj/GXLoadTlut/GXInitTexObj/GXInitTexObjLOD/GXLoadTexObj
+#     off their own texture structures (0x8016B714-0x8016B810), not off a
+#     TEXPalettePtr/TEXDescriptorPtr pair.
+#   * The member's only two external data references, DODisplayCache and
+#     DOCacheInitialized, belong to fileCache.c, which is itself dead-stripped
+#     (see the fileCache.a note), so a live texPalette.o would have had to drag
+#     the fileCache/List/string cluster into the image; none of those bodies
+#     exist.
+# The member therefore contributes no bytes and takes the conventional
+# zero-length slot at 0x800CF708 shared by the other dropped dolsdk2001 members.
+# All eight definitions stay in the source, each marked with the single
+# "// UNUSED:" line. The object needs no symbols.txt entry: every name it
+# references (DODisplayCache, DOCacheInitialized, DSGetCacheObj,
+# DSAddCacheNode, DSReleaseCacheObj, DVDOpen, DVDReadPrio, DVDClose,
+# __OSCurrHeap, OSAllocFromHeap, OSFreeToHeap, OSPanic, GXInitTexObj,
+# GXInitTexObjCI, GXInitTexObjLOD, GXInitTlutObj) is either defined by an
+# already-linked unit or only reachable from the stripped bodies.
+[[lib]]
+name = "texPalette"
+mw_version = "GC/1.2.5n"
+cflags_preset = "base"
+cflags_extra = ["-use_lmw_stmw on", "-common off", "-inline auto"]
+progress_category = "sdk"
+[[lib.object]]
+name = "ext/dolsdk2001/texPalette/texPalette.c"
+extra_cflags = ["-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/os", "-i src/ext/dolsdk2001/include/libc"]
+completed = true
