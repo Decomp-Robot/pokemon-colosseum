@@ -1671,3 +1671,64 @@ completed = true
 name = "ext/dolsdk2001/ax/AXAux.c"
 extra_cflags = ["-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/os", "-i src/ext/dolsdk2001/include/libc", "-i src/ext/dolsdk2001/ax"]
 completed = true
+
+# AXCL.o (ax.a) was dropped by the original link too: not one of its eight
+# functions occurs in the retail image. Binary evidence:
+#   * Compiling this source with the project flags (GC/1.2.5n, the sibling
+#     dolsdk2001 settings used here, -DNDEBUG=1 so the ASSERTLINE calls compile
+#     out) produces 0x524 bytes of .text holding, in order,
+#     __AXGetCommandListCycles (0x8), __AXGetCommandListAddress (0x3C),
+#     __AXWriteToCommandList (0x18), __AXNextFrame (0x44C), __AXClInit (0x1C),
+#     __AXClQuit (0x4), AXSetMode (0x54) and AXGetMode (0x8), plus .bss 0x700
+#     for __AXHRTFHistory and __AXCommandList[2][384] and .sbss 0x10 for
+#     __AXCommandListPosition/__AXClWrite/__AXCommandListCycles/__AXClMode.
+#   * A masked full-body search over the whole 3,779,808-byte DOL - only the
+#     operands of the object's 148 .rela.text entries (REL24 call sites,
+#     ADDR16_HA/LO address pairs and EMB_SDA21 SDA offsets) are wildcarded,
+#     every other byte is compared - finds no match (0 hits) for seven of the
+#     eight bodies and none for the 0x524-byte block as a whole, which a live
+#     member would have to occupy contiguously. The only "hits" are the eight
+#     bare `blr` words that trivially match __AXClQuit, whose body is empty in
+#     a -DNDEBUG build. The method is not blind: run over the already-integrated
+#     ai.a object it finds that member's bodies at their real addresses
+#     (AIInitDMA at 0x800AC070, AIStartDMA at 0x800AC0F8, AIStopDMA at
+#     0x800AC110, AISetStreamPlayState at 0x800AC128, AISetDSPSampleRate at
+#     0x800AC210, AIGetDSPSampleRate at 0x800AC2F0, ...).
+#   * The member is also absent by constant, independently of body layout and
+#     compiler revision: __AXGetCommandListAddress indexes the u16 command-list
+#     rows with `mulli rX,rY,768` (2 * 384 * sizeof(u16)), and __AXNextFrame
+#     seeds the cycle counter with `li rX,425` (0x1A9) and then adds 0x2E44
+#     after the studio command. The DOL contains no mulli with immediate 0x300,
+#     no instruction with immediate 0x2E44, and no `li r0,425` anywhere (0 hits
+#     each), so not even an inlined or re-scheduled copy of the getter or of
+#     the frame builder survives in some other caller. The `li rD,768` words the
+#     DOL does contain are unrelated argument setups in game/GX code
+#     (zz_80191ECC_ at 0x80191F4C, zz_801920E4_ at 0x801921D0,
+#     GXSetTevIndBumpST at 0x800BBF60), never a command-list row index.
+#   * The member carries no data fingerprint to look for: its only statics
+#     (__AXCommandList, __AXHRTFHistory, __AXCommandListPosition, __AXClWrite,
+#     __AXCommandListCycles, __AXClMode) are zero-initialized .bss/.sbss, it
+#     emits no .rodata, and the DOL contains no "AXCL"/"AXNextFrame" text at all
+#     (0 hits, as expected for a -DNDEBUG build).
+#   * AXCL.o can only have been pulled in by AX.c (__AXClInit/__AXClQuit) or by
+#     AXOut.c (__AXGetCommandListAddress/__AXNextFrame), and AX.c is itself
+#     absent (see the ax.a note above), so nothing in the image could reference
+#     these functions. There is also no room for the member: its natural link
+#     position is between dsp.a and card.a, and dsp/dsp_task.c ends at
+#     0x800AF280 exactly where card/CARDBios.c starts.
+#   * The game's audio stack is its own snd/musyx library, not AX: sndStreamFree
+#     (0x8014F838), sndStreamDeactivate (0x80150564), salActivateVoice
+#     (0x8015D44C) and friends, driving a 188-byte-stride voice table at
+#     0x80447E60, not AX's command list / DSP command ring. symbols.txt names no
+#     AX* function.
+# The member therefore contributes no bytes and takes the conventional
+# zero-length slot at 0x800CF708 shared by the other dropped dolsdk2001 members.
+# All eight definitions stay in the source, each marked with the single
+# "// UNUSED:" line. The object needs no symbols.txt entry: the eight names it
+# references (DCFlushRange, memset, __AXGetStudio, __AXGetPBs, __AXGetAuxAInput,
+# __AXGetAuxAOutput, __AXGetAuxBInput, __AXGetAuxBOutput) are either defined by
+# an already-linked unit or only reachable from the stripped bodies.
+[[lib.object]]
+name = "ext/dolsdk2001/ax/AXCL.c"
+extra_cflags = ["-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/os", "-i src/ext/dolsdk2001/include/libc", "-i src/ext/dolsdk2001/ax"]
+completed = true
