@@ -2027,9 +2027,28 @@ completed = true
 # do_src1/do_src2/AXFXChorusSettings and the rsmpTab12khz/i2fMagic data) again.
 [[lib]]
 name = "axfx"
-mw_version = "GC/1.2.5n"
+# GC/2.6 for the linked reverb_hi.o: under GC/1.2.5n the C functions miss the
+# retail bytes badly (ReverbHICreate/Modify/Callback ~64%) and DLcreate/
+# DLdelete/DLsetdelay are emitted standalone, while the retail image inlines
+# all three into their callers; GC/2.6 (the project's linker version) is the
+# next probe. chorus.o/delay.o are dropped members measured only, so the
+# switch does not disturb any linked bytes.
+mw_version = "GC/2.6"
 cflags_preset = "base"
-cflags_extra = ["-use_lmw_stmw on", "-common off", "-inline auto"]
+# Flag evidence (retail reverb_hi.o, versus GC/2.6 builds of this source):
+#   * -fp_contract off: the retail bodies keep 1.0f - (0.05f + 0.8f*damping)
+#     as separate fmuls/fadds (ReverbHIModify 0x80164B3C fmuls + 0x80164B44
+#     fadds); with the default fp_contract on the product+sum folds into a
+#     single fmadds and ReverbHIModify loses a word (532 -> 528 bytes). Same
+#     rationale as the gx lib blocks above.
+#   * no -use_lmw_stmw on: the retail prologues save GPRs via the runtime
+#     helpers (ReverbHICreate 0x80164570 addi r11,r1,0x40 + bl _savegpr_20
+#     for r20-r31, ReverbHICallback 0x801652EC bl _savegpr_27 for r27-r31)
+#     while ReverbHIModify, which saves only r30/r31, gets individual stw's -
+#     the compiler default. With the flag forced on, inline stmw/lmw were
+#     emitted instead, shortening ReverbHICreate (1292 -> 1280) and
+#     ReverbHICallback (224 -> 216) and shifting every downstream byte.
+cflags_extra = ["-common off", "-inline auto", "-fp_contract off"]
 progress_category = "sdk"
 [[lib.object]]
 name = "ext/dolsdk2001/axfx/chorus.c"
@@ -2066,5 +2085,32 @@ completed = true
 # linker strips it (and, with it, the other three bodies) again.
 [[lib.object]]
 name = "ext/dolsdk2001/axfx/delay.c"
+extra_cflags = ["-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/os", "-i src/ext/dolsdk2001/include/libc"]
+completed = true
+
+# reverb_hi.o (axfx.a) IS linked by the original build: the game's snd library
+# registers AXFXReverbHiCallback as its AUX callback and the whole reverb
+# engine sits at .text 0x80164520-0x801653BC (ReverbHICreate/ReverbHIModify/
+# ReverbHICallback, detected by fingerprints; HandleReverb and the asm
+# DoCrossTalk lie between them, DoCrossTalk renamed at 0x80164C40 from
+# zz_80164C40_). Revision adaptations proved by the binary:
+#   * the three exported functions are NOT static in this drop - the snd
+#     library calls them directly from 0x80164474/0x801644BC/0x8016450C;
+#   * memory goes through the snd library's settable allocator hooks
+#     (installed at 0x801631AC into lbl_8047B054/lbl_8047B058) via the
+#     trampolines renamed salAlloc/salFree (0x801643D8/0x80164400), not
+#     OSAllocFromHeap/OSFreeToHeap - ReverbHICreate/ReverbHIModify and the
+#     inlined DLcreate/DLdelete bodies call those trampolines directly;
+#   * ReverbHICreate calls double-precision pow (renamed at 0x800CE358, the
+#     __ieee754_pow forwarder), not powf - the exponent is built with the
+#     0x4330 int->double magic against sdata2 double 10.0 (0x8047D508) and
+#     the result is frsp'd back to f32;
+#   * AXFXReverbHiInit/Shutdown/Settings/Callback and ReverbHIFree never
+#     link (nothing anywhere references the AXFXReverbHi family and the
+#     member's .text is exactly the five functions above), so they carry
+#     the "// UNUSED:" mark; DLcreate/DLdelete/DLsetdelay inline into their
+#     callers, as the binary shows (no standalone bodies exist).
+[[lib.object]]
+name = "ext/dolsdk2001/axfx/reverb_hi.c"
 extra_cflags = ["-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/os", "-i src/ext/dolsdk2001/include/libc"]
 completed = true
