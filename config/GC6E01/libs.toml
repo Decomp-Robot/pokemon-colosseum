@@ -2155,3 +2155,57 @@ completed = true
 name = "ext/dolsdk2001/axfx/reverb_std.c"
 extra_cflags = ["-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/os", "-i src/ext/dolsdk2001/include/libc"]
 completed = true
+
+# syn.a is the Dolphin synth library that layers MIDI note handling on top of
+# ax.a + mix.a. Its core member syn.c holds the library entry points
+# (SYNInit/SYNQuit), the per-frame driver SYNRunAudioFrame, the synth
+# lifecycle (SYNInitSynth/SYNQuitSynth), MIDI buffering (SYNMidiInput), the
+# master-volume/note queries and the two static list helpers. The original
+# link dropped the whole member. Binary evidence:
+#   * Compiling the pristine source with the sibling audio-library flags
+#     (GC/1.2.5n, the ai.a/ax.a settings, -DNDEBUG=1 so the ASSERTLINE /
+#     ASSERTMSGLINE lines compile out) gives 11 bodies totalling 0x2e8 bytes
+#     of .text, from __SYNAddSynthToList (0x50 bytes) to SYNGetActiveNotes
+#     (8 bytes: lwz/blr).
+#   * A masked full-body search over the whole 3,779,808-byte DOL - the
+#     operands of every REL24 `bl` word and every .rela.text relocation
+#     wildcarded, every other byte compared - finds no match for any of the
+#     11 bodies (0 hits), and the search stays empty when the source is
+#     rebuilt with GC/2.6 (the project's linker version), so the result is
+#     not an artifact of the compiler revision chosen here. The method is
+#     not blind: the same search with the same script finds the linked ai.a
+#     member AIInitDMA at exactly its symbols.txt address 0x800AC070
+#     (pristine ai.c, GC/1.2.5n, identical flags).
+#   * syn.a's distinctive initialized data is missing too. Its members carry
+#     non-BSS .data tables - synctrl.o 0x21c bytes, synmix.o 0x390,
+#     synpitch.o 0x3f0, synlfo.o 0x100 in the same build - and none of these
+#     byte arrays occurs anywhere in the DOL, neither full-length nor as
+#     their first 64 bytes. syn.c itself holds only the .sbss pointer
+#     __SYNSynthList, which leaves no footprint.
+#   * The member's one assert message, SYNMidiInput's "synth input buffer
+#     exceeded, increase SYN_INPUT_BUFFER_SIZE", does not occur in the image,
+#     and a full strings scan finds no SYN-family string at all.
+#   * Nothing could pull the member in: symbols.txt names no SYN* or MIX*
+#     symbol, and the bodies reference mix.a's MIXReleaseChannel and ax.a's
+#     AXFreeVoice - members the original link never took (see the ax.a note;
+#     the game's audio is its own MusyX-family snd library) - plus sibling
+#     syn.a members (__SYNServiceVoice, __SYNRunInputBufferEvents,
+#     __SYNResetAllControllers, __SYNVoice) that are equally absent. With no
+#     reference to any SYN* export the whole member dead-strips.
+# The member therefore contributes no bytes and takes the conventional
+# zero-length slot at 0x800CF708 shared by the other dropped dolsdk2001
+# members. All 11 definitions stay in the source as shipped by the SDK
+# (byte-identical to the pristine .sdk-cache copy apart from the 11
+# "// UNUSED:" lines), each marked with the single "// UNUSED:" line; no
+# symbols.txt entries are added because nothing references the SYN exports,
+# so the linker strips the member again.
+[[lib]]
+name = "syn"
+mw_version = "GC/1.2.5n"
+cflags_preset = "base"
+cflags_extra = ["-use_lmw_stmw on", "-common off", "-inline auto"]
+progress_category = "sdk"
+[[lib.object]]
+name = "ext/dolsdk2001/syn/syn.c"
+extra_cflags = ["-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/os", "-i src/ext/dolsdk2001/include/libc", "-i src/ext/dolsdk2001/syn"]
+completed = true
