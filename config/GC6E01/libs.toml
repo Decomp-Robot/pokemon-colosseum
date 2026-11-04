@@ -2114,3 +2114,44 @@ completed = true
 name = "ext/dolsdk2001/axfx/reverb_hi.c"
 extra_cflags = ["-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/os", "-i src/ext/dolsdk2001/include/libc"]
 completed = true
+
+# reverb_std.o (axfx.a) was dropped by the original link, like chorus.o and
+# delay.o before it: none of its 12 functions occurs in the retail image.
+# Binary evidence:
+#   * Its distinctive .data fingerprint - ReverbSTDCreate's static const
+#     lens[4] = {0x06FD, 0x07CF, 0x01B1, 0x0095} (16 bytes) - does not occur
+#     anywhere in the DOL. The search was validated with the linked
+#     reverb_hi.o as positive control: its static lens[8] sits at .data
+#     0x8036BF00 (06FD 07CF 091D 01B1 0095 002F 0049 0043) exactly as
+#     splits.txt records, i.e. a linked axfx member's initialized data is
+#     always present in the image and is found by this search.
+#   * The .sdata2 constants in reverb_std.c's declaration order (value0_3
+#     0.3f then value0_6 0.6f, adjacent) do not occur; the only adjacency in
+#     the image is reverb_hi.o's reverse order at 0x8047D530, and the asm
+#     HandleReverb prologue of reverb_std.c (stwu r1,-144(r1) = 9421FF70,
+#     stmw r17,8(r1) = BC240008) does not occur anywhere in .text. The only
+#     HandleReverb in the image is reverb_hi.c's at 0x80164DD0
+#     (9421FF40 BDC10008), covered by the reverb_hi object above.
+#   * Link order rules out a hidden slice: axfx.a members link in archive
+#     order (chorus.o, delay.o, reverb_hi.o, reverb_std.o); reverb_hi.o ends
+#     exactly at .text 0x801653BC where the game's own code
+#     (auto_01_801653BC_text.s) begins, so reverb_std.o cannot follow it.
+#   * Nothing could pull the member in: the game's snd library registers one
+#     reverb AUX callback (sndAuxCallbackReverbSTD, 0x8016442C) and its body
+#     calls ReverbHICallback directly (bl at 0x80164474) - the game routes
+#     its "STD" reverb request to the HI engine. symbols.txt names no
+#     AXFXReverbStd* symbol, and the four exported functions
+#     (AXFXReverbStdInit/Shutdown/Settings/Callback) are referenced by
+#     nothing, so the whole member (every internal references only its own
+#     file) dead-strips.
+# The object therefore contributes no bytes and takes the conventional
+# zero-length slot at 0x800CF708 shared by the other dropped dolsdk2001
+# members. All 12 definitions stay in the source as shipped by the SDK
+# (byte-identical to the pristine .sdk-cache copy apart from the 12
+# "// UNUSED:" lines), each marked with the single "// UNUSED:" line; no
+# symbols.txt entries are added because nothing references
+# AXFXReverbStdCallback, so the linker strips the member again.
+[[lib.object]]
+name = "ext/dolsdk2001/axfx/reverb_std.c"
+extra_cflags = ["-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/os", "-i src/ext/dolsdk2001/include/libc"]
+completed = true
