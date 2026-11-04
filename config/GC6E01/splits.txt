@@ -401,4 +401,4 @@ ext/dolsdk2001/axfx/delay.c:
 ext/dolsdk2001/axfx/reverb_hi.c:
 	.text       start:0x80164520 end:0x801653BC
 	.data       start:0x8036BF00 end:0x8036BF20
-	.sdata2     start:0x8047D4F0 end:0x8047D540
+	.sdata2     start:0x8047D4F0 end:0x8047D53C

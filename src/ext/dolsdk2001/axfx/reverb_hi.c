@@ -256,10 +256,6 @@ loop:
 }
 
 const static float value0_3 = 0.3f;
-// retail .sdata2 ends with an 8-byte pair (lbl_8047D538: .float 0.5
-// / .float 0); GC/2.6 pools a lone 0.5f as 4 bytes. Declared as a
-// double so the 8-byte size/alignment lands it after value0_3.
-const static double value0_2 = 0.000030517578125;
 
 asm static void HandleReverb(register long * sptr, register struct AXFX_REVHI_WORK * rv, register long k) {
     nofralloc
@@ -625,8 +621,8 @@ void ReverbHICallback(long * left, long * right, long * surround, struct AXFX_RE
         switch(k) {
             case 0:
                 if (0.0f != rv->crosstalk) {
-                    DoCrossTalk(left, right, *(const float *) &value0_2 * rv->crosstalk,
-                                1.0f - (*(const float *) &value0_2 * rv->crosstalk));
+                    DoCrossTalk(left, right, 0.5f * rv->crosstalk,
+                                1.0f - (0.5f * rv->crosstalk));
                 }
                 HandleReverb(left, rv, 0);
                 break;
