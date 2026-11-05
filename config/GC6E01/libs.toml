@@ -2164,7 +2164,7 @@ completed = true
 # link dropped the whole member. Binary evidence:
 #   * Compiling the pristine source with the sibling audio-library flags
 #     (GC/1.2.5n, the ai.a/ax.a settings, -DNDEBUG=1 so the ASSERTLINE /
-#     ASSERTMSGLINE lines compile out) gives 11 bodies totalling 0x2e8 bytes
+#     ASSERTMSGLINE lines compile out) gives 11 bodies totalling 0x730 bytes
 #     of .text, from __SYNAddSynthToList (0x50 bytes) to SYNGetActiveNotes
 #     (8 bytes: lwz/blr).
 #   * A masked full-body search over the whole 3,779,808-byte DOL - the
