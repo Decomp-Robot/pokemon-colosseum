@@ -2455,3 +2455,57 @@ completed = true
 name = "ext/dolsdk2001/syn/synpitch.c"
 extra_cflags = ["-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/os", "-i src/ext/dolsdk2001/include/libc", "-i src/ext/dolsdk2001/syn"]
 completed = true
+
+# synsample.o is syn.a's sample-setup member: the format dispatcher
+# __SYNSetupSample plus the file-statics __SYNGetNibbleAddress (the ADPCM
+# nibble-address math: frames*0x10 + 2 + samples mod 14), __SYNSetupAdpcm,
+# __SYNSetupPcm16 and __SYNSetupPcm8, which program the AXVPB parameter block
+# (.addr/.loop/.end/.cur, the ADPCM coefficients and the .sync bits). Like the
+# syn.c/synctrl.c/synenv.c/synlfo.c/synmix.c/synpitch.c members, the original
+# link dropped the whole member. Binary evidence:
+#   * Compiling the pristine source with the sibling audio-library flags
+#     (GC/1.2.5n, the ai.a/ax.a settings, -DNDEBUG=1 so the ASSERTLINE /
+#     ASSERTMSGLINE lines compile out) gives 5 bodies totalling 0x520 bytes of
+#     .text (__SYNGetNibbleAddress 0x34, __SYNSetupAdpcm 0x248 with the nibble
+#     math inlined at both call sites, __SYNSetupPcm16 0x124, __SYNSetupPcm8
+#     0x124, __SYNSetupSample 0x5C), a 0x20-byte .sdata2 block of unreferenced
+#     fake_tgmath sqrtf/sqrt half/three constants, and exactly 3 relocations -
+#     the three bls of __SYNSetupSample.
+#   * A masked full-body search over the whole 3,779,808-byte DOL - the
+#     operands of every REL24 `bl` word and every .rela.text relocation word
+#     wildcarded, every other byte compared - finds no match for any of the 5
+#     bodies (0 hits masked, 0 exact). The same search is empty for a GC/2.6
+#     rebuild (the project's linker version; there __SYNSetupAdpcm compiles to
+#     0x230), so the result is not an artifact of the compiler revision chosen
+#     here. The method is not blind: the same script finds the linked ai.a
+#     member AIInitDMA at exactly its symbols.txt address 0x800AC070 (pristine
+#     ai.c, GC/1.2.5n, identical flags), and gives 0 hits for the accepted dead
+#     syn.o/synctrl.o/synenv.o/synlfo.o/synmix.o/synpitch.o members, as
+#     expected.
+#   * The member's data is missing too: the 0x20-byte .sdata2 block occurs
+#     nowhere in the DOL; only the ubiquitous individual 8-byte 0.5/3.0
+#     windows occur, as in every linked fake_tgmath user, and no longer run of
+#     the block is present.
+#   * The member has no strings in this build: NDEBUG=1 compiles the
+#     ASSERTLINE/ASSERTMSGLINE lines out (the object's only sections are
+#     .text/.sdata2/.comment), and a full scan finds neither the
+#     "unknown sample format" message nor the "synsample" / "__SYNSetupSample"
+#     name bytes anywhere in the image.
+#   * Nothing could pull the member in: symbols.txt names no SYN* or MIX*
+#     symbol, and the only SDK-internal caller of __SYNSetupSample is
+#     synctrl.c's __SYNNoteOn, itself dead per the synctrl.o note; the other 4
+#     functions are file-statics. The game's audio is its own MusyX-family snd
+#     library (see the ax.a note), so no game code reaches the synth either.
+#     With no reference to any synsample export from linked code the whole
+#     member dead-strips.
+# The member therefore contributes no bytes and takes the conventional
+# zero-length slot at 0x800CF708 shared by the other dropped dolsdk2001
+# members. All 5 definitions stay in the source as shipped by the SDK
+# (byte-identical to the pristine .sdk-cache copy apart from the 5
+# "// UNUSED:" lines), each marked with the single "// UNUSED:" line. No
+# symbols.txt entries are added because nothing references the SYN exports,
+# so the linker strips the member again.
+[[lib.object]]
+name = "ext/dolsdk2001/syn/synsample.c"
+extra_cflags = ["-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/os", "-i src/ext/dolsdk2001/include/libc", "-i src/ext/dolsdk2001/syn"]
+completed = true
