@@ -2705,3 +2705,73 @@ progress_category = "sdk"
 name = "ext/dolsdk2001/seq/seq.c"
 extra_cflags = ["-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/os", "-i src/ext/dolsdk2001/include/libc", "-i src/ext/dolsdk2001/syn"]
 completed = true
+
+# mix.a is the Dolphin mixer library that layers per-voice volume/pan/aux
+# mixing on top of ax.a. Its single member mix.c (the SDK Makefile builds the
+# archive from src/mix/*.c, and src/mix holds exactly mix.c) holds the 965-entry
+# u16 __MIXVolumeTable, the two 128-entry int pan tables __MIXPanTableL/R, the
+# 50-byte u8 __MIXAIVolumeTable, the 64-entry static channel array __MIXChannel,
+# the two static DVD-stream attenuation words and 41 functions - six statics
+# (__MIXGetVolume, __MIXGetPanL, __MIXGetPanR, __MIXResetChannel, __MIXSetPan,
+# __MIXClampPan) and 35 exports from MIXInit to MIXUpdateSettings. The original
+# link dropped the whole member. Binary evidence:
+#   * Compiling the pristine source with the sibling audio-library flags
+#     (GC/1.2.5n, the ai.a/ax.a/syn.a settings, -DNDEBUG=1 so the five
+#     ASSERTLINE sites compile to (void)0, macros.h) gives 41 bodies totalling
+#     0x18C0 bytes of .text (MIXInitChannel 0x68C ... MIXQuit 4 bytes), plus
+#     0xBBE bytes of .data (the three tables above) and 0x1608 bytes of
+#     .bss/.sbss (__MIXChannel 64*0x38 = 0x1600 and the two atten words).
+#   * A masked full-body search over the whole 3,779,808-byte DOL - the
+#     operands of every .rela.text relocation word wildcarded (108 entries:
+#     REL24 bl words plus the sda21/data refs), every other byte compared -
+#     finds no match for the 0x18C0-byte block nor for any of the 41 bodies.
+#     The only matchers are generic stub shapes, not placements: MIXQuit is a
+#     bare 4-byte `blr` (9,961 identical sites) and the GC/2.6 8-byte
+#     lwz/blr MIXGetDvdStreamFader shape (9,905 sites) - the same idiom the
+#     seq.o note disqualified there (SEQInit/SEQQuit hit the identical 39
+#     addresses). The search stays empty for a GC/2.6 rebuild (the project's
+#     linker version, 0x1998 bytes of .text there), so the result is not an
+#     artifact of the compiler revision chosen here. The method is not blind:
+#     the same script with the same flags finds the linked ai.a body
+#     AIGetDSPSampleRate at file offset 0xa92f0, exactly its symbols.txt
+#     address 0x800AC2F0, while the dropped ai.a getters give 0 hits.
+#   * The member's data is missing too: __MIXVolumeTable (0x78A bytes),
+#     __MIXPanTableL and __MIXPanTableR (0x200 each) and __MIXAIVolumeTable
+#     (0x32) occur nowhere in the DOL, neither full-length nor as their first
+#     64 bytes; __MIXChannel and the atten words are .bss/.sbss and leave no
+#     footprint.
+#   * No fingerprint strings exist: the NDEBUG release build emits no strings
+#     at all (all five asserts compile out, and mix.c has no OSReport calls),
+#     so the only revision that could leave strings is an assert-enabled one;
+#     a full strings scan of the DOL finds no "Failed assertion" text and no
+#     MIX-family string anywhere in the image.
+#   * Nothing could pull the member in: symbols.txt names no MIX* symbol
+#     (0 entries), no non-SDK source in the tree references AXRegisterCallback
+#     (the only way game code could reach MIXUpdateSettings) or MIXInit/
+#     MIXUpdateSettings, the accepted ax.a integration already established
+#     that no AX* body exists in the retail image (dsp_task.c ends 0x800AF280
+#     exactly where card/CARDBios.c starts, so no mixer callback registration
+#     path can be live), and the game's audio is its own MusyX-family snd
+#     library. mix.o's own externals are AISetStreamVolLeft/AISetStreamVolRight
+#     (ai.o, linked, but nothing references MIX* exports from it) and
+#     OSDisableInterrupts/OSRestoreInterrupts (OS.c, linked). With no reference
+#     to any MIX export from linked code the whole member dead-strips.
+# The member therefore contributes no bytes and takes the conventional
+# zero-length slot at 0x800CF708 shared by the other dropped dolsdk2001
+# members. All 41 definitions stay in the source as shipped by the SDK
+# (byte-identical to the pristine .sdk-cache copy apart from the 41
+# "// UNUSED:" lines), each marked with the single "// UNUSED:" line; the
+# tables and __MIXChannel keep their pristine form because nothing references
+# them either, so the linker strips them as well. No symbols.txt entries are
+# added because nothing references the MIX exports, so the linker strips the
+# member again.
+[[lib]]
+name = "mix"
+mw_version = "GC/1.2.5n"
+cflags_preset = "base"
+cflags_extra = ["-use_lmw_stmw on", "-common off", "-inline auto"]
+progress_category = "sdk"
+[[lib.object]]
+name = "ext/dolsdk2001/mix/mix.c"
+extra_cflags = ["-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/os", "-i src/ext/dolsdk2001/include/libc", "-i src/ext/dolsdk2001/mix"]
+completed = true
