@@ -2209,3 +2209,47 @@ progress_category = "sdk"
 name = "ext/dolsdk2001/syn/syn.c"
 extra_cflags = ["-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/os", "-i src/ext/dolsdk2001/include/libc", "-i src/ext/dolsdk2001/syn"]
 completed = true
+
+# synctrl.o is syn.a's MIDI-controller member: the controller-defaults table
+# __SYNn128 plus the MIDI message handlers (__SYNSetController and friends,
+# __SYNMidiIn, __SYNNoteOn/Off, __SYNPitchWheel, __SYNRunInputBufferEvents,
+# SYNGetMidiController). Like the syn.c member, the original link dropped the
+# whole member. Binary evidence:
+#   * Compiling the pristine source with the sibling audio-library flags
+#     (GC/1.2.5n, the ai.a/ax.a settings, -DNDEBUG=1 so the ASSERTLINE lines
+#     compile out) gives 15 bodies totalling 0x102C bytes of .text
+#     (__SYNSetData 0x60 ... SYNGetMidiController 8 bytes) plus __SYNn128
+#     (0x200 bytes of .data: the i/128 floats) and a 0x30-byte .sdata2 block
+#     of double constants from the tgmath sqrt emulation; the 0x1C .data tail
+#     after __SYNn128 is a relocated jump table, so only __SYNn128 itself is
+#     position-independent data.
+#   * A masked full-body search over the whole 3,779,808-byte DOL - the
+#     operands of every REL24 `bl` word and every .rela.text relocation word
+#     wildcarded, every other byte compared - finds no match for any of the
+#     15 bodies (0 hits, exact unmasked search also 0). The method is not
+#     blind: the same script finds the linked ai.a member AIInitDMA at
+#     exactly its symbols.txt address 0x800AC070 (pristine ai.c, GC/1.2.5n,
+#     identical flags), and gives 0 hits for the accepted dead syn.o member,
+#     as expected.
+#   * __SYNn128 is missing too: its 0x200 bytes occur nowhere in the DOL,
+#     neither full-length nor as their first 64 bytes nor as any 64-byte
+#     window, and the .sdata2 double block does not occur either.
+#   * Nothing could pull the member in: symbols.txt names no SYN* or MIX*
+#     symbol, no SYN-family string occurs in the image, and the only
+#     referencers of synctrl.o's exports are syn.a's own dead siblings
+#     (syn.c calls __SYNRunInputBufferEvents/__SYNResetAllControllers,
+#     synenv.c/synlfo.c read __SYNn128), which are equally absent. With no
+#     reference to any synctrl export from linked code the whole member
+#     dead-strips.
+# The member therefore contributes no bytes and takes the conventional
+# zero-length slot at 0x800CF708 shared by the other dropped dolsdk2001
+# members. All 15 definitions stay in the source as shipped by the SDK
+# (byte-identical to the pristine .sdk-cache copy apart from the 15
+# "// UNUSED:" lines), each marked with the single "// UNUSED:" line;
+# __SYNn128 keeps its pristine form because nothing references it either, so
+# the linker strips it as well. No symbols.txt entries are added because
+# nothing references the SYN exports, so the linker strips the member again.
+[[lib.object]]
+name = "ext/dolsdk2001/syn/synctrl.c"
+extra_cflags = ["-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/os", "-i src/ext/dolsdk2001/include/libc", "-i src/ext/dolsdk2001/syn"]
+completed = true
