@@ -2622,3 +2622,86 @@ completed = true
 name = "ext/dolsdk2001/syn/synwt.c"
 extra_cflags = ["-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/os", "-i src/ext/dolsdk2001/include/libc", "-i src/ext/dolsdk2001/syn"]
 completed = true
+
+# seq.a is dolsdk2001's Standard MIDI File sequencer, layered on syn.a. Its
+# single member seq.c holds the twelve static helpers (__SEQPushSequenceList,
+# __SEQRemoveSequenceFromList, __SEQGetIntTrack, __SEQHandleSysExEvent,
+# __SEQSetTicksPerFrame, __SEQTempoMetaEvent, __SEQTrackEnd,
+# __SEQHandleMetaEvent, __SEQHandleSynthEvent, __SEQRunEvent, __SEQInitTracks,
+# __SEQReadHeader) and the twelve exports (SEQInit, SEQQuit, SEQRunAudioFrame,
+# SEQAddSequence, SEQRemoveSequence, SEQRegisterControllerCallback,
+# SEQSetState, SEQGetState, SEQSetTempo, SEQGetTempo, SEQSetVolume,
+# SEQGetVolume). The original link dropped the whole member. Binary evidence:
+#   * Compiling the pristine source with the sibling audio-library flags
+#     (GC/1.2.5n, the ai.a/ax.a/syn.a settings, -DNDEBUG=1 so the
+#     ASSERTLINE/ASSERTMSGLINE lines compile out) gives 24 bodies totalling
+#     0x1094 bytes of .text with 91 .rela.text entries (SEQInit 0xC ...
+#     SEQGetVolume 0x24), plus the 0x80-byte .data MIDI event-length table
+#     __SEQMidiEventLength, the 4-byte .sbss list head __SEQSequenceList and a
+#     0x30-byte .sdata2 block (65536.0f, 160.0f, 32000.0f, 128.0f, -0.0f,
+#     1000000.0f, 16000.0f, 60.0f).
+#   * A masked full-body search over the whole 3,779,808-byte DOL - the
+#     operands of every .rela.text relocation word wildcarded, every other
+#     byte compared - finds no match for any of the 24 bodies (0 hits) and no
+#     match for the whole 0x1094-byte block either, which a live member would
+#     have to occupy contiguously (MWCC emits one .text section per member).
+#     The search stays empty for a GC/2.6 rebuild (the project's linker
+#     version, 0x1398 bytes of .text there), so the result is not an artifact
+#     of the compiler revision chosen here. The three short bodies that do
+#     match are generic stub shapes, not placements: SEQInit/SEQQuit (12
+#     bytes: null an .sbss pointer via r13) and SEQGetState (8 bytes: lwz/blr)
+#     match dozens of unrelated data sites - SEQInit and SEQQuit hit the
+#     identical 39 addresses, which no real pair of distinct functions could.
+#     The method is not blind: the same script with the same flags finds the
+#     linked ai.a bodies at exactly their symbols.txt addresses (AIInitDMA
+#     0x800AC070, AIStartDMA 0x800AC0F8, AIStopDMA 0x800AC110,
+#     AISetStreamPlayState 0x800AC128, AISetDSPSampleRate 0x800AC210,
+#     AIGetDSPSampleRate 0x800AC2F0, __AI_set_stream_sample_rate 0x800AC304,
+#     AIGetStreamSampleRate 0x800AC3D8, ... AIGetStreamVolRight 0x800AC430)
+#     and gives 0 hits for the ai.a getters the original link dropped
+#     (AIGetDMAEnableFlag, AICheckInit, AIResetStreamSampleCount, ...), none
+#     of which symbols.txt names.
+#   * The member's data is missing too: __SEQMidiEventLength occurs nowhere in
+#     the DOL, neither its full 0x80 bytes nor its first 0x40; the 0x30-byte
+#     .sdata2 block occurs nowhere; the seq-only constant 16000.0f (0x467A0000)
+#     occurs nowhere in the image, not even as an isolated word, and the
+#     adjacent 1000000.0f,0.0 pair is absent as well. __SEQSequenceList is
+#     zero-initialized .sbss and leaves no footprint.
+#   * No fingerprint strings exist: a full scan finds no "MIDI", "MThd",
+#     "MTrk", "SMPTE", "SEQ_MAX_TRACKS" or "midiStream" string in the image,
+#     so none of the member's assert messages
+#     ("!!!midiStream is not a valid MIDI file\n!!!", "!!!SEQ does not support
+#     SMPTE time!!!\n", "exceeded SEQ_MAX_TRACKS, please increase
+#     SEQ_MAX_TRACKS\n", "!!!Invalid MIDI file type\n!!!") is present either -
+#     which also rules out a hypothetical assert-enabled (NDEBUG-off) build of
+#     the member.
+#   * Nothing could pull the member in: no other dolsdk2001 source includes
+#     dolphin/seq.h or calls any SEQ* export (full tree scan), symbols.txt
+#     names no SEQ* symbol (the lowercase seqPause/seqStop/seqSpeed/...
+#     functions at 0x80146EEC+ are the game's own MusyX-family snd library,
+#     not this SDK module), and seq.o's only external dependencies are
+#     OSDisableInterrupts/OSRestoreInterrupts (already linked in OS.c) plus
+#     the five SYN* exports it calls (SYNInitSynth, SYNQuitSynth, SYNMidiInput,
+#     SYNSetMasterVolume, SYNGetMasterVolume) whose absence the accepted syn.a
+#     integration established - a live seq.o would require live SYN* bodies.
+#     There is also no room at the natural position: os/OSUartExi.c's .text
+#     ends at 0x800CF708 exactly where the chain of dropped dolsdk2001 members
+#     takes the conventional zero-length slot.
+# The member therefore contributes no bytes and takes the zero-length slot at
+# 0x800CF708 shared by the other dropped dolsdk2001 members. All 24 definitions
+# stay in the source as shipped by the SDK (byte-identical to the pristine
+# .sdk-cache copy apart from the 24 "// UNUSED:" lines), each marked with the
+# single "// UNUSED:" line; __SEQMidiEventLength and __SEQSequenceList keep
+# their pristine form because nothing references them either, so the linker
+# strips them as well. No symbols.txt entries are added because nothing
+# references the SEQ exports, so the linker strips the member again.
+[[lib]]
+name = "seq"
+mw_version = "GC/1.2.5n"
+cflags_preset = "base"
+cflags_extra = ["-use_lmw_stmw on", "-common off", "-inline auto"]
+progress_category = "sdk"
+[[lib.object]]
+name = "ext/dolsdk2001/seq/seq.c"
+extra_cflags = ["-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/os", "-i src/ext/dolsdk2001/include/libc", "-i src/ext/dolsdk2001/syn"]
+completed = true
