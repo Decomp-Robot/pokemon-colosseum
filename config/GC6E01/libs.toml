@@ -2571,3 +2571,54 @@ completed = true
 name = "ext/dolsdk2001/syn/synvoice.c"
 extra_cflags = ["-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/os", "-i src/ext/dolsdk2001/include/libc", "-i src/ext/dolsdk2001/syn"]
 completed = true
+
+# synwt.o is syn.a's wavetable member: the single body
+# __SYNGetWavetableData, which resolves a SYNVOICE's region/articulation/
+# sample/adpcm pointers from the synth's inst/keyRegion tables and returns
+# 0 for the empty 0xFFFF keyRegion marker. Like the syn.c/synctrl.c/synenv.c/
+# synlfo.c/synmix.c/synpitch.c/synsample.c/synvoice.c members, the original
+# link dropped the whole member. Binary evidence:
+#   * Compiling the pristine source with the sibling audio-library flags
+#     (GC/1.2.5n, the ai.a/ax.a settings, -DNDEBUG=1) gives exactly 1 body
+#     totalling 0x90 bytes of .text (__SYNGetWavetableData) carrying zero
+#     relocations and zero calls, plus a 0x20-byte .sdata2 block of the
+#     shared fake_tgmath sqrtf/sqrt 0.5/3.0 doubles, which nothing in this
+#     object references. The object has no .data/.sdata and no ASSERTLINE
+#     lines to compile out; its only other section is .comment.
+#   * A masked full-body search over the whole 3,779,808-byte DOL - the
+#     operands of every REL24 `bl` word and every .rela.text relocation word
+#     wildcarded, every other byte compared - finds no match (0 hits; the
+#     body carries zero relocations, so the search is pure exact bytes). A
+#     GC/2.6 rebuild (the project's linker version) gives the same 0x90-byte
+#     body and is also 0 hits, so the result is not an artifact of the
+#     compiler revision chosen here. The method is not blind: the same
+#     script finds the linked ai.a member AIInitDMA exactly once, at file
+#     offset 0xA9070 = its symbols.txt address 0x800AC070 (pristine ai.c,
+#     GC/1.2.5n, identical flags), and gives 0 hits for the accepted dead
+#     syn.o..synvoice.o members, as expected. Of the body's 16-byte windows
+#     only the one at offset 0x20 (the ubiquitous cmplwi 0xFFFF / bne /
+#     li r3,0 / blr idiom) occurs anywhere in the image - no signal; the
+#     first 0x40 bytes do not occur at all.
+#   * The member's data is missing too: its 0x20-byte .sdata2 block occurs
+#     nowhere in the DOL, not even as a shorter prefix.
+#   * The member has no strings: a full scan finds no "synwt" file name and
+#     no __SYNGetWavetableData/WavetableData/SYNGet byte string anywhere in
+#     the image.
+#   * Nothing could pull the member in: __SYNGetWavetableData's only
+#     referencer in the whole SDK tree is synctrl.c's static __SYNNoteOn,
+#     a member the original link already dropped (its body is 0 hits in the
+#     same search, per the synctrl.o note). symbols.txt names no SYN* or
+#     MIX* symbol and no SYN-family string occurs in the image, and the
+#     game's audio is its own MusyX-family snd library (see the ax.a note),
+#     so no game code reaches the synth either. With no reference to any
+#     synwt export from linked code the whole member dead-strips.
+# The member therefore contributes no bytes and takes the conventional
+# zero-length slot at 0x800CF708 shared by the other dropped dolsdk2001
+# members. The definition stays in the source as shipped by the SDK
+# (byte-identical to the pristine .sdk-cache copy apart from the single
+# "// UNUSED:" line above it). No symbols.txt entries are added because
+# nothing references the SYN exports, so the linker strips the member again.
+[[lib.object]]
+name = "ext/dolsdk2001/syn/synwt.c"
+extra_cflags = ["-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/os", "-i src/ext/dolsdk2001/include/libc", "-i src/ext/dolsdk2001/syn"]
+completed = true
