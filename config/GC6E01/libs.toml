@@ -2305,3 +2305,52 @@ completed = true
 name = "ext/dolsdk2001/syn/synenv.c"
 extra_cflags = ["-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/os", "-i src/ext/dolsdk2001/include/libc", "-i src/ext/dolsdk2001/syn"]
 completed = true
+
+# synlfo.o is syn.a's LFO member: the static 0x100-byte sine-amplitude table
+# __SYNLfo (64 f32 samples, 0.0 .. 1.0 .. -1.0 .. 0.0, rounded to 5 decimals in
+# the source) plus the two per-voice LFO bodies __SYNSetupLfo and
+# __SYNRunLfo. Like the syn.c/synctrl.c/synenv.c members, the original link
+# dropped the whole member. Binary evidence:
+#   * Compiling the pristine source with the sibling audio-library flags
+#     (GC/1.2.5n, the ai.a/ax.a settings, -DNDEBUG=1 so the ASSERTLINE lines
+#     compile out) gives exactly 2 bodies totalling 0x17C bytes of .text
+#     (__SYNSetupLfo 0x5C, __SYNRunLfo 0x120), the 0x100-byte __SYNLfo table in
+#     .data, and a 0x28-byte .sdata2 block (the fake_tgmath sqrtf/sqrt 0.5/3.0
+#     doubles plus the one referenced f32 128.0 pair used by the % 64); five
+#     relocations, four of them inside __SYNRunLfo.
+#   * A masked full-body search over the whole 3,779,808-byte DOL - the
+#     operands of every REL24 `bl` word and every .rela.text relocation word
+#     wildcarded, every other byte compared - finds no match for either body
+#     (0 hits; __SYNSetupLfo carries zero relocations and no calls, so its
+#     search is pure exact bytes). The method is not blind: the same script
+#     finds the linked ai.a member AIInitDMA at exactly its symbols.txt
+#     address 0x800AC070 (pristine ai.c, GC/1.2.5n, identical flags, 1 hit),
+#     and gives 0 hits for the accepted dead syn.o/synctrl.o/synenv.o members,
+#     as expected.
+#   * The member's data is missing too: __SYNLfo's 0x100 bytes occur nowhere
+#     in the DOL, neither full-length, nor as their first 64 bytes, nor as any
+#     64-byte window; the 0x28-byte .sdata2 block does not occur either (the
+#     one referenced 8-byte constant pair is a ubiquitous 128.0 float pair and
+#     carries no signal).
+#   * The member has no strings: NDEBUG=1 compiles the ASSERTLINE lines out,
+#     and a full scan finds no "synlfo" file name or __SYN*/SYN* byte string
+#     anywhere in the image.
+#   * Nothing could pull the member in: symbols.txt names no SYN* or MIX*
+#     symbol, no SYN-family string occurs in the image, and the only
+#     referencers of synlfo.o's exports are syn.a's own dead siblings
+#     (synctrl.c's __SYNNoteOn calls __SYNSetupLfo - its body is 0 hits in the
+#     same search - and synvoice.c's __SYNServiceVoice runs __SYNRunLfo,
+#     equally absent per the syn.c note). With no reference to any synlfo
+#     export from linked code the whole member dead-strips.
+# The member therefore contributes no bytes and takes the conventional
+# zero-length slot at 0x800CF708 shared by the other dropped dolsdk2001
+# members. Both definitions stay in the source as shipped by the SDK
+# (byte-identical to the pristine .sdk-cache copy apart from the 2
+# "// UNUSED:" lines), each marked with the single "// UNUSED:" line;
+# __SYNLfo keeps its pristine form because nothing references it either, so
+# the linker strips it as well. No symbols.txt entries are added because
+# nothing references the SYN exports, so the linker strips the member again.
+[[lib.object]]
+name = "ext/dolsdk2001/syn/synlfo.c"
+extra_cflags = ["-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/os", "-i src/ext/dolsdk2001/include/libc", "-i src/ext/dolsdk2001/syn"]
+completed = true
