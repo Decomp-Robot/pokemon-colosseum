@@ -2509,3 +2509,65 @@ completed = true
 name = "ext/dolsdk2001/syn/synsample.c"
 extra_cflags = ["-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/os", "-i src/ext/dolsdk2001/include/libc", "-i src/ext/dolsdk2001/syn"]
 completed = true
+
+# synvoice.o is syn.a's voice-lifecycle member: the shared __SYNVoice[64]
+# table plus __SYNClearVoiceReferences (the AXAcquireVoice free-callback that
+# detaches a voice from its synth: keyGroup/voice pointer clears, MIX
+# release, notes--), __SYNSetVoiceToRelease (the veState/peState=3 +
+# AXSetVoicePriority kill helper driven by synctrl.c's note-off paths) and
+# __SYNServiceVoice (the per-voice per-frame pump called by syn.c's
+# SYNRunAudioFrame: runs the volume envelope, LFO and pitch envelope, then
+# __SYNUpdateMix/__SYNUpdateSrc and frees finished voices through
+# MIXReleaseChannel + AXFreeVoice). Like the syn.c/synctrl.c/synenv.c/
+# synlfo.c/synmix.c/synpitch.c/synsample.c members, the original link dropped
+# the whole member. Binary evidence:
+#   * Compiling the pristine source with the sibling audio-library flags
+#     (GC/1.2.5n, the ai.a/ax.a settings, -DNDEBUG=1 so the ASSERTLINE lines
+#     compile out) gives 3 bodies totalling 0x22C bytes of .text
+#     (__SYNClearVoiceReferences 0xB0, __SYNSetVoiceToRelease 0x30,
+#     __SYNServiceVoice 0x14C), a 0x2500-byte .bss __SYNVoice table (no file
+#     footprint), a 0x20-byte .sdata2 block of unreferenced fake_tgmath
+#     sqrtf/sqrt half/three constants, and 13 relocations (two __SYNVoice
+#     @ha/@l pairs plus 11 bls).
+#   * A masked full-body search over the whole 3,779,808-byte DOL - the
+#     operands of every REL24 `bl` word and every .rela.text relocation word
+#     wildcarded, every other byte compared - finds no match for any of the 3
+#     bodies (0 hits masked, 0 exact). The same search is empty for a GC/2.6
+#     rebuild (the project's linker version; .text compiles to 0x228 there),
+#     so the result is not an artifact of the compiler revision chosen here.
+#     The method is not blind: the same script finds the linked ai.a member
+#     AIInitDMA exactly once, at its symbols.txt address 0x800AC070 (pristine
+#     ai.c, GC/1.2.5n, identical flags), and gives 0 hits for the accepted
+#     dead syn.o/synctrl.o/synenv.o/synlfo.o/synmix.o/synpitch.o/synsample.o
+#     members, as expected.
+#   * The member's data is missing too: the 0x20-byte .sdata2 block occurs
+#     nowhere in the DOL; only the ubiquitous individual 8-byte 0.5/3.0
+#     windows occur (37/23 hits, as in every linked fake_tgmath user), and no
+#     longer run of the block is present. __SYNVoice is .bss and would leave
+#     no initialized-data footprint in any case.
+#   * The member has no strings in this build: NDEBUG=1 compiles the
+#     ASSERTLINE lines out (the object's only sections are
+#     .text/.bss/.sdata2/.comment), and a full scan finds neither the
+#     "synvoice" file name nor any __SYN* export name anywhere in the image.
+#   * Nothing could pull the member in: symbols.txt names no SYN* or MIX*
+#     symbol, and the only referencers of synvoice.o's exports are syn.a's
+#     own dead siblings - syn.c's SYNRunAudioFrame calls __SYNServiceVoice
+#     (its body is 0 hits in the same search), synctrl.c's note-off paths
+#     call __SYNSetVoiceToRelease and pass &__SYNClearVoiceReferences to
+#     AXAcquireVoice (equally dead per the synctrl.o note), and __SYNVoice is
+#     read/written only by those same dead members. The game's audio is its
+#     own MusyX-family snd library (see the ax.a note), so no game code
+#     reaches the synth either. With no reference to any synvoice export from
+#     linked code the whole member dead-strips.
+# The member therefore contributes no bytes and takes the conventional
+# zero-length slot at 0x800CF708 shared by the other dropped dolsdk2001
+# members. All 3 definitions stay in the source as shipped by the SDK
+# (byte-identical to the pristine .sdk-cache copy apart from the 3
+# "// UNUSED:" lines), each marked with the single "// UNUSED:" line;
+# __SYNVoice keeps its pristine form because nothing references it either.
+# No symbols.txt entries are added because nothing references the SYN
+# exports, so the linker strips the member again.
+[[lib.object]]
+name = "ext/dolsdk2001/syn/synvoice.c"
+extra_cflags = ["-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/os", "-i src/ext/dolsdk2001/include/libc", "-i src/ext/dolsdk2001/syn"]
+completed = true
