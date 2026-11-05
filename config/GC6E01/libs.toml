@@ -2775,3 +2775,76 @@ progress_category = "sdk"
 name = "ext/dolsdk2001/mix/mix.c"
 extra_cflags = ["-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/os", "-i src/ext/dolsdk2001/include/libc", "-i src/ext/dolsdk2001/mix"]
 completed = true
+
+# dtk.a is the Dolphin disc-track streaming library: it plays DVD audio streams
+# through the AI streaming path as a playlist of DTKTrack entries driven by the
+# AI stream interrupt. The SDK Makefile builds the archive from src/dtk/*.c and
+# this SDK drop ships exactly one member there, dtk.c: the 16 static helpers
+# (__DTKStartAi .. __DTKCallbackForPrevTrack) plus the 19 exports from DTKInit
+# to DTKGetVolume. The original link dropped the whole member. Binary evidence:
+#   * Compiling the pristine source with the sibling audio-library flags
+#     (GC/1.2.5n, the ai.a/ax.a/syn.a/seq.a/mix.a settings, -DNDEBUG=1 so the
+#     one ASSERTLINE at line 0x53 compiles to (void)0, macros.h) gives 35
+#     bodies totalling 0xE00 bytes of .text (__DTKStartAi 0x40 ...
+#     __DTKCallbackForPlaylist 0x1FC) and no initialized data section at all:
+#     the only data is .bss (0x1B0, the nine DVDCommandBlocks) and .sbss
+#     (0x30, the twelve zero-initialized statics), which leave no footprint
+#     when dead.
+#   * A masked full-body search over the whole 3,779,808-byte DOL - the
+#     operands of every REL24 branch word and every .rela.text relocation word
+#     wildcarded on both the compiled body and the scanned window, every other
+#     byte compared - finds no match for any of the 33 substantive bodies
+#     (0 hits). The search stays empty for a GC/2.6 rebuild (the project's
+#     linker version), so the result is not an artifact of the compiler
+#     revision chosen here. The only matchers are the two generic stub shapes
+#     the accepted mix.o note already disqualified: DTKSetSampleRate is a bare
+#     4-byte `blr` (9,961 identical sites) and DTKGetSampleRate the 8-byte
+#     `li r3,1; blr` shape (118 sites; the GC/2.6 rebuild instead folds the six
+#     8-byte lwz/blr getters into the 9,961-site generic shape). The method is
+#     not blind: the same script with the same flags finds the linked ai.a
+#     bodies AIInitDMA, AIGetDSPSampleRate and AIGetStreamVolLeft at exactly
+#     their symbols.txt addresses (file offsets 0xa9070, 0xa92f0 and 0xa9404 =
+#     0x800AC070/0x800AC2F0/0x800AC404) while the accepted dead AIInit body
+#     gives 0 hits, as expected.
+#   * build/GC6E01/main.elf defines no DTK* symbol at all (powerpc-eabi-nm),
+#     which settles the two generic shapes: a linked dtk.o would define all 19
+#     exports, including DTKSetSampleRate and DTKGetSampleRate, at fixed
+#     addresses.
+#   * No fingerprint strings exist: the NDEBUG release build emits no strings
+#     at all (the one assert compiles out and dtk.c has no OSReport calls), so
+#     the only revision that could leave strings is an assert-enabled one; a
+#     full strings scan of the DOL finds no "Failed assertion" text, no "dtk.c"
+#     file-name string and no DTK-family string anywhere in the image, and the
+#     image's "<< Dolphin SDK - ... >>" release banners name OS/DVD/VI/PAD/AI/
+#     AR/ARQ/DSP/CARD/GX/SI/THP but no DTK.
+#   * Nothing could pull the member in: symbols.txt names no DTK* symbol, no
+#     source in the tree references any DTK export (dolphin.h includes dtk.h,
+#     but only dtk.c itself uses it), and even the streaming entry points dtk.o
+#     itself imports are absent from the image - AIRegisterStreamCallback,
+#     AIResetStreamSampleCount, AISetStreamTrigger, DVDPrepareStreamAsync,
+#     DVDStopStreamAtEndAsync, DVDGetStreamPlayAddrAsync and
+#     DVDGetStreamErrorStatusAsync are defined nowhere in main.elf, leaving
+#     only the volume trio AISetStreamVolLeft/Right and AISetStreamPlayState
+#     the game's own snd code already uses (see the ax.a note; the game's
+#     audio is its own MusyX-family snd library). With no reference to any DTK
+#     export from linked code and no live streaming path to serve, the whole
+#     member dead-strips.
+# The member therefore contributes no bytes and takes the conventional
+# zero-length slot at 0x800CF708 shared by the other dropped dolsdk2001
+# members. All 35 definitions stay in the source as shipped by the SDK
+# (byte-identical to the pristine .sdk-cache copy apart from the 35
+# "// UNUSED:" lines), each marked with the single "// UNUSED:" line; the
+# statics and command blocks keep their pristine form because nothing
+# references them either, so the linker strips them as well. No symbols.txt
+# entries are added because nothing references the DTK exports, so the linker
+# strips the member again.
+[[lib]]
+name = "dtk"
+mw_version = "GC/1.2.5n"
+cflags_preset = "base"
+cflags_extra = ["-use_lmw_stmw on", "-common off", "-inline auto"]
+progress_category = "sdk"
+[[lib.object]]
+name = "ext/dolsdk2001/dtk/dtk.c"
+extra_cflags = ["-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/os", "-i src/ext/dolsdk2001/include/libc", "-i src/ext/dolsdk2001/dtk"]
+completed = true
