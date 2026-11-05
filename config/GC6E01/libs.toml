@@ -2402,3 +2402,56 @@ completed = true
 name = "ext/dolsdk2001/syn/synmix.c"
 extra_cflags = ["-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/os", "-i src/ext/dolsdk2001/include/libc", "-i src/ext/dolsdk2001/syn"]
 completed = true
+
+# synpitch.o is syn.a's pitch member: the four cents/semitone/octave lookup
+# tables (__SYNCentsTable 0x190, __SYNOctavesTableUp 0x30,
+# __SYNSemitonesTableUp 0x30, __SYNSemitonesTableDown 0x200) plus the four
+# bodies __SYNGetRelativePitch (the 2^(cents/1200) multiplier),
+# __SYNSetupPitch, __SYNSetupSrc and __SYNUpdateSrc. Like the syn.c/synctrl.c/
+# synenv.c/synlfo.c/synmix.c members, the original link dropped the whole
+# member. Binary evidence:
+#   * Compiling the pristine source with the sibling audio-library flags
+#     (GC/1.2.5n, the ai.a/ax.a settings, -DNDEBUG=1 so the ASSERTLINE lines
+#     compile out) gives 4 bodies totalling 0x2B4 bytes of .text
+#     (__SYNGetRelativePitch 0x130, __SYNSetupPitch 0x70, __SYNSetupSrc 0xAC,
+#     __SYNUpdateSrc 0x68) plus 0x3F0 bytes of .data (the four tables) and a
+#     0x38-byte .sdata2 block of the shared fake_tgmath sqrtf/sqrt 0.5/3.0
+#     doubles; 12 .text relocations (2 .data refs, 5 SDA21, 2 bl
+#     __SYNGetRelativePitch, 2 bl the MSL float->u32 helper __cvt_fp2unsigned).
+#   * A masked full-body search over the whole 3,779,808-byte DOL - the 4-byte
+#     word at every .rela.text relocation offset wildcarded, every other byte
+#     compared - finds no match for any of the 4 bodies (0 hits). The search
+#     stays empty when the source is rebuilt with GC/2.6 (the project's linker
+#     version), so the result is not an artifact of the compiler revision
+#     chosen here. The method is not blind: the same script finds the linked
+#     ai.a member AIInitDMA at exactly its symbols.txt address 0x800AC070
+#     (pristine ai.c, GC/1.2.5n, identical flags, exactly 1 hit), and gives
+#     0 hits for the accepted dead syn.o/synctrl.o/synenv.o/synlfo.o/synmix.o
+#     members, as expected.
+#   * The member's data is missing too: none of the four tables occurs in the
+#     DOL, neither full-length, nor as its first 64 bytes, nor as any 64-byte
+#     window (4-byte step), and the 0x38-byte .sdata2 block does not occur
+#     either.
+#   * Nothing could pull the member in: its only referencers are syn.a's own
+#     dead siblings (synctrl.c's __SYNNoteOn calls __SYNSetupPitch and
+#     __SYNSetupSrc - synctrl.o is an accepted dead member whose bodies are
+#     0 hits in the same search - and synvoice.c's __SYNServiceVoice calls
+#     __SYNUpdateSrc, a member the original link never took, equally absent
+#     per the syn.c note); __SYNGetRelativePitch is called only from within
+#     this very file (by __SYNSetupSrc/__SYNUpdateSrc). The game's audio is
+#     its own MusyX-family snd library (see the ax.a note), symbols.txt names
+#     no SYN* or MIX* symbol and no SYN-family string occurs in the image, so
+#     the whole member dead-strips.
+# The member therefore contributes no bytes and takes the conventional
+# zero-length slot at 0x800CF708 shared by the other dropped dolsdk2001
+# members. All 4 definitions and the four tables stay in the source as
+# shipped by the SDK (byte-identical to the pristine .sdk-cache copy apart
+# from the 4 "// UNUSED:" lines), each function marked with the single
+# "// UNUSED:" line; the tables keep their pristine form because nothing
+# references them either, so the linker strips them as well. No symbols.txt
+# entries are added because nothing references the SYN exports, so the linker
+# strips the member again.
+[[lib.object]]
+name = "ext/dolsdk2001/syn/synpitch.c"
+extra_cflags = ["-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/os", "-i src/ext/dolsdk2001/include/libc", "-i src/ext/dolsdk2001/syn"]
+completed = true
