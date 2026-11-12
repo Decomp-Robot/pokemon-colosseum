@@ -574,6 +574,28 @@ completed = true
 # and the retail __AIDHandler (0x800AC674-0x800AC6AC) guards the callback with a
 # re-entrancy flag word at 0x8047A8DC that the dolsdk2001 copy lacks, so both
 # were added to the source.
+# gpioexi.o is a vi.a member, but contributes no code or data to this DOL.
+# The only initializer path to __VIInitI2C is __VIInitPhilips, guarded in
+# vi.c::__VIInit by getEncoderType()==0; getEncoderType() returns constant 1.
+# The target's __VIInit body at 0x800A8934 has no such call, and the VI
+# source interval 0x800A8894-0x800AA4D4 is fully accounted for by encoder/VI
+# functions, not GPIO EXI routines. Its two shadow bytes likewise have no
+# .sbss allocation: mapped boundaries continue from AI at 0x8047A908 into AR
+# with no gap.
+# Keep the pristine object registered with the VI archive's GC/1.2.5n
+# settings, but do not assign it a DOL split range (the game never extracts
+# this unreferenced archive member).
+[[lib]]
+name = "vi"
+mw_version = "GC/1.2.5n"
+cflags_preset = "base"
+cflags_extra = ["-use_lmw_stmw on", "-common off", "-inline auto"]
+progress_category = "sdk"
+[[lib.object]]
+name = "ext/dolsdk2001/vi/gpioexi.c"
+extra_cflags = ["-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/os", "-i src/ext/dolsdk2001/include/libc", "-i src/ext/dolsdk2001/vi"]
+completed = true
+
 # pad.o occupies the controller-driver span immediately before ai.o: its
 # compiled 0x1B58-byte text begins at 0x800AA4D4 (UpdateOrigin) and ends at
 # 0x800AC02C, and its PAD release banner/data at 0x803124B8-0x80312510 is
