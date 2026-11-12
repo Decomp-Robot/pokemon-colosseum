@@ -2207,6 +2207,27 @@ name = "ext/dolsdk2001/demo/DEMOWin.c"
 extra_cflags = ["-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/os", "-i src/ext/dolsdk2001/include/libc", "-i src/ext/dolsdk2001/demo"]
 completed = true
 
+# perfdraw.o belongs to perf.a, but this game's retail image does not retain the
+# performance overlay renderer. This complete unit's public entry points
+# (__PERFDrawInit, PERFPreDraw, PERFDumpScreen, PERFPostDraw, and the setters /
+# toggles) have no target symbol definitions or caller evidence in the image;
+# none is represented by a target split. Its private drawing state, matrix,
+# points, and initialized colors are consequently not target data ranges either.
+# Preserve and compile the pristine archive member; do not delete its code/data
+# or assign fabricated ranges. The pristine dolsdk2001 Makefile builds perf.a
+# with its archive-wide release recipe: compiler 1.2.5 and -O4,p -inline auto.
+# The project base preset already supplies those release options; do not add
+# neighboring game-specific overrides to this SDK archive member.
+[[lib]]
+name = "perf"
+mw_version = "GC/1.2.5"
+cflags_preset = "base"
+progress_category = "sdk"
+[[lib.object]]
+name = "ext/dolsdk2001/perf/perfdraw.c"
+extra_cflags = ["-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/os", "-i src/ext/dolsdk2001/include/libc", "-i src/ext/dolsdk2001/gx", "-i src/ext/dolsdk2001/perf"]
+completed = true
+
 [[lib]]
 name = "axfx"
 # GC/2.6 for the linked reverb_hi.o: under GC/1.2.5n the C functions miss the
