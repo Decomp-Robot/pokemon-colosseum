@@ -591,6 +591,16 @@ name = "ext/dolsdk2001/pad/Pad.c"
 extra_cflags = ["-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/os", "-i src/ext/dolsdk2001/include/libc"]
 completed = true
 
+# Padclamp.c is the distinct pad.a archive member defining PADClamp. The
+# release DOL has no PADClamp symbol/body or references to it: the retained pad
+# text is wholly covered by Pad.c (0x800AA4D4-0x800AC02C), and the pad .sbss
+# span ends at 0x8047A8C8 with no TriggerMin/TriggerMax storage. Keep the source
+# registered as a compiled archive member, but do not assign a DOL split range.
+[[lib.object]]
+name = "ext/dolsdk2001/pad/Padclamp.c"
+extra_cflags = ["-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/os", "-i src/ext/dolsdk2001/include/libc"]
+completed = true
+
 [[lib]]
 name = "ai"
 mw_version = "GC/1.2.5n"
