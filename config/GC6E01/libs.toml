@@ -2180,6 +2180,19 @@ name = "ext/dolsdk2001/demo/DEMOPuts.c"
 extra_cflags = ["-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/os", "-i src/ext/dolsdk2001/include/libc", "-i src/ext/dolsdk2001/demo"]
 completed = true
 
+# DEMOStats.c is retained in its original demo.a membership. Its three public
+# routines, DemoStatEnable, and diagnostic/format data are absent from the
+# retail image: none of the exports is in symbols.txt or main.elf, its unique
+# DEMOStats.c / unknown-stat diagnostic strings are absent from main.dol, and
+# the retail checksum remains exact with this member registered. The pristine
+# source compiles to .text (0xD8C), .data (0x158), .sdata (8), .sbss (0x68),
+# and .sdata2 (0x10); those member sections are not target ranges. Preserve the
+# SDK implementation and use the established zero-length text slot.
+[[lib.object]]
+name = "ext/dolsdk2001/demo/DEMOStats.c"
+extra_cflags = ["-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/os", "-i src/ext/dolsdk2001/include/libc", "-i src/ext/dolsdk2001/demo"]
+completed = true
+
 [[lib]]
 name = "axfx"
 # GC/2.6 for the linked reverb_hi.o: under GC/1.2.5n the C functions miss the
