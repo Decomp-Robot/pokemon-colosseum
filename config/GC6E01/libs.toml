@@ -574,6 +574,23 @@ completed = true
 # and the retail __AIDHandler (0x800AC674-0x800AC6AC) guards the callback with a
 # re-entrancy flag word at 0x8047A8DC that the dolsdk2001 copy lacks, so both
 # were added to the source.
+# pad.o occupies the controller-driver span immediately before ai.o: its
+# compiled 0x1B58-byte text begins at 0x800AA4D4 (UpdateOrigin) and ends at
+# 0x800AC02C, and its PAD release banner/data at 0x803124B8-0x80312510 is
+# retained in the image. The corresponding small-data/BSS ranges are recorded
+# in splits.txt. The PAD release banner identifies the Sep 5 2002 SDK; build
+# it with the same GC/1.2.5n archive settings as the neighboring OS/AI members.
+[[lib]]
+name = "pad"
+mw_version = "GC/1.2.5n"
+cflags_preset = "base"
+cflags_extra = ["-use_lmw_stmw on", "-common off", "-inline auto"]
+progress_category = "sdk"
+[[lib.object]]
+name = "ext/dolsdk2001/pad/Pad.c"
+extra_cflags = ["-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/os", "-i src/ext/dolsdk2001/include/libc"]
+completed = true
+
 [[lib]]
 name = "ai"
 mw_version = "GC/1.2.5n"
