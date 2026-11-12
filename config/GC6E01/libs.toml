@@ -596,6 +596,17 @@ name = "ext/dolsdk2001/vi/gpioexi.c"
 extra_cflags = ["-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/os", "-i src/ext/dolsdk2001/include/libc", "-i src/ext/dolsdk2001/vi"]
 completed = true
 
+# initphilips.c is a distinct vi.a member, but the target does not extract it:
+# __VIInit at 0x800A8934 has no call to __VIInitPhilips, and the VI text span
+# 0x800A8894-0x800AA4D4 is occupied by the retained VI routines rather than
+# this Philips/I2C initialization path. Its static encoder tables likewise
+# have no target data allocation. Keep the pristine member compiled in vi.a,
+# without assigning a DOL split range (there are no assigned target functions).
+[[lib.object]]
+name = "ext/dolsdk2001/vi/initphilips.c"
+extra_cflags = ["-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/os", "-i src/ext/dolsdk2001/include/libc", "-i src/ext/dolsdk2001/vi"]
+completed = true
+
 # i2c.o belongs to vi.a but is not extracted by this game's VI initialization:
 # the target __VIInit body at 0x800A8934 does not call __VIInitPhilips, the
 # only source caller of __VIInitI2C and __VISendI2CData. The complete DOL VI
