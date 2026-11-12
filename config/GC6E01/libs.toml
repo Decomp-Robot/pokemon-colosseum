@@ -2167,6 +2167,19 @@ name = "ext/dolsdk2001/demo/DEMOPad.c"
 extra_cflags = ["-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/os", "-i src/ext/dolsdk2001/include/libc", "-i src/ext/dolsdk2001/demo"]
 completed = true
 
+# DEMOPuts.c is an original demo.a member and is preserved verbatim from the
+# SDK reference tree. The ROM-font initializer's two OSPanic messages and the
+# ROM-font dump's formatting strings are absent from the retail DOL; the
+# assigned DEMO* exports have no corresponding symbols/splits. This agrees
+# with the independently evidenced dropped demo.a members (including the
+# absent DEMOFontBitmap payload). Keep and compile all SDK code/data rather
+# than deleting it; its target split is the established zero-length slot for
+# dropped demo members.
+[[lib.object]]
+name = "ext/dolsdk2001/demo/DEMOPuts.c"
+extra_cflags = ["-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/os", "-i src/ext/dolsdk2001/include/libc", "-i src/ext/dolsdk2001/demo"]
+completed = true
+
 [[lib]]
 name = "axfx"
 # GC/2.6 for the linked reverb_hi.o: under GC/1.2.5n the C functions miss the
