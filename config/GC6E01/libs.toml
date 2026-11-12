@@ -2143,6 +2143,23 @@ name = "ext/dolsdk2001/demo/DEMOFont.c"
 extra_cflags = ["-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/os", "-i src/ext/dolsdk2001/include/libc"]
 completed = true
 
+# DEMOInit.c is present in the SDK tree and is kept intact, but the game
+# drops this demo.a member. The warning-as-error native compile emits .text
+# (0xDE8), .data (0x193), .bss (0x3C), .sdata (0xA), .sbss (0x24), and
+# .sdata2 (0x10). None of its exported DEMOInit/DEMOBeforeRender/DEMODoneRender/
+# DEMOSwapBuffers/DEMOSetTevColorIn/DEMOSetTevOp/DEMOGetRenderModeObj/
+# DEMOGetCurrentBuffer/DEMOEnableBypassWorkaround/DEMOReInit routines is in
+# symbols.txt; the member-specific messages (including "DEMOInit: invalid TV
+# format" and the /meminfo.bin diagnostics) are absent from the retail DOL.
+# Adding the compiled member leaves the pristine DOL checksum unchanged; it
+# contributes no target code or data. Preserve the SDK definitions instead of
+# deleting or inventing ranges for this unused archive member. Its source-local
+# __demo.h requires the additional include path below.
+[[lib.object]]
+name = "ext/dolsdk2001/demo/DEMOInit.c"
+extra_cflags = ["-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/os", "-i src/ext/dolsdk2001/include/libc", "-i src/ext/dolsdk2001/demo"]
+completed = true
+
 [[lib]]
 name = "axfx"
 # GC/2.6 for the linked reverb_hi.o: under GC/1.2.5n the C functions miss the
