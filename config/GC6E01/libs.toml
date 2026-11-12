@@ -2124,6 +2124,25 @@ name = "ext/dolsdk2001/hio/hio.c"
 extra_cflags = ["-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/os", "-i src/ext/dolsdk2001/include/libc"]
 completed = true
 
+# demo.a's DEMOFont.o contains only the SDK's aligned 0xC00-byte
+# DEMOFontBitmap array (no functions). The complete 768-word source initializer
+# was checked against the retail main.dol: no 32-byte window of the big-endian
+# emitted array occurs in the image, excluding the contiguous font payload
+# from the target. The SDK-source reference from DEMOPuts.c is not evidence that
+# this member is present in the retail link. Keep the pristine data definition
+# and account for the absent target data rather than fabricating or deleting
+# the SDK asset. Use the established dolsdk2001 release base compiler setup.
+[[lib]]
+name = "demo"
+mw_version = "GC/1.2.5n"
+cflags_preset = "base"
+cflags_extra = ["-use_lmw_stmw on", "-common off", "-inline auto"]
+progress_category = "sdk"
+[[lib.object]]
+name = "ext/dolsdk2001/demo/DEMOFont.c"
+extra_cflags = ["-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/os", "-i src/ext/dolsdk2001/include/libc"]
+completed = true
+
 [[lib]]
 name = "axfx"
 # GC/2.6 for the linked reverb_hi.o: under GC/1.2.5n the C functions miss the
