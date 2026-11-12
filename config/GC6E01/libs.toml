@@ -2104,6 +2104,26 @@ completed = true
 # the single "// UNUSED:" line; the object needs no symbols.txt entry because
 # nothing references AXFXChorusCallback, so the linker strips it (and, with it,
 # do_src1/do_src2/AXFXChorusSettings and the rsmpTab12khz/i2fMagic data) again.
+# hio.a is the SDK host-I/O/debug transport. None of its HIO exports has a
+# retail caller: the only source-tree references are from mcc.c, which is not
+# part of the retail link, and this target has no HIO symbol/string evidence.
+# All 14 definitions remain in pristine hio.c with UNUSED annotations. The
+# object contributes no target sections and shares the conventional dropped-
+# member text slot at 0x800CF708 (see the zero-length SDK members in splits.txt).
+# The HIO member has no binary compiler fingerprint because it is absent from
+# the DOL. Use the established dolsdk2001 OS-library baseline (GC/1.2.5n and
+# its base flags), rather than inventing a game-specific optimization override.
+[[lib]]
+name = "hio"
+mw_version = "GC/1.2.5n"
+cflags_preset = "base"
+cflags_extra = ["-use_lmw_stmw on", "-common off", "-inline auto"]
+progress_category = "sdk"
+[[lib.object]]
+name = "ext/dolsdk2001/hio/hio.c"
+extra_cflags = ["-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/os", "-i src/ext/dolsdk2001/include/libc"]
+completed = true
+
 [[lib]]
 name = "axfx"
 # GC/2.6 for the linked reverb_hi.o: under GC/1.2.5n the C functions miss the
