@@ -2160,6 +2160,13 @@ name = "ext/dolsdk2001/demo/DEMOInit.c"
 extra_cflags = ["-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/os", "-i src/ext/dolsdk2001/include/libc", "-i src/ext/dolsdk2001/demo"]
 completed = true
 
+# DEMOPad.o is retained as the original demo.a member, but no routine or
+# emitted data from this demo-only pad wrapper is linked into the retail DOL.
+[[lib.object]]
+name = "ext/dolsdk2001/demo/DEMOPad.c"
+extra_cflags = ["-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/os", "-i src/ext/dolsdk2001/include/libc", "-i src/ext/dolsdk2001/demo"]
+completed = true
+
 [[lib]]
 name = "axfx"
 # GC/2.6 for the linked reverb_hi.o: under GC/1.2.5n the C functions miss the
