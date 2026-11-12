@@ -578,7 +578,7 @@ completed = true
 # The only initializer path to __VIInitI2C is __VIInitPhilips, guarded in
 # vi.c::__VIInit by getEncoderType()==0; getEncoderType() returns constant 1.
 # The target's __VIInit body at 0x800A8934 has no such call, and the VI
-# source interval 0x800A8894-0x800AA4D4 is fully accounted for by encoder/VI
+# source interval 0x800A85DC-0x800AA4D4 is fully accounted for by encoder/VI
 # functions, not GPIO EXI routines. Its two shadow bytes likewise have no
 # .sbss allocation: mapped boundaries continue from AI at 0x8047A908 into AR
 # with no gap.
@@ -598,7 +598,7 @@ completed = true
 
 # initphilips.c is a distinct vi.a member, but the target does not extract it:
 # __VIInit at 0x800A8934 has no call to __VIInitPhilips, and the VI text span
-# 0x800A8894-0x800AA4D4 is occupied by the retained VI routines rather than
+# 0x800A85DC-0x800AA4D4 is occupied by the retained VI routines rather than
 # this Philips/I2C initialization path. Its static encoder tables likewise
 # have no target data allocation. Keep the pristine member compiled in vi.a,
 # without assigning a DOL split range (there are no assigned target functions).
@@ -610,12 +610,20 @@ completed = true
 # i2c.o belongs to vi.a but is not extracted by this game's VI initialization:
 # the target __VIInit body at 0x800A8934 does not call __VIInitPhilips, the
 # only source caller of __VIInitI2C and __VISendI2CData. The complete DOL VI
-# text span 0x800A8894-0x800AA4D4 is accounted for by VI routines, and the
+# text span 0x800A85DC-0x800AA4D4 is accounted for by VI routines, and the
 # target has no I2C GPIO routines/data or corresponding small-data allocation.
 # Retain the pristine source as a compiled archive member without a DOL split.
 [[lib.object]]
 name = "ext/dolsdk2001/vi/i2c.c"
 extra_cflags = ["-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/os", "-i src/ext/dolsdk2001/include/libc", "-i src/ext/dolsdk2001/vi"]
+completed = true
+
+# vi.o owns the complete VI text/data allocation between fstload and PAD.
+# The target retains the later release's timing/mode routines and version data;
+# vi.c's GC/1.2.5n archive settings are evidenced by the neighboring SDK objects.
+[[lib.object]]
+name = "ext/dolsdk2001/vi/vi.c"
+extra_cflags = ["-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/os", "-i src/ext/dolsdk2001/include/libc", "-i src/ext/dolsdk2001/vi", "-i src/ext/dolsdk2001/gx"]
 completed = true
 
 # pad.o occupies the controller-driver span immediately before ai.o: its
