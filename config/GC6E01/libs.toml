@@ -2193,6 +2193,20 @@ name = "ext/dolsdk2001/demo/DEMOStats.c"
 extra_cflags = ["-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/os", "-i src/ext/dolsdk2001/include/libc", "-i src/ext/dolsdk2001/demo"]
 completed = true
 
+# DEMOWin.c is a complete original demo.a member (27 public window, menu, pad,
+# and list routines plus associated state), but the retail image drops this
+# demo-only API. None of its exports is represented in the project's symbol
+# map, and none of the 28 distinct source string literals occurs in main.dol;
+# the neighboring demo.a members exhibit the same absent-member disposition.
+# Register and compile the pristine source, preserving its source-owned code and
+# data instead of fabricating target ranges or deleting it. The target therefore
+# uses the archive's established zero-length text slot, with no emitted data
+# ranges claimed for this dropped object.
+[[lib.object]]
+name = "ext/dolsdk2001/demo/DEMOWin.c"
+extra_cflags = ["-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/os", "-i src/ext/dolsdk2001/include/libc", "-i src/ext/dolsdk2001/demo"]
+completed = true
+
 [[lib]]
 name = "axfx"
 # GC/2.6 for the linked reverb_hi.o: under GC/1.2.5n the C functions miss the
