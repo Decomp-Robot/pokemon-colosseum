@@ -2130,8 +2130,9 @@ completed = true
 # init-code strings. This supports the retail disposition that the member is
 # is unreferenced rather than linked; do not infer absence from the sparse name
 # map alone. Preserve pristine SDK code/data, with its conventional zero-length
-# SDK text slot at 0x800CF708. The sibling fio.c client likewise has no target
-# text or diagnostic-string evidence.
+# SDK text slot at 0x800CF708. Neither client has target text or client-specific
+# diagnostics; tty.c's channel labels (DISCONNECT/HOST_OPEN/TARGET_OPEN/etc.)
+# are absent from main.dol. Preserve the complete pristine SDK implementations.
 [[lib]]
 name = "mcc"
 mw_version = "GC/1.2.5n"
@@ -2144,6 +2145,10 @@ extra_cflags = ["-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/os", "-i
 completed = true
 [[lib.object]]
 name = "ext/dolsdk2001/mcc/mcc.c"
+extra_cflags = ["-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/os", "-i src/ext/dolsdk2001/include/libc"]
+completed = true
+[[lib.object]]
+name = "ext/dolsdk2001/mcc/tty.c"
 extra_cflags = ["-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/os", "-i src/ext/dolsdk2001/include/libc"]
 completed = true
 

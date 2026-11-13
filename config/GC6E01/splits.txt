@@ -460,6 +460,9 @@ ext/dolsdk2001/mcc/fio.c:
 ext/dolsdk2001/mcc/mcc.c:
 	.text       start:0x800CF708 end:0x800CF708
 
+ext/dolsdk2001/mcc/tty.c:
+	.text       start:0x800CF708 end:0x800CF708
+
 ext/dolsdk2001/perf/perfdraw.c:
 	.text       start:0x800CF708 end:0x800CF708
 
