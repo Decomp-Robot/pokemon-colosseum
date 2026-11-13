@@ -2124,11 +2124,14 @@ name = "ext/dolsdk2001/hio/hio.c"
 extra_cflags = ["-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/os", "-i src/ext/dolsdk2001/include/libc"]
 completed = true
 
-# fio.c is the SDK-side host file-I/O client for MCC. Its public FIO exports
-# and diagnostic strings have no retail DOL evidence; this source member has no
-# target text in the SDK region, which ends at 0x800CF708. Keep the complete
-# source intact and use the established dolsdk2001 release base settings; the
-# unreferenced archive member is omitted by the retail link.
+# The MCC/HIO host-transport subsystem has no title-side source call sites:
+# the copied SDK tree's external MCC clients are fio.c/tty.c. An exact DOL
+# search finds neither an "MCC" literal nor MCC's distinctive HUDSON/USB2EXI
+# init-code strings. This supports the retail disposition that the member is
+# is unreferenced rather than linked; do not infer absence from the sparse name
+# map alone. Preserve pristine SDK code/data, with its conventional zero-length
+# SDK text slot at 0x800CF708. The sibling fio.c client likewise has no target
+# text or diagnostic-string evidence.
 [[lib]]
 name = "mcc"
 mw_version = "GC/1.2.5n"
@@ -2137,6 +2140,10 @@ cflags_extra = ["-use_lmw_stmw on", "-common off", "-inline auto"]
 progress_category = "sdk"
 [[lib.object]]
 name = "ext/dolsdk2001/mcc/fio.c"
+extra_cflags = ["-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/os", "-i src/ext/dolsdk2001/include/libc"]
+completed = true
+[[lib.object]]
+name = "ext/dolsdk2001/mcc/mcc.c"
 extra_cflags = ["-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/os", "-i src/ext/dolsdk2001/include/libc"]
 completed = true
 
