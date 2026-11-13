@@ -3079,3 +3079,15 @@ progress_category = "sdk"
 name = "ext/dolsdk2001/dtk/dtk.c"
 extra_cflags = ["-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/os", "-i src/ext/dolsdk2001/include/libc", "-i src/ext/dolsdk2001/dtk"]
 completed = true
+
+# MusyX runtime DSP microcode import: the 2.0.0-default DSP payload is byte-identical
+# to the DOL at 0x8036A520-0x8036BF00; its exported length word is in .sdata.
+[[lib]]
+name = "runtime"
+mw_version = "GC/2.6"
+cflags_preset = "base"
+progress_category = "sdk"
+[[lib.object]]
+name = "ext/musyx_sdk/runtime/dsp_import.c"
+extra_cflags = ["-i src/ext/musyx_sdk/include", "-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/include/libc"]
+completed = true

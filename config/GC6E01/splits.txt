@@ -348,6 +348,10 @@ ext/dolsdk2001/gx/GXPerf.c:
 	.text       start:0x800BD91C end:0x800BE348
 	.data       start:0x80313628 end:0x80313770
 
+ext/musyx_sdk/runtime/dsp_import.c:
+	.data       start:0x8036A520 end:0x8036BF00
+	.sdata      start:0x80478C08 end:0x80478C10
+
 ext/dolsdk2001/amcstubs/AmcExi2Stubs.c:
 	.text       start:0x800CE79C end:0x800CE7CC
 
