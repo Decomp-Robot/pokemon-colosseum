@@ -2124,6 +2124,22 @@ name = "ext/dolsdk2001/hio/hio.c"
 extra_cflags = ["-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/os", "-i src/ext/dolsdk2001/include/libc"]
 completed = true
 
+# fio.c is the SDK-side host file-I/O client for MCC. Its public FIO exports
+# and diagnostic strings have no retail DOL evidence; this source member has no
+# target text in the SDK region, which ends at 0x800CF708. Keep the complete
+# source intact and use the established dolsdk2001 release base settings; the
+# unreferenced archive member is omitted by the retail link.
+[[lib]]
+name = "mcc"
+mw_version = "GC/1.2.5n"
+cflags_preset = "base"
+cflags_extra = ["-use_lmw_stmw on", "-common off", "-inline auto"]
+progress_category = "sdk"
+[[lib.object]]
+name = "ext/dolsdk2001/mcc/fio.c"
+extra_cflags = ["-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/os", "-i src/ext/dolsdk2001/include/libc"]
+completed = true
+
 # demo.a's DEMOFont.o contains only the SDK's aligned 0xC00-byte
 # DEMOFontBitmap array (no functions). The complete 768-word source initializer
 # was checked against the retail main.dol: no 32-byte window of the big-endian
