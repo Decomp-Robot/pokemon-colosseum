@@ -139,7 +139,9 @@ void hwSetSaveSampleCallback(ARAMUploadCallback callback, unsigned long chunckSi
 void hwSyncSampleMem();
 void hwSetAUXProcessingCallbacks(u8 studio, SND_AUX_CALLBACK auxA, void* userA,
                                  SND_AUX_CALLBACK auxB, void* userB);
+#if MUSY_VERSION >= MUSY_VERSION_CHECK(2, 0, 0)
 void hwSetMesgCallback(SND_MESSAGE_CALLBACK callback);
+#endif
 #if MUSY_VERSION >= MUSY_VERSION_CHECK(2, 0, 1)
 void hwSetFilter(u32 v, unsigned char mode, unsigned short coefA, unsigned short coefB);
 #if MUSY_VERSION >= MUSY_VERSION_CHECK(2, 0, 4)
@@ -170,7 +172,11 @@ void hwActivateStudio(u8 studio, bool isMaster, SND_STUDIO_TYPE type);
 void hwDeactivateStudio(u8);
 void hwSetPriority(u32 v, u32 prio);
 u32 hwIsActive(u32);
+#if MUSY_VERSION < MUSY_VERSION_CHECK(2, 0, 0)
+void hwGlobalActivity(SND_MESSAGE_CALLBACK callback);
+#else
 u32 hwGlobalActivity();
+#endif
 void hwSetAUXProcessingCallbacks(u8 studio, SND_AUX_CALLBACK auxA, void* userA,
                                  SND_AUX_CALLBACK auxB, void* userB);
 u8 hwInitStream(u32 len);

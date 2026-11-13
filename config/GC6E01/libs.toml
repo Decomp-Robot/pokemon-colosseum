@@ -3091,3 +3091,10 @@ progress_category = "sdk"
 name = "ext/musyx_sdk/runtime/dsp_import.c"
 extra_cflags = ["-i src/ext/musyx_sdk/include", "-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/include/libc"]
 completed = true
+
+# Core MusyX runtime hardware translation unit. It has no target-version override;
+# use the runtime archive settings and its SDK/Dolphin include trees.
+[[lib.object]]
+name = "ext/musyx_sdk/runtime/hardware.c"
+extra_cflags = ["-i src/ext/musyx_sdk/include", "-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/include/libc", "-DMUSY_VERSION_MAJOR=1", "-DMUSY_VERSION_MINOR=5", "-DMUSY_VERSION_PATCH=3"]
+completed = true
