@@ -3107,6 +3107,11 @@ completed = true
 
 # SAL allocation implementation retained as an uncompleted neighboring runtime object.
 [[lib.object]]
+name = "ext/musyx_sdk/runtime/hw_dolphin.c"
+extra_cflags = ["-i src/ext/musyx_sdk/include", "-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/include/libc", "-DMUSY_VERSION_MAJOR=1", "-DMUSY_VERSION_MINOR=5", "-DMUSY_VERSION_PATCH=3"]
+completed = true
+
+[[lib.object]]
 name = "ext/musyx_sdk/runtime/hw_memory.c"
 extra_cflags = ["-i src/ext/musyx_sdk/include", "-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/include/libc", "-DMUSY_VERSION_MAJOR=1", "-DMUSY_VERSION_MINOR=5", "-DMUSY_VERSION_PATCH=3"]
 completed = false

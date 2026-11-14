@@ -9,7 +9,7 @@
 #include "__gx.h"
 
 static struct __GXData_struct gxData;
-struct __GXData_struct *const gx = &gxData;
+struct __GXData_struct *gx = &gxData;
 // DWARF info lists all of these as "void *", but these types make more sense.
 u16 *__memReg;
 u16 *__peReg;
