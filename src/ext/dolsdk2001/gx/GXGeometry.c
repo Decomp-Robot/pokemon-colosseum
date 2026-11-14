@@ -72,13 +72,6 @@ void GXSetLineWidth(u8 width, GXTexOffset texOffsets)
 }
 
 // UNUSED: the game never calls this; dead-stripped at link.
-void GXGetLineWidth(u8 *width, GXTexOffset *texOffsets)
-{
-    ASSERTMSGLINE(0x1BF, width != NULL && texOffsets != NULL, "GXGet*: invalid null pointer");
-
-    *width      = GET_REG_FIELD(gx->lpSize, 8, 0);
-    *texOffsets = GET_REG_FIELD(gx->lpSize, 3, 16);
-}
 
 void GXSetPointSize(u8 pointSize, GXTexOffset texOffsets)
 {
@@ -90,13 +83,6 @@ void GXSetPointSize(u8 pointSize, GXTexOffset texOffsets)
 }
 
 // UNUSED: the game never calls this; dead-stripped at link.
-void GXGetPointSize(u8 *pointSize, GXTexOffset *texOffsets)
-{
-    ASSERTMSGLINE(0x1EB, pointSize != NULL && texOffsets != NULL, "GXGet*: invalid null pointer");
-
-    *pointSize  = (int)GET_REG_FIELD(gx->lpSize, 8, 8);
-    *texOffsets = GET_REG_FIELD(gx->lpSize, 3, 19);
-}
 
 void GXEnableTexOffsets(GXTexCoordID coord, u8 line_enable, u8 point_enable)
 {
@@ -125,16 +111,6 @@ void GXSetCullMode(GXCullMode mode)
 }
 
 // UNUSED: the game never calls this; dead-stripped at link.
-void GXGetCullMode(GXCullMode *mode)
-{
-    GXCullMode hwMode = GET_REG_FIELD(gx->genMode, 2, 14);
-
-    switch (hwMode) {
-    case GX_CULL_FRONT: *mode = GX_CULL_BACK;  break;
-    case GX_CULL_BACK:  *mode = GX_CULL_FRONT; break;
-    default:            *mode = hwMode;        break;
-    }
-}
 
 void GXSetCoPlanar(GXBool enable)
 {

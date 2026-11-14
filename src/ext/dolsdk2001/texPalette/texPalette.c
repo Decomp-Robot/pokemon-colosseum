@@ -10,21 +10,6 @@ static void UnpackTexPalette(TEXPalettePtr pal);
 static void TexFreeFunc(TEXPalettePtr pal);
 
 // UNUSED: the game never calls this; dead-stripped at link.
-void TEXGetPalette(TEXPalettePtr *pal, char *name)
-{
-    void *p = TexFreeFunc;
-
-    if (DOCacheInitialized) {
-        *pal = (TEXPalettePtr)DSGetCacheObj(&DODisplayCache, name);
-    }
-    if (!*pal) {
-        LoadTexPalette(pal, name);
-        if (DOCacheInitialized) {
-            DSAddCacheNode(&DODisplayCache, name, (Ptr)*pal, p);
-            DSGetCacheObj(&DODisplayCache, name);
-        }
-    }
-}
 
 // UNUSED: the game never calls this; dead-stripped at link.
 static void LoadTexPalette(TEXPalettePtr *pal, char *name)
@@ -82,15 +67,6 @@ static void TexFreeFunc(TEXPalettePtr pal)
 }
 
 // UNUSED: the game never calls this; dead-stripped at link.
-void TEXReleasePalette(TEXPalettePtr *pal)
-{
-    if (DOCacheInitialized) {
-        DSReleaseCacheObj(&DODisplayCache, (Ptr)*pal);
-    } else {
-        OSFree(*pal);
-        *pal = NULL;
-    }
-}
 
 // UNUSED: the game never calls this; dead-stripped at link.
 void TEXGetGXTexObjFromPalette(TEXPalettePtr pal, GXTexObj *to, u32 id)
@@ -109,18 +85,3 @@ void TEXGetGXTexObjFromPalette(TEXPalettePtr pal, GXTexObj *to, u32 id)
 }
 
 // UNUSED: the game never calls this; dead-stripped at link.
-void TEXGetGXTexObjFromPaletteCI(TEXPalettePtr pal, GXTexObj *to, GXTlutObj *tlo, GXTlut tluts, u32 id)
-{
-    GXBool mipMap;
-    TEXDescriptorPtr tdp;
-
-    tdp = TEXGet(pal, id);
-    if (tdp->textureHeader->minLOD == tdp->textureHeader->maxLOD) {
-        mipMap = GX_FALSE;
-    } else {
-        mipMap = GX_TRUE;
-    }
-    GXInitTlutObj(tlo, tdp->CLUTHeader->data, tdp->CLUTHeader->format, tdp->CLUTHeader->numEntries);
-    GXInitTexObjCI(to, tdp->textureHeader->data, tdp->textureHeader->width, tdp->textureHeader->height, tdp->textureHeader->format, tdp->textureHeader->wrapS, tdp->textureHeader->wrapT, mipMap, tluts);
-    GXInitTexObjLOD(to, tdp->textureHeader->minFilter, tdp->textureHeader->magFilter, tdp->textureHeader->minLOD, tdp->textureHeader->maxLOD, tdp->textureHeader->LODBias, GX_DISABLE, tdp->textureHeader->edgeLODEnable, GX_ANISO_1);
-}

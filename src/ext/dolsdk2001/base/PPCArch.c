@@ -14,28 +14,10 @@ asm void PPCMtmsr(register u32 newMSR) {
 }
 
 // UNUSED: the game never calls this; dead-stripped at link.
-asm u32 PPCOrMsr(register u32 value) {
-    nofralloc
-    mfmsr r4
-    or value, r4, value
-    blr
-}
 
 // UNUSED: the game never calls this; dead-stripped at link.
-asm u32 PPCAndMsr(register u32 value) {
-    nofralloc
-    mfmsr r4
-    and value, r4, value
-    blr
-}
 
 // UNUSED: the game never calls this; dead-stripped at link.
-asm u32 PPCAndCMsr(register u32 value) {
-    nofralloc
-    mfmsr r4
-    andc value, r4, value
-    blr
-}
 
 asm u32 PPCMfhid0() {
     nofralloc
@@ -50,11 +32,6 @@ asm void PPCMthid0(register u32 newHID0) {
 }
 
 // UNUSED: the game never calls this; dead-stripped at link.
-asm u32 PPCMfhid1() {
-    nofralloc
-    mfspr r3, HID1
-    blr
-}
 
 asm u32 PPCMfl2cr() {
     nofralloc
@@ -88,22 +65,6 @@ asm void PPCSync() {
 }
 
 // UNUSED: the game never calls this; dead-stripped at link.
-asm void PPCEieio() {
-    nofralloc
-    mfmsr r5
-    rlwinm r6, r5, 0, 17, 15
-    mtmsr r6
-    mfspr r3, HID0
-    ori r4, r3, 0x8
-    mtspr HID0, r4
-    isync
-    eieio
-    isync
-    mtspr HID0, r3
-    mtmsr r5
-    isync
-    blr
-}
 
 asm void PPCHalt() {
     nofralloc
@@ -116,11 +77,6 @@ loop:
 }
 
 // UNUSED: the game never calls this; dead-stripped at link.
-asm u32 PPCMfmmcr0() {
-    nofralloc
-    mfspr r3, MMCR0
-    blr
-}
 
 asm void PPCMtmmcr0(register u32 newMmcr0) {
     nofralloc
@@ -129,11 +85,6 @@ asm void PPCMtmmcr0(register u32 newMmcr0) {
 }
 
 // UNUSED: the game never calls this; dead-stripped at link.
-asm u32 PPCMfmmcr1() {
-    nofralloc
-    mfspr r3, MMCR1
-    blr
-}
 
 asm void PPCMtmmcr1(register u32 newMmcr1) {
     nofralloc
@@ -220,18 +171,8 @@ asm void PPCMtfpscr(register u32 newFPSCR) {
 }
 
 // UNUSED: the game never calls this; dead-stripped at link.
-asm u32 PPCMfsia() {
-    nofralloc
-    mfspr r3, SIA
-    blr
-}
 
 // UNUSED: the game never calls this; dead-stripped at link.
-asm void PPCMtsia(register u32 newSia) {
-    nofralloc
-    mtspr SIA, newSia
-    blr
-}
 
 asm u32 PPCMfhid2() {
     nofralloc
@@ -260,18 +201,8 @@ asm void PPCMtwpar(register u32 newwpar) {
 }
 
 // UNUSED: the game never calls this; dead-stripped at link.
-asm u32 PPCMfdmaU() {
-    nofralloc
-    mfspr r3, DMA_U
-    blr
-}
 
 // UNUSED: the game never calls this; dead-stripped at link.
-asm u32 PPCMfdmaL() {
-    nofralloc
-    mfspr r3, DMA_L
-    blr
-}
 
 // UNUSED: the game never calls this; dead-stripped at link.
 asm void PPCMtdmaU(register u32 newdmau) {
@@ -288,8 +219,3 @@ asm void PPCMtdmaL(register u32 newdmal) {
 }
 
 // UNUSED: the game never calls this; dead-stripped at link.
-asm u32 PPCMfpvr() {
-    nofralloc
-    mfspr r3, PVR
-    blr
-}

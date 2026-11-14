@@ -728,19 +728,6 @@ int MCCPing(void) {
     return 0;
 }
 
-int MCCEnumDevices(MCC_CBEnumDevices callbackEnumDevices) {
-    if (callbackEnumDevices == NULL) {
-        gLastError = 0xD;
-    }
-    if (HIOEnumDevices(callbackEnumDevices) == 0) {
-        gLastError = 0xD;
-    } else {
-        gLastError = 0;
-        return 1;
-    }
-    return 0;
-}
-
 u8 MCCGetFreeBlocks(enum MCC_MODE mode) {
 #ifndef DEBUG
     int unused[3]; // fake but blah
@@ -831,7 +818,6 @@ int MCCNotify(enum MCC_CHANNEL chID, u32 notify) {
 #ifndef DEBUG
     int unused[3]; // fake but blah
 #endif
-
 
     mccDebugPrint("MCCNotify\n");
     if (gMccInitialized == 0) {

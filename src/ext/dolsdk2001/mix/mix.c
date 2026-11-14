@@ -487,9 +487,6 @@ void MIXInit(void) {
 }
 
 // UNUSED: the game never calls this; dead-stripped at link.
-void MIXQuit(void) {
-    
-}
 
 // UNUSED: the game never calls this; dead-stripped at link.
 void MIXInitChannel(AXVPB * axvpb, u32 mode, int input, int auxA, int auxB, int pan, int span, int fader) {
@@ -581,9 +578,6 @@ void MIXReleaseChannel(AXVPB * axvpb) {
 }
 
 // UNUSED: the game never calls this; dead-stripped at link.
-void MIXResetControls(AXVPB * p) {
-    __MIXResetChannel(&__MIXChannel[p->index]);
-}
 
 // UNUSED: the game never calls this; dead-stripped at link.
 void MIXSetInput(AXVPB * p, int dB) {
@@ -595,49 +589,14 @@ void MIXSetInput(AXVPB * p, int dB) {
 }
 
 // UNUSED: the game never calls this; dead-stripped at link.
-void MIXAdjustInput(AXVPB * p, int dB) {
-    struct MIXChannel * channel;
-
-    channel = &__MIXChannel[p->index];
-    channel->input += dB;
-    channel->mode |= 0x10000000;
-}
 
 // UNUSED: the game never calls this; dead-stripped at link.
-int MIXGetInput(AXVPB * p) {
-    struct MIXChannel * channel;
-
-    channel = &__MIXChannel[p->index];
-    return channel->input;
-}
 
 // UNUSED: the game never calls this; dead-stripped at link.
-void MIXAuxAPostFader(AXVPB * p) {
-    struct MIXChannel * channel;
-
-    channel = &__MIXChannel[p->index];
-    channel->mode &= 0xFFFFFFFE;
-    channel->mode |= 0x40000000;
-}
 
 // UNUSED: the game never calls this; dead-stripped at link.
-void MIXAuxAPreFader(AXVPB * p) {
-    struct MIXChannel * channel;
-
-    channel = &__MIXChannel[p->index];
-    channel->mode |= 0x40000001;
-}
 
 // UNUSED: the game never calls this; dead-stripped at link.
-int MIXAuxAIsPostFader(AXVPB * p) {
-    struct MIXChannel * channel;
-
-    channel = &__MIXChannel[p->index];
-    if (channel->mode & 1) {
-        return 0;
-    }
-    return 1;
-}
 
 // UNUSED: the game never calls this; dead-stripped at link.
 void MIXSetAuxA(AXVPB * p, int dB) {
@@ -649,49 +608,14 @@ void MIXSetAuxA(AXVPB * p, int dB) {
 }
 
 // UNUSED: the game never calls this; dead-stripped at link.
-void MIXAdjustAuxA(AXVPB * p, int dB) {
-    struct MIXChannel * channel;
-
-    channel = &__MIXChannel[p->index];
-    channel->auxA += dB;
-    channel->mode |= 0x40000000;
-}
 
 // UNUSED: the game never calls this; dead-stripped at link.
-int MIXGetAuxA(AXVPB * p) {
-    struct MIXChannel * channel;
-
-    channel = &__MIXChannel[p->index];
-    return channel->auxA;
-}
 
 // UNUSED: the game never calls this; dead-stripped at link.
-void MIXAuxBPostFader(AXVPB * p) {
-    struct MIXChannel * channel;
-
-    channel = &__MIXChannel[p->index];
-    channel->mode &= 0xFFFFFFFD;
-    channel->mode |= 0x40000000;
-}
 
 // UNUSED: the game never calls this; dead-stripped at link.
-void MIXAuxBPreFader(AXVPB * p) {
-    struct MIXChannel * channel;
-
-    channel = &__MIXChannel[p->index];
-    channel->mode |= 0x40000002;
-}
 
 // UNUSED: the game never calls this; dead-stripped at link.
-int MIXAuxBIsPostFader(AXVPB * p) {
-    struct MIXChannel * channel;
-
-    channel = &__MIXChannel[p->index];
-    if (channel->mode & 2) {
-        return 0;
-    }
-    return 1;
-}
 
 // UNUSED: the game never calls this; dead-stripped at link.
 void MIXSetAuxB(AXVPB * p, int dB) {
@@ -703,21 +627,8 @@ void MIXSetAuxB(AXVPB * p, int dB) {
 }
 
 // UNUSED: the game never calls this; dead-stripped at link.
-void MIXAdjustAuxB(AXVPB * p, int dB) {
-    struct MIXChannel * channel;
-
-    channel = &__MIXChannel[p->index];
-    channel->auxB += dB;
-    channel->mode |= 0x40000000;
-}
 
 // UNUSED: the game never calls this; dead-stripped at link.
-int MIXGetAuxB(AXVPB * p) {
-    struct MIXChannel * channel;
-
-    channel = &__MIXChannel[p->index];
-    return channel->auxB;
-}
 
 // UNUSED: the game never calls this; dead-stripped at link.
 void MIXSetPan(AXVPB * p, int pan) {
@@ -730,14 +641,6 @@ void MIXSetPan(AXVPB * p, int pan) {
 }
 
 // UNUSED: the game never calls this; dead-stripped at link.
-void MIXAdjustPan(AXVPB * p, int pan) {
-    struct MIXChannel * channel;
-
-    channel = &__MIXChannel[p->index];
-    channel->pan = __MIXClampPan(channel->pan + pan);
-    __MIXSetPan(channel);
-    channel->mode |= 0x40000000;
-}
 
 // UNUSED: the game never calls this; dead-stripped at link.
 int MIXGetPan(AXVPB * p) {
@@ -748,60 +651,16 @@ int MIXGetPan(AXVPB * p) {
 }
 
 // UNUSED: the game never calls this; dead-stripped at link.
-void MIXSetSPan(AXVPB * p, int span) {
-    struct MIXChannel * channel;
-
-    channel = &__MIXChannel[p->index];
-    channel->span = __MIXClampPan(span);
-    __MIXSetPan(channel);
-    channel->mode |= 0x40000000;
-}
 
 // UNUSED: the game never calls this; dead-stripped at link.
-void MIXAdjustSPan(AXVPB * p, int span) {
-    struct MIXChannel * channel;
-
-    channel = &__MIXChannel[p->index];
-    channel->span = __MIXClampPan(channel->span + span);
-    __MIXSetPan(channel);
-    channel->mode |= 0x40000000;
-}
 
 // UNUSED: the game never calls this; dead-stripped at link.
-int MIXGetSPan(AXVPB * p) {
-    struct MIXChannel * channel;
-
-    channel = &__MIXChannel[p->index];
-    return channel->span;
-}
 
 // UNUSED: the game never calls this; dead-stripped at link.
-void MIXMute(AXVPB * p) {
-    struct MIXChannel * channel;
-
-    channel = &__MIXChannel[p->index];
-    channel->mode |= 0x10000004;
-}
 
 // UNUSED: the game never calls this; dead-stripped at link.
-void MIXUnMute(AXVPB * p) {
-    struct MIXChannel * channel;
-
-    channel = &__MIXChannel[p->index];
-    channel->mode &= 0xFFFFFFFB;
-    channel->mode |= 0x10000000;
-}
 
 // UNUSED: the game never calls this; dead-stripped at link.
-int MIXIsMute(AXVPB * p) {
-    struct MIXChannel * channel;
-
-    channel = &__MIXChannel[p->index];
-    if (channel->mode & 4) {
-        return 1;
-    }
-    return 0;
-}
 
 // UNUSED: the game never calls this; dead-stripped at link.
 void MIXSetFader(AXVPB * p, int dB) {
@@ -813,164 +672,11 @@ void MIXSetFader(AXVPB * p, int dB) {
 }
 
 // UNUSED: the game never calls this; dead-stripped at link.
-void MIXAdjustFader(AXVPB * p, int dB) {
-    struct MIXChannel * channel;
-
-    channel = &__MIXChannel[p->index];
-    channel->fader += dB;
-    channel->mode |= 0x40000000;
-}
 
 // UNUSED: the game never calls this; dead-stripped at link.
-int MIXGetFader(AXVPB * p) {
-    struct MIXChannel * channel;
-
-    channel = &__MIXChannel[p->index];
-    return channel->fader;
-}
 
 // UNUSED: the game never calls this; dead-stripped at link.
-void MIXSetDvdStreamFader(int dB) {
-    int db;
-
-    db = dB;
-    if (db < -0x31) {
-        db = -0x31;
-    }
-    if (db > 0) {
-        db = 0;
-    }
-    __MIXDvdStreamAttenUser = db;
-}
 
 // UNUSED: the game never calls this; dead-stripped at link.
-int MIXGetDvdStreamFader(void) {
-    return __MIXDvdStreamAttenUser;
-}
 
 // UNUSED: the game never calls this; dead-stripped at link.
-void MIXUpdateSettings(void) {
-    int i;
-    int setNewMixLevel;
-    int setNewInputLevel;
-    struct MIXChannel * c;
-    AXVPB * axvpb;
-    u16 mixerCtrl;
-    u16 * p;
-
-    for(i = 0; i < 64; i++) {
-        setNewInputLevel = 0;
-        setNewMixLevel = 0;
-        c = &__MIXChannel[i];
-        axvpb = c->axvpb;
-        if (axvpb) {
-            if (c->mode & 0x20000000) {
-                c->v = c->v1;
-                c->mode &= 0xDFFFFFFF;
-                setNewInputLevel = 1;
-            }
-            if (c->mode & 0x10000000) {
-                if (c->mode & 4) {
-                    c->v1 = 0U;
-                } else {
-                    c->v1 = __MIXGetVolume(c->input);
-                }
-                c->mode |= 0x20000000;
-                setNewInputLevel = 1;
-            }
-            if (c->mode & 0x80000000) {
-                c->vL = c->vL1;
-                c->vR = c->vR1;
-                c->vS = c->vS1;
-                c->vAL = c->vAL1;
-                c->vAR = c->vAR1;
-                c->vAS = c->vAS1;
-                c->vBL = c->vBL1;
-                c->vBR = c->vBR1;
-                c->vBS = c->vBS1;
-                c->mode &= 0x7FFFFFFF;
-                setNewMixLevel = 1;
-            }
-            if (c->mode & 0x40000000) {
-                c->vL1 = __MIXGetVolume(c->fader + c->l + c->f);
-                c->vR1 = __MIXGetVolume(c->fader + c->r + c->f);
-                c->vS1 = __MIXGetVolume(c->fader + c->b - 0x3C);
-                if (c->mode & 1) {
-                    c->vAL1 = __MIXGetVolume(c->auxA + c->l + c->f);
-                    c->vAR1 = __MIXGetVolume(c->auxA + c->r + c->f);
-                    c->vAS1 = __MIXGetVolume(c->auxA + c->b - 0x3C);
-                } else {
-                    c->vAL1 = __MIXGetVolume(c->fader + c->auxA + c->l + c->f);
-                    c->vAR1 = __MIXGetVolume(c->fader + c->auxA + c->r + c->f);
-                    c->vAS1 = __MIXGetVolume(c->fader + c->auxA + c->b - 0x3C);
-                }
-                if (c->mode & 2) {
-                    c->vBL1 = __MIXGetVolume(c->auxB + c->l + c->f);
-                    c->vBR1 = __MIXGetVolume(c->auxB + c->r + c->f);
-                    c->vBS1 = __MIXGetVolume(c->auxB + c->b - 0x3C);
-                } else {
-                    c->vBL1 = __MIXGetVolume(c->fader + c->auxB + c->l + c->f);
-                    c->vBR1 = __MIXGetVolume(c->fader + c->auxB + c->r + c->f);
-                    c->vBS1 = __MIXGetVolume(c->fader + c->auxB + c->b - 0x3C);
-                }
-                c->mode &= 0xBFFFFFFF;
-                c->mode |= 0x80000000;
-                setNewMixLevel = 1;
-            }
-            if (setNewInputLevel != 0 && axvpb) {
-                axvpb->pb.ve.currentVolume = c->v;
-                axvpb->pb.ve.currentDelta = ((c->v1 - c->v) / 160);
-                axvpb->sync |= 0x200;
-            }
-            if (setNewMixLevel != 0 && axvpb) {
-                p = (u16*)&axvpb->pb.mix;
-                *(p) = c->vL; p+=1;
-                *(p) = ((c->vL1 - c->vL) / 160); p+=1;
-                *(p) = c->vR; p+=1;
-                *(p) = ((c->vR1 - c->vR) / 160); p+=1;
-                *(p) = c->vAL; p+=1;
-                *(p) = ((c->vAL1 - c->vAL) / 160); p+=1;
-                *(p) = c->vAR; p+=1;
-                *(p) = ((c->vAR1 - c->vAR) / 160); p+=1;
-                *(p) = c->vBL; p+=1;
-                *(p) = ((c->vBL1 - c->vBL) / 160); p+=1;
-                *(p) = c->vBR; p+=1;
-                *(p) = ((c->vBR1 - c->vBR) / 160); p+=1;
-                *(p) = c->vBS; p+=1;
-                *(p) = ((c->vBS1 - c->vBS) / 160); p+=1;
-                *(p) = c->vS; p+=1;
-                *(p) = ((c->vS1 - c->vS) / 160); p+=1;
-                *(p) = c->vAS; p+=1;
-                *(p) = ((c->vAS1 - c->vAS) / 160); p+=1;
-                mixerCtrl = 0;
-                if ((axvpb->pb.mix.vAuxAL != 0) || (axvpb->pb.mix.vAuxAR != 0) || (axvpb->pb.mix.vAuxAS != 0)) {
-                    mixerCtrl |= 1;
-                }
-                if ((axvpb->pb.mix.vAuxBL != 0) || (axvpb->pb.mix.vAuxBR != 0) || (axvpb->pb.mix.vAuxBS != 0)) {
-                    mixerCtrl |= 2;
-                }
-                if ((axvpb->pb.mix.vS != 0) || (axvpb->pb.mix.vAuxAS != 0) || (axvpb->pb.mix.vAuxBS != 0)) {
-                    mixerCtrl |= 4;
-                }
-                if ((axvpb->pb.mix.vDeltaL != 0) || (axvpb->pb.mix.vDeltaR != 0) || (axvpb->pb.mix.vDeltaS != 0) || (axvpb->pb.mix.vDeltaAuxAL != 0) 
-                 || (axvpb->pb.mix.vDeltaAuxAR != 0) || (axvpb->pb.mix.vDeltaAuxAS != 0) || (axvpb->pb.mix.vDeltaAuxBL != 0) || (axvpb->pb.mix.vDeltaAuxBR != 0) 
-                 || (axvpb->pb.mix.vDeltaAuxBS != 0)) {
-                    mixerCtrl |= 8;
-                }
-                axvpb->pb.mixerCtrl = mixerCtrl;
-                axvpb->sync |= 0x12;
-            }
-        }
-    }
-    if (__MIXDvdStreamAttenUser > __MIXDvdStreamAttenCurrent) {
-        __MIXDvdStreamAttenCurrent += 1;
-        AISetStreamVolLeft(__MIXAIVolumeTable[__MIXDvdStreamAttenCurrent]);
-        AISetStreamVolRight(__MIXAIVolumeTable[__MIXDvdStreamAttenCurrent]);
-        return;
-    }
-    if (__MIXDvdStreamAttenUser < __MIXDvdStreamAttenCurrent) {
-        __MIXDvdStreamAttenCurrent -= 1;
-        AISetStreamVolLeft(__MIXAIVolumeTable[__MIXDvdStreamAttenCurrent]);
-        AISetStreamVolRight(__MIXAIVolumeTable[__MIXDvdStreamAttenCurrent]);
-    }
-}

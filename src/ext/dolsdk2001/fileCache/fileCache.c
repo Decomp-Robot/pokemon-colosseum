@@ -42,19 +42,6 @@ static u8 AllocCacheNode(DSCacheNodePtr *cacheNode, char *name)
 }
 
 // UNUSED: the game never calls this; dead-stripped at link.
-void DSEmptyCache(DSCachePtr cache)
-{
-    DSCacheNodePtr cursor;
-    DSCacheNodePtr cacheNode;
-
-    cursor = (DSCacheNodePtr)cache->CacheNodeList.Head;
-    while (cursor) {
-        cacheNode = cursor;
-        cursor = (DSCacheNodePtr)cursor->Link.Next;
-        DSRemoveListObject(&cache->CacheNodeList, (Ptr)cacheNode);
-        FreeCacheNode(&cacheNode);
-    }
-}
 
 // UNUSED: the game never calls this; dead-stripped at link.
 static DSCacheNodePtr FindCacheNode(DSCachePtr cache, char *name, Ptr data)
@@ -116,21 +103,6 @@ void DSInitCache(DSCachePtr cache)
 }
 
 // UNUSED: the game never calls this; dead-stripped at link.
-void DSPurgeCache(DSCachePtr cache)
-{
-    DSCacheNodePtr cursor;
-    DSCacheNodePtr cacheNode;
-
-    cursor = (DSCacheNodePtr)cache->CacheNodeList.Head;
-    while (cursor) {
-        cacheNode = cursor;
-        cursor = (DSCacheNodePtr)cursor->Link.Next;
-        if (cacheNode->ReferenceCount == 0) {
-            DSRemoveListObject(&cache->CacheNodeList, (Ptr)cacheNode);
-            FreeCacheNode(&cacheNode);
-        }
-    }
-}
 
 // UNUSED: the game never calls this; dead-stripped at link.
 void DSReleaseCacheObj(DSCachePtr cache, Ptr data)
@@ -150,14 +122,5 @@ void DSReleaseCacheObj(DSCachePtr cache, Ptr data)
 }
 
 // UNUSED: the game never calls this; dead-stripped at link.
-void DSSetCachePurgeFlag(DSCachePtr cache, u8 purgeFlag)
-{
-    cache->PurgeFlag = purgeFlag;
-}
 
 // UNUSED: the game never calls this; dead-stripped at link.
-void CSHInitDisplayCache(void)
-{
-    DSInitCache(&DODisplayCache);
-    DOCacheInitialized = TRUE;
-}

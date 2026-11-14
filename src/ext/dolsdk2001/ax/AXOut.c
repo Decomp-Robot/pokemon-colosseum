@@ -156,6 +156,3 @@ void __AXOutQuit(void) {
 }
 
 // UNUSED: the game never calls this; dead-stripped at link.
-void AXRegisterCallback(void (* callback)()) {
-    __AXUserFrameCallback = callback;
-}

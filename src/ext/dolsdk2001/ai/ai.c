@@ -70,10 +70,6 @@ void AIInitDMA(u32 start_addr, u32 length)
 }
 
 // UNUSED: the game never calls this; dead-stripped at link.
-BOOL AIGetDMAEnableFlag(void)
-{
-    return (__DSPRegs[27] & (1 << 15)) >> 15;
-}
 
 void AIStartDMA(void)
 {
@@ -86,28 +82,12 @@ void AIStopDMA(void)
 }
 
 // UNUSED: the game never calls this; dead-stripped at link.
-u32 AIGetDMABytesLeft(void)
-{
-    return (__DSPRegs[29] & 0x7FFF) << 5;
-}
 
 // UNUSED: the game never calls this; dead-stripped at link.
-u32 AIGetDMAStartAddr(void)
-{
-    return ((__DSPRegs[24] << 16) & 0x03FF0000) |  (__DSPRegs[25] & 0xFFE0);
-}
 
 // UNUSED: the game never calls this; dead-stripped at link.
-u32 AIGetDMALength(void)
-{
-    return (__DSPRegs[27] & 0x7FFF) << 5;
-}
 
 // UNUSED: the game never calls this; dead-stripped at link.
-BOOL AICheckInit(void)
-{
-    return __AI_init_flag;
-}
 
 // UNUSED: the game never calls this; dead-stripped at link.
 AISCallback AIRegisterStreamCallback(AISCallback callback)
@@ -123,10 +103,6 @@ AISCallback AIRegisterStreamCallback(AISCallback callback)
 }
 
 // UNUSED: the game never calls this; dead-stripped at link.
-u32 AIGetStreamSampleCount(void)
-{
-    return __AIRegs[2];
-}
 
 // UNUSED: the game never calls this; dead-stripped at link.
 void AIResetStreamSampleCount(void)
@@ -141,10 +117,6 @@ void AISetStreamTrigger(u32 trigger)
 }
 
 // UNUSED: the game never calls this; dead-stripped at link.
-u32 AIGetStreamTrigger(void)
-{
-    return __AIRegs[3];
-}
 
 void AISetStreamPlayState(u32 state)
 {

@@ -21,7 +21,6 @@ struct __GXFifoObj *CPUFifo;
 static int IsWGPipeRedirected;
 #endif
 
-
 static void __GXFifoReadEnable(void);
 static void __GXFifoReadDisable(void);
 static void __GXFifoLink(u8 arg0);
@@ -228,39 +227,8 @@ void GXSaveGPFifo(GXFifoObj *fifo)
 }
 
 // UNUSED: the game never calls this; dead-stripped at link.
-void GXGetGPStatus(GXBool *overhi, GXBool *underlow, GXBool *readIdle, GXBool *cmdIdle, GXBool *brkpt)
-{
-    gx->cpStatus = __cpReg[0];
-    *overhi   = GET_REG_FIELD(gx->cpStatus, 1, 0);
-    *underlow = (int)GET_REG_FIELD(gx->cpStatus, 1, 1);
-    *readIdle = (int)GET_REG_FIELD(gx->cpStatus, 1, 2);
-    *cmdIdle  = (int)GET_REG_FIELD(gx->cpStatus, 1, 3);
-    *brkpt    = (int)GET_REG_FIELD(gx->cpStatus, 1, 4);
-}
 
 // UNUSED: the game never calls this; dead-stripped at link.
-void GXGetFifoStatus(GXFifoObj *fifo, GXBool *overhi, GXBool *underflow, u32 *fifoCount, GXBool *cpuWrite, GXBool *gpRead, GXBool *fifowrap)
-{
-    struct __GXFifoObj *realFifo = (struct __GXFifoObj *)fifo;
-
-    *underflow = GX_FALSE;
-    *overhi    = GX_FALSE;
-    *fifoCount = 0;
-    *fifowrap  = GX_FALSE;
-    if (realFifo == GPFifo) {
-        SOME_MACRO1(realFifo);
-        SOME_MACRO2(realFifo);
-    }
-    if (realFifo == CPUFifo) {
-        __GXSaveCPUFifoAux(realFifo);
-        *fifowrap = (int)GET_REG_FIELD(__piReg[5], 1, 26);
-    }
-    *overhi    = (realFifo->count > realFifo->hiWatermark);
-    *underflow = (realFifo->count < realFifo->loWatermark);
-    *fifoCount = (realFifo->count);
-    *cpuWrite  = (CPUFifo == realFifo);
-    *gpRead    = (GPFifo == realFifo);
-}
 
 // UNUSED: the game never calls this; dead-stripped at link.
 void GXGetFifoPtrs(GXFifoObj *fifo, void **readPtr, void **writePtr)
@@ -301,13 +269,6 @@ u32 GXGetFifoSize(GXFifoObj *fifo)
 }
 
 // UNUSED: the game never calls this; dead-stripped at link.
-void GXGetFifoLimits(GXFifoObj *fifo, u32 *hi, u32 *lo)
-{
-     struct __GXFifoObj *realFifo = (struct __GXFifoObj *)fifo;
-
-    *hi = realFifo->hiWatermark;
-    *lo = realFifo->loWatermark;
-}
 
 GXBreakPtCallback GXSetBreakPtCallback(GXBreakPtCallback cb)
 {
@@ -339,16 +300,6 @@ void GXEnableBreakPt(void *break_pt)
 }
 
 // UNUSED: the game never calls this; dead-stripped at link.
-void GXDisableBreakPt(void)
-{
-    BOOL enabled = OSDisableInterrupts();
-
-    gx->cpEnable = gx->cpEnable & 0xFFFFFFFD;
-    gx->cpEnable = gx->cpEnable & 0xFFFFFFDF;
-    __cpReg[1] = gx->cpEnable;
-    __GXCurrentBP = NULL;
-    OSRestoreInterrupts(enabled);
-}
 
 void __GXFifoInit(void)
 {
@@ -393,14 +344,6 @@ void __GXWriteFifoIntReset(u8 hiWatermarkClr, u8 loWatermarkClr)
 }
 
 // UNUSED: the game never calls this; dead-stripped at link.
-void __GXInsaneWatermark(void)
-{
-    struct __GXFifoObj *realFifo = GPFifo;
-
-    realFifo->hiWatermark = realFifo->loWatermark + 512;
-    __cpReg[20] = PHYSICAL(realFifo->hiWatermark) & 0xFFFF;
-    __cpReg[21] = PHYSICAL(realFifo->hiWatermark) >> 16;
-}
 
 void __GXCleanGPFifo(void)
 {
@@ -458,19 +401,6 @@ GXFifoObj *GXGetGPFifo(void)
 }
 
 // UNUSED: the game never calls this; dead-stripped at link.
-u32 GXGetOverflowCount(void)
-{
-    return __GXOverflowCount;
-}
 
 // UNUSED: the game never calls this; dead-stripped at link.
-u32 GXResetOverflowCount(void)
-{
-    u32 oldcount;
-
-    oldcount = __GXOverflowCount;
-    __GXOverflowCount = 0;
-    return oldcount;
-}
-
 

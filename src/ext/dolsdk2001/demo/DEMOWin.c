@@ -21,14 +21,6 @@ static void __DEMOWinMenu_refesh_menu(struct STRUCT_DEMOWIN * w);
 static u16 __DEMOWinMenu_get_user_input(DEMOWinPadInfo *p);
 static void __DEMOWinList_refresh_list(struct STRUCT_DEMOWIN * w);
 
-void DEMOWinInit() {
-    __first_node = NULL;
-    __last_node = NULL;
-    __curr_node = NULL;
-    __rmp = DEMOGetRenderModeObj();
-    GXSetCopyClear((GXColor){0, 0, 0, 0}, 0xFFFFFF);
-}
-
 struct STRUCT_DEMOWIN * DEMOWinCreateWindow(s32 x1, s32 y1, s32 x2, s32 y2, char * caption, u16 scroll, void * func) {
     struct STRUCT_DEMOWIN * handle;
 
@@ -128,43 +120,6 @@ void DEMOWinSetWindowColor(struct STRUCT_DEMOWIN * handle, enum DEMOWinItem item
             ASSERTMSGLINE(0x183, FALSE, "DEMOWinSetWinColor(): Unknown item\n");
             return;
     }
-}
-
-void DEMOWinLogPrintf(struct STRUCT_DEMOWIN * handle, char * fmt, ...) {
-    va_list vlist;
-    char buffer[128];
-    u16 len;
-    u16 i;
-    int old;
-    u16 index;
-
-    va_start(vlist, fmt);
-    vsprintf(buffer, fmt, vlist);
-    
-    old = OSDisableInterrupts();
-    len = strlen(buffer);
-    for(i = 0; i < len; i++) {
-        if(buffer[i] == 0xA) {
-            handle->curr_output_line = (handle->curr_output_line + 1) % handle->total_lines;
-            handle->curr_view_line = (handle->curr_view_line + 1) % handle->total_lines;
-            handle->curr_output_col = 0;
-            index = handle->curr_output_col + (handle->curr_output_line * handle->char_width);
-            memset(&handle->buffer[index], ' ', handle->char_width);
-        } else {
-            index = handle->curr_output_col + (handle->curr_output_line * handle->char_width);
-            handle->buffer[index] = buffer[i];
-            handle->curr_output_col++;
-        }
-        if (handle->curr_output_col >= handle->char_width) {
-            handle->curr_output_col = 0;
-            handle->curr_output_line = (handle->curr_output_line + 1) % handle->total_lines;
-            handle->curr_view_line = (handle->curr_view_line + 1) % handle->total_lines;
-            index = handle->curr_output_col + (handle->curr_output_line * handle->char_width);
-            memset(&handle->buffer[index], ' ', handle->char_width);
-        }
-    }
-    OSRestoreInterrupts(old);
-    va_end(vlist);
 }
 
 void DEMOWinPrintfXY(struct STRUCT_DEMOWIN * handle, u16 col, u16 row, char * fmt, ...) {
@@ -801,16 +756,6 @@ static unsigned short __DEMOWinMenu_get_user_input(DEMOWinPadInfo *p) {
     return user_input;
 }
 
-void DEMOWinSetRepeat(unsigned long threshold, unsigned long rate) {
-    __DEMOWIN_PAD_repeat_rate = rate;
-    __DEMOWIN_PAD_repeat_threshold = threshold;
-}
-
-void DEMOWinResetRepeat() {
-    __DEMOWIN_PAD_repeat_threshold = 0xF;
-    __DEMOWIN_PAD_repeat_rate = 2;
-}
-
 struct STRUCT_LISTBOX * DEMOWinCreateListWindow(struct STRUCT_LISTBOX * list, unsigned short x, unsigned short y) {
     struct STRUCT_LISTBOX_ITEM * ptr;
 
@@ -836,13 +781,6 @@ struct STRUCT_LISTBOX * DEMOWinCreateListWindow(struct STRUCT_LISTBOX * list, un
         return list;
     }
     return NULL;
-}
-
-void DEMOWinDestroyListWindow(struct STRUCT_LISTBOX * list) {
-    if (list->handle) {
-        DEMOWinCloseWindow(list->handle);
-        DEMOWinDestroyWindow(list->handle);
-    }
 }
 
 static void __DEMOWinList_refresh_list(struct STRUCT_DEMOWIN * w) {
@@ -874,10 +812,6 @@ static void __DEMOWinList_refresh_list(struct STRUCT_DEMOWIN * w) {
         }
         j++;
     }
-}
-
-void DEMOWinListSetCursor(struct STRUCT_LISTBOX * list, int x) {
-    list->cursor_state = x;
 }
 
 long DEMOWinListScrollList(struct STRUCT_LISTBOX * list, unsigned long dir) {

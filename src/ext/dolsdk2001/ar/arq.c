@@ -110,9 +110,6 @@ void ARQInit(void) {
 }
 
 // UNUSED: the game never calls this; dead-stripped at link.
-void ARQReset(void) {
-    __ARQ_init_flag = 0;
-}
 
 void ARQPostRequest(struct ARQRequest * request, u32 owner, u32 type, u32 priority, u32 source, u32 dest, u32 length, ARQCallback callback) {
     int level;
@@ -161,87 +158,12 @@ void ARQPostRequest(struct ARQRequest * request, u32 owner, u32 type, u32 priori
 }
 
 // UNUSED: the game never calls this; dead-stripped at link.
-void ARQRemoveRequest(struct ARQRequest * request) {
-    struct ARQRequest * thisRequest;
-    int level;
-
-    level = OSDisableInterrupts();
-    __ARQInitTempQueue();
-    for(thisRequest = __ARQRequestQueueHi; thisRequest; thisRequest = thisRequest->next) {
-        if (thisRequest != request) {
-            __ARQPushTempQueue(thisRequest);
-        }
-    }
-    __ARQRequestQueueHi = __ARQRequestQueueTemp;
-    __ARQRequestTailHi = __ARQRequestTailTemp;
-    __ARQInitTempQueue();
-    for(thisRequest = __ARQRequestQueueLo; thisRequest; thisRequest = thisRequest->next) {
-        if (thisRequest != request) {
-            __ARQPushTempQueue(thisRequest);
-        }
-    }
-    __ARQRequestQueueLo = __ARQRequestQueueTemp;
-    __ARQRequestTailLo = __ARQRequestTailTemp;
-    if ((__ARQRequestPendingLo) && (__ARQRequestPendingLo == request) && (__ARQCallbackLo == 0)) {
-        __ARQRequestPendingLo = NULL;
-    }
-    OSRestoreInterrupts(level);
-}
 
 // UNUSED: the game never calls this; dead-stripped at link.
-void ARQRemoveOwnerRequest(u32 owner) {
-    struct ARQRequest * thisRequest;
-    int level;
-
-    level = OSDisableInterrupts();
-    __ARQInitTempQueue();
-    for(thisRequest = __ARQRequestQueueHi; thisRequest; thisRequest = thisRequest->next) {
-        if (thisRequest->owner != owner) {
-            __ARQPushTempQueue(thisRequest);
-        }
-    }
-    __ARQRequestQueueHi = __ARQRequestQueueTemp;
-    __ARQRequestTailHi = __ARQRequestTailTemp;
-    __ARQInitTempQueue();
-    for(thisRequest = __ARQRequestQueueLo; thisRequest; thisRequest = thisRequest->next) {
-        if (thisRequest->owner != owner) {
-            __ARQPushTempQueue(thisRequest);
-        }
-    }
-    __ARQRequestQueueLo = __ARQRequestQueueTemp;
-    __ARQRequestTailLo = __ARQRequestTailTemp;
-    if ((__ARQRequestPendingLo) && (__ARQRequestPendingLo->owner == owner) && (__ARQCallbackLo == 0)) {
-        __ARQRequestPendingLo = NULL;
-    }
-    OSRestoreInterrupts(level);
-}
 
 // UNUSED: the game never calls this; dead-stripped at link.
-void ARQFlushQueue(void) {
-    int level;
-
-    level = OSDisableInterrupts();
-    __ARQRequestQueueHi = NULL;
-    __ARQRequestTailHi = NULL;
-    __ARQRequestQueueLo = NULL;
-    __ARQRequestTailLo = NULL;
-    if (__ARQCallbackLo == 0) {
-        __ARQRequestPendingLo = NULL;
-    }
-    OSRestoreInterrupts(level);
-}
 
 // UNUSED: the game never calls this; dead-stripped at link.
-void ARQSetChunkSize(u32 size) {
-    u32 i;
-
-    i = size & 0x1F;
-    if (i) {
-        __ARQChunkSize = size + (0x20 - i);
-        return;
-    }
-    __ARQChunkSize = size;
-}
 
 u32 ARQGetChunkSize(void) {
     return __ARQChunkSize;

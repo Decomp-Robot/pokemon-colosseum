@@ -40,49 +40,8 @@ static int GetRTC(unsigned long * rtc) {
 }
 
 // UNUSED: the game never calls this; dead-stripped at link.
-int __OSGetRTC(unsigned long * rtc) {
-    int err;
-    unsigned long t0;
-    unsigned long t1;
-    int i;
-
-    for(i = 0; i < 16; i++) {
-        err = 0;
-        err |= !GetRTC(&t0);
-        err |= !GetRTC(&t1);
-        if (err) {
-            break;
-        }
-        if (t0 == t1) {
-            rtc[0] = t0;
-            return 1;
-        }
-    }
-    return 0;
-}
 
 // UNUSED: the game never calls this; dead-stripped at link.
-int __OSSetRTC(unsigned long rtc) {
-    int err;
-    unsigned long cmd;
-
-    if (EXILock(0, 1, NULL) == 0) {
-        return 0;
-    }
-    if (EXISelect(0, 1, 3) == 0) {
-        EXIUnlock(0);
-        return 0;
-    }
-    cmd = 0xA0000000;
-    err = 0;
-    err |= !EXIImm(0, &cmd, 4, 1, 0);
-    err |= !EXISync(0);
-    err |= !EXIImm(0, &rtc, 4, 1, 0);
-    err |= !EXISync(0);
-    err |= !EXIDeselect(0);
-    EXIUnlock(0);
-    return !err;
-}
 
 static int ReadSram(void * buffer) {
     int err;
@@ -210,26 +169,6 @@ int __OSSyncSram() {
 }
 
 // UNUSED: the game never calls this; dead-stripped at link.
-int __OSCheckSram() {
-    unsigned short * p;
-    unsigned short checkSum;
-    unsigned short checkSumInv;
-    struct OSSram * sram;
-    int unused;
-
-    ASSERTLINE(0x1A9, Scb.locked);
-
-    checkSum = checkSumInv = 0;
-
-    sram = (struct OSSram *)&Scb.sram[0];
-
-    for (p = (void*)&sram->counterBias; p < (u16*)&Scb.sram[0x14]; p++) {
-        checkSum += *p;
-        checkSumInv += ~(*p);
-    }
-
-    return (sram->checkSum == checkSum && sram->checkSumInv == checkSumInv);
-}
 
 int __OSReadROM(void * buffer, long length, long offset) {
     int err;
@@ -269,28 +208,6 @@ static void __OSReadROMCallback(long chan) {
 }
 
 // UNUSED: the game never calls this; dead-stripped at link.
-int __OSReadROMAsync(void * buffer, long length, long offset, void (* callback)()) {
-    int err;
-    unsigned long cmd;
-
-    ASSERTLINE(0x203, length <= 1024);
-    ASSERTLINE(0x204, callback);
-    DCInvalidateRange(buffer, length);
-    Scb.callback = callback;
-    if (EXILock(0, 1, NULL) == 0) {
-        return 0;
-    }
-    if (EXISelect(0, 1, 3) == 0) {
-        EXIUnlock(0);
-        return 0;
-    }
-    cmd = offset << 6;
-    err = 0;
-    err |= !EXIImm(0, &cmd, 4, 1, 0);
-    err |= !EXISync(0);
-    err |= !EXIDma(0, buffer, length, 0, (void*)__OSReadROMCallback);
-    return !err;
-}
 
 unsigned long OSGetSoundMode() {
     struct OSSram * sram = __OSLockSram();
@@ -351,22 +268,6 @@ unsigned long OSGetVideoMode() {
 }
 
 // UNUSED: the game never calls this; dead-stripped at link.
-void OSSetVideoMode(unsigned long mode) {
-    struct OSSram * sram;
-    int unused;
-
-    ASSERTLINE(0x249, OS_VIDEO_MODE_NTSC <= mode && mode <= OS_VIDEO_MODE_MPAL);
-
-    mode &= 3;
-    sram = __OSLockSram();
-    if (mode == (sram->flags & 3)) {
-        __OSUnlockSram(0);
-        return;
-    }
-    sram->flags &= 0xFFFFFFFC;
-    sram->flags |= mode;
-    __OSUnlockSram(1);
-}
 
 unsigned char OSGetLanguage() {
     struct OSSram * sram = __OSLockSram();
@@ -396,17 +297,6 @@ void OSSetWirelessID(long chan, unsigned short id) {
 }
 
 // UNUSED: the game never calls this; dead-stripped at link.
-void OSSetLanguage(unsigned char language) {
-    struct OSSram * sram = __OSLockSram();
-    int unused;
-
-    if (language == sram->language) {
-        __OSUnlockSram(0);
-        return;
-    }
-    sram->language = language;
-    __OSUnlockSram(1);
-}
 
 // UNUSED: the game never calls this; dead-stripped at link.
 unsigned char __OSGetBootMode() {
@@ -417,17 +307,3 @@ unsigned char __OSGetBootMode() {
 }
 
 // UNUSED: the game never calls this; dead-stripped at link.
-void __OSSetBootMode(unsigned char ntd) {
-    struct OSSram * sram;
-    int unused;
-
-    ntd &= 0x80;
-    sram = __OSLockSram();
-    if (ntd == (sram->ntd & 0x80U)) {
-        __OSUnlockSram(0);
-        return;
-    }
-    sram->ntd &= 0xFFFFFF7F;
-    sram->ntd |= ntd;
-    __OSUnlockSram(1);
-}

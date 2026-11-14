@@ -92,7 +92,6 @@ _return:
   // clang-format on
 }
 
-
 static asm void __OSSaveFPUContext(register u32, register u32, register OSContext* fpuContext) {
   // clang-format off
   nofralloc
@@ -361,15 +360,6 @@ asm u32 OSGetStackPointer() {
 }
 
 // UNUSED: the game never calls this; dead-stripped at link.
-asm u32 OSSwitchStack(register u32 newsp) {
-  // clang-format off
-  nofralloc
-  mr  r5, r1
-  mr  r1, newsp
-  mr  r3, r5
-  blr
-  // clang-format on
-}
 
 asm int OSSwitchFiber(register u32 pc, register u32 newsp) {
   // clang-format off
@@ -408,7 +398,6 @@ asm void OSInitContext(register OSContext* context, register u32 pc, register u3
     li      r0,  0x0
     stw     r0,  OS_CONTEXT_CR(context)
     stw     r0,  OS_CONTEXT_XER(context)
-
 
     stw     r2,  OS_CONTEXT_R2(context)
     stw     r13, OS_CONTEXT_R13(context)

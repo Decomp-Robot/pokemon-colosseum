@@ -224,14 +224,6 @@ static void __SYNReleaseChannelNotes(struct SYNSYNTH * synth, u8 midiChannel) {
 }
 
 // UNUSED: the game never calls this; dead-stripped at link.
-void __SYNClearAllNotes(struct SYNSYNTH * synth) {
-    u8 i;
-
-    ASSERTLINE(0xBD, synth);
-    for(i = 0; i < 16; i++) {
-        __SYNReleaseChannelNotes(synth, i);
-    }
-}
 
 // UNUSED: the game never calls this; dead-stripped at link.
 void __SYNSetController(struct SYNSYNTH * synth, u8 midiChannel, u8 function, u8 value) {
@@ -494,9 +486,3 @@ void __SYNRunInputBufferEvents(struct SYNSYNTH * synth) {
 }
 
 // UNUSED: the game never calls this; dead-stripped at link.
-u8 SYNGetMidiController(struct SYNSYNTH * synth, u8 midiChannel, u8 function) {
-    ASSERTLINE(0x2A6, synth);
-    ASSERTLINE(0x2A7, midiChannel < 16);
-    ASSERTLINE(0x2A8, function < 128);
-    return synth->controller[midiChannel][function];
-}

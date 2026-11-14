@@ -8,7 +8,6 @@
 
 #include "__os.h"
 
-
 // The original build did not pool literals: each string is its own .data object.
 
 void EnableMetroTRKInterrupts(void);
@@ -93,9 +92,6 @@ static asm void OSExceptionVector(void);
 void OSDefaultExceptionHandler(u8 exception, OSContext* context);
 
 // UNUSED: the game never calls this; dead-stripped at link.
-u32 __OSIsDebuggerPresent(void) {
-    return *(u32*)OSPhysicalToCached(0x40);
-}
 
 asm void __OSFPRInit(void) {
     // clang-format off

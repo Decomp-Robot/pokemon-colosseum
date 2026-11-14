@@ -6,14 +6,6 @@
 #define qr0 0
 
 // UNUSED: the game never calls this; dead-stripped at link.
-void C_VECAdd(Vec *a, Vec *b, Vec *c) {
-    ASSERTMSGLINE(0x57, a, "VECAdd():  NULL VecPtr 'a' ");
-    ASSERTMSGLINE(0x58, b, "VECAdd():  NULL VecPtr 'b' ");
-    ASSERTMSGLINE(0x59, c, "VECAdd():  NULL VecPtr 'ab' ");
-    c->x = a->x + b->x;
-    c->y = a->y + b->y;
-    c->z = a->z + b->z;
-}
 
 asm void PSVECAdd(register Vec *a, register Vec *b, register Vec *c) {
     psq_l f2, Vec.x(a), 0, qr0
@@ -27,14 +19,6 @@ asm void PSVECAdd(register Vec *a, register Vec *b, register Vec *c) {
 }
 
 // UNUSED: the game never calls this; dead-stripped at link.
-void C_VECSubtract(Vec *a, Vec *b, Vec *c) {
-    ASSERTMSGLINE(0x9C, a, "VECSubtract():  NULL VecPtr 'a' ");
-    ASSERTMSGLINE(0x9D, b, "VECSubtract():  NULL VecPtr 'b' ");
-    ASSERTMSGLINE(0x9E, c, "VECSubtract():  NULL VecPtr 'a_b' ");
-    c->x = a->x - b->x;
-    c->y = a->y - b->y;
-    c->z = a->z - b->z;
-}
 
 asm void PSVECSubtract(register Vec *a, register Vec *b, register Vec *c) {
     psq_l f2, Vec.x(a), 0, qr0
@@ -48,13 +32,6 @@ asm void PSVECSubtract(register Vec *a, register Vec *b, register Vec *c) {
 }
 
 // UNUSED: the game never calls this; dead-stripped at link.
-void C_VECScale(Vec *src, Vec *dst, f32 scale) {
-    ASSERTMSGLINE(0xE2, src, "VECScale():  NULL VecPtr 'src' ");
-    ASSERTMSGLINE(0xE3, dst, "VECScale():  NULL VecPtr 'dst' ");
-    dst->x = (src->x * scale);
-    dst->y = (src->y * scale);
-    dst->z = (src->z * scale);
-}
 
 // The retail body scales both pairs in place with ps_muls0, while the older
 // reference revision broadcast the scalar first (ps_merge00 into f4 and
@@ -69,18 +46,6 @@ asm void PSVECScale(register Vec *src, register Vec *dst, register f32 mult) {
 }
 
 // UNUSED: the game never calls this; dead-stripped at link.
-void C_VECNormalize(Vec *src, Vec *unit) {
-    f32 mag;
-
-    ASSERTMSGLINE(0x127, src, "VECNormalize():  NULL VecPtr 'src' ");
-    ASSERTMSGLINE(0x128, unit, "VECNormalize():  NULL VecPtr 'unit' ");
-    mag = (src->z * src->z) + ((src->x * src->x) + (src->y * src->y));
-    ASSERTMSGLINE(0x12D, 0.0f != mag, "VECNormalize():  zero magnitude vector ");
-    mag = 1.0f/ sqrtf(mag);
-    unit->x = src->x * mag;
-    unit->y = src->y * mag;
-    unit->z = src->z * mag;
-}
 
 // The retail body takes the scalar single-precision reciprocal square root
 // (frsqrte) and folds the Newton-Raphson refinement into one fnmsubs, where
@@ -116,14 +81,6 @@ void PSVECNormalize(register Vec *vec1, register Vec *dst) {
 }
 
 // UNUSED: the game never calls this; dead-stripped at link.
-f32 C_VECSquareMag(Vec *v) {
-    f32 sqmag;
-
-    ASSERTMSGLINE(0x182, v, "VECMag():  NULL VecPtr 'v' ");
-
-    sqmag = v->z * v->z + ((v->x * v->x) + (v->y * v->y));
-    return sqmag;
-}
 
 // The retail body keeps the sum in f0/f1 and ends on ps_sum0 without the
 // extra trailing blr the reference revision has to comment around.
@@ -178,14 +135,6 @@ f32 VECMag(register Vec *v) {
 }
 
 // UNUSED: the game never calls this; dead-stripped at link.
-f32 C_VECDotProduct(Vec *a, Vec *b) {
-    f32 dot;
-
-    ASSERTMSGLINE(0x1D1, a, "VECDotProduct():  NULL VecPtr 'a' ");
-    ASSERTMSGLINE(0x1D2, b, "VECDotProduct():  NULL VecPtr 'b' ");
-    dot = (a->z * b->z) + ((a->x * b->x) + (a->y * b->y));
-    return dot;
-}
 
 asm f32 PSVECDotProduct(register Vec *vec1, register Vec *vec2) {
     psq_l f2, Vec.y(vec1), 0, qr0
@@ -198,20 +147,6 @@ asm f32 PSVECDotProduct(register Vec *vec1, register Vec *vec2) {
 }
 
 // UNUSED: the game never calls this; dead-stripped at link.
-void C_VECCrossProduct(Vec *a, Vec *b, Vec *axb) {
-    Vec vTmp;
-
-    ASSERTMSGLINE(0x20F, a, "VECCrossProduct():  NULL VecPtr 'a' ");
-    ASSERTMSGLINE(0x210, b, "VECCrossProduct():  NULL VecPtr 'b' ");
-    ASSERTMSGLINE(0x211, axb, "VECCrossProduct():  NULL VecPtr 'axb' ");
-
-    vTmp.x = (a->y * b->z) - (a->z * b->y);
-    vTmp.y = (a->z * b->x) - (a->x * b->z);
-    vTmp.z = (a->x * b->y) - (a->y * b->x);
-    axb->x = vTmp.x;
-    axb->y = vTmp.y;
-    axb->z = vTmp.z;
-}
 
 asm void PSVECCrossProduct(register Vec *vec1, register Vec *vec2, register Vec *dst) {
     psq_l f1, Vec.x(vec2), 0, qr0
@@ -278,14 +213,6 @@ void VECReflect(Vec *src, Vec *normal, Vec *dst) {
 }
 
 // UNUSED: the game never calls this; dead-stripped at link.
-f32 C_VECSquareDistance(Vec *a, Vec *b) {
-    Vec diff;
-
-    diff.x = a->x - b->x;
-    diff.y = a->y - b->y;
-    diff.z = a->z - b->z;
-    return (diff.z * diff.z) + ((diff.x * diff.x) + (diff.y * diff.y));
-}
 
 // The retail body accumulates in f0-f2 (subtracting the y pair first and
 // keeping the y products in f2) rather than in the f2-f6 assignment the

@@ -95,7 +95,3 @@ long __CARDWrite(long chan, unsigned long addr, long length, void * dst, void (*
 }
 
 // UNUSED: the game never calls this; dead-stripped at link.
-long CARDGetXferredBytes(long chan) {
-    ASSERTLINE(0xB4, 0 <= chan && chan < 2);
-    return __CARDBlock[chan].xferred;
-}

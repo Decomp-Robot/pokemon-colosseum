@@ -361,53 +361,8 @@ L_00000344:
 }
 
 // UNUSED: the game never calls this; dead-stripped at link.
-int AXFXChorusInit(struct AXFX_CHORUS * c) {
-    long * left;
-    long * right;
-    long * sur;
-    u32 i;
-    int old;
-
-    old = OSDisableInterrupts();
-    c->work.lastLeft[0] = OSAllocFromHeap(__OSCurrHeap, 0x1680);
-    if (c->work.lastLeft[0] != NULL) {
-        c->work.lastRight[0] = (void*)(c->work.lastLeft[0] + 0x1E0);
-        c->work.lastSur[0] = (void*)(c->work.lastRight[0] + 0x1E0);
-        for(i = 1; i < 3; i++) {
-            c->work.lastLeft[i] = (void*)&c->work.lastLeft[0][i * 0xA0];
-            c->work.lastRight[i] = (void*)&c->work.lastRight[0][i * 0xA0];
-            c->work.lastSur[i] = (void*)&c->work.lastSur[0][i * 0xA0];
-        }
-        left = c->work.lastLeft[0];
-        right = c->work.lastRight[0];
-        sur = c->work.lastSur[0];
-        for(i = 0; i < 0x140; i++) {
-            *left++ = 0;
-            *right++ = 0;
-            *sur++ = 0;
-        }
-        c->work.currentLast = 1;
-        c->work.oldLeft[0] = c->work.oldLeft[1] = c->work.oldLeft[2] = c->work.oldLeft[3] = 0;
-        c->work.oldRight[0] = c->work.oldRight[1] = c->work.oldRight[2] = c->work.oldRight[3] = 0;
-        c->work.oldSur[0] = c->work.oldSur[1] = c->work.oldSur[2] = c->work.oldSur[3] = 0;
-        c->work.src.trigger = 0x1E0;
-        c->work.src.target = 0;
-        OSRestoreInterrupts(old);
-        return AXFXChorusSettings(c);
-    }
-    OSRestoreInterrupts(old);
-    return 0;
-}
 
 // UNUSED: the game never calls this; dead-stripped at link.
-int AXFXChorusShutdown(struct AXFX_CHORUS * c) {
-    int old;
-
-    old = OSDisableInterrupts();
-    OSFreeToHeap(__OSCurrHeap, c->work.lastLeft[0]);
-    OSRestoreInterrupts(old);
-    return 1;
-}
 
 // UNUSED: the game never calls this; dead-stripped at link.
 int AXFXChorusSettings(struct AXFX_CHORUS * c) {
@@ -425,64 +380,3 @@ int AXFXChorusSettings(struct AXFX_CHORUS * c) {
 }
 
 // UNUSED: the game never calls this; dead-stripped at link.
-void AXFXChorusCallback(struct AXFX_BUFFERUPDATE * bufferUpdate, struct AXFX_CHORUS * chorus) {
-    long * leftD;
-    long * rightD;
-    long * surD;
-    long * leftS;
-    long * rightS;
-    long * surS;
-    u32 i;
-    u8 nextCurrentLast;
-
-    nextCurrentLast = (chorus->work.currentLast + 1) % 3;
-    leftD = chorus->work.lastLeft[nextCurrentLast];
-    rightD = chorus->work.lastRight[nextCurrentLast];
-    surD = chorus->work.lastSur[nextCurrentLast];
-    leftS = bufferUpdate->left;
-    rightS = bufferUpdate->right;
-    surS = bufferUpdate->surround;
-    for(i = 0; i < 0xA0; i++) {
-        *leftD++ = *leftS++;
-        *rightD++ = *rightS++;
-        *surD++ = *surS++;
-    }
-    chorus->work.src.pitchHi = (chorus->work.pitchOffset >> 0x10) + 1;
-    chorus->work.src.pitchLo = (chorus->work.pitchOffset & 0xFFFF) << 0x10;
-    if(--chorus->work.pitchOffsetPeriodCount == 0) {
-        chorus->work.pitchOffsetPeriodCount = chorus->work.pitchOffsetPeriod;
-        chorus->work.pitchOffset = -chorus->work.pitchOffset;
-    }
-    for(i = 0; i < 3; i++) {
-        chorus->work.src.posHi = chorus->work.currentPosHi;
-        chorus->work.src.posLo = chorus->work.currentPosLo;
-        switch (i) {                  
-        case 0:
-            chorus->work.src.smpBase = chorus->work.lastLeft[0];
-            chorus->work.src.dest = bufferUpdate->left;
-            chorus->work.src.old = &chorus->work.oldLeft[0];
-            break;
-        case 1:
-            chorus->work.src.smpBase = chorus->work.lastRight[0];
-            chorus->work.src.dest = bufferUpdate->right;
-            chorus->work.src.old = &chorus->work.oldRight[0];
-            break;
-        case 2:
-            chorus->work.src.smpBase = chorus->work.lastSur[0];
-            chorus->work.src.dest = bufferUpdate->surround;
-            chorus->work.src.old = &chorus->work.oldSur[0];
-            break;
-        }
-        switch(chorus->work.src.pitchHi) {
-            case 0:
-                do_src1(&chorus->work.src);
-                break;
-            case 1:
-                do_src2(&chorus->work.src);
-                break;
-        }
-    }
-    chorus->work.currentPosHi = (chorus->work.src.posHi % 480);
-    chorus->work.currentPosLo = chorus->work.src.posLo;
-    chorus->work.currentLast = nextCurrentLast;
-}

@@ -12,13 +12,6 @@ void DMAErrorHandler(OSError error, OSContext* context, ...);
 
 /* clang-format off */
 // UNUSED: the game never calls this; dead-stripped at link.
-asm void DCFlashInvalidate(void) {
-  nofralloc
-  mfspr r3, HID0
-  ori r3, r3, 0x400
-  mtspr HID0, r3
-  blr
-}
 
 asm void DCEnable(void) {
   nofralloc
@@ -30,68 +23,20 @@ asm void DCEnable(void) {
 }
 
 // UNUSED: the game never calls this; dead-stripped at link.
-asm void DCDisable(void) {
-  nofralloc
-  sync
-  mfspr r3, HID0
-  rlwinm r3, r3, 0, 18, 16
-  mtspr HID0, r3
-  blr
-}
 
 // UNUSED: the game never calls this; dead-stripped at link.
-asm void DCFreeze(void) {
-  nofralloc
-  sync
-  mfspr r3, HID0
-  ori r3, r3, 0x1000
-  mtspr HID0, r3
-  blr
-}
 
 // UNUSED: the game never calls this; dead-stripped at link.
-asm void DCUnfreeze(void) {
-  nofralloc
-  mfspr r3, HID0
-  rlwinm r3, r3, 0, 20, 18
-  mtspr HID0, r3
-  blr
-}
 
 // UNUSED: the game never calls this; dead-stripped at link.
-asm void DCTouchLoad(register void * addr) {
-  nofralloc
-  dcbt r0, addr
-  blr
-}
 
 // UNUSED: the game never calls this; dead-stripped at link.
-asm void DCBlockZero(register void * addr) {
-  nofralloc
-  dcbz r0, addr
-  blr
-}
 
 // UNUSED: the game never calls this; dead-stripped at link.
-asm void DCBlockStore(register void * addr) {
-  nofralloc
-  dcbst r0, addr
-  blr
-}
 
 // UNUSED: the game never calls this; dead-stripped at link.
-asm void DCBlockFlush(register void * addr) {
-  nofralloc
-  dcbf r0, addr
-  blr
-}
 
 // UNUSED: the game never calls this; dead-stripped at link.
-asm void DCBlockInvalidate(register void * addr) {
-  nofralloc
-  dcbi r0, addr
-  blr
-}
 
 asm void DCInvalidateRange(register void* addr, register u32 nBytes) {
   nofralloc
@@ -109,7 +54,6 @@ asm void DCInvalidateRange(register void* addr, register u32 nBytes) {
   bdnz @1
   blr
 }
-
 
 asm void DCFlushRange(register void* addr, register u32 nBytes) {
   nofralloc
@@ -165,7 +109,6 @@ asm void DCFlushRangeNoSync(register void* addr, register u32 nBytes) {
   blr
 }
 
-
 asm void DCStoreRangeNoSync(register void* addr, register u32 nBytes) {
   nofralloc
   cmplwi nBytes, 0
@@ -203,25 +146,6 @@ asm void DCZeroRange(register void* addr, register u32 nBytes) {
 }
 
 // UNUSED: the game never calls this; dead-stripped at link.
-asm void DCTouchRange(register void * addr, register u32 nBytes) {
-  nofralloc
-  cmplwi nBytes, 0
-  blelr
-  clrlwi. r5, addr, 27
-  beq @2
-  addi nBytes, nBytes, 32
-@2
-  addi nBytes, nBytes, 31
-  srwi nBytes, nBytes, 5
-  mtctr nBytes
-
-@1
-  dcbt r0, addr
-  addi addr, addr, 32
-  bdnz @1
-
-  blr
-}
 
 asm void ICInvalidateRange(register void* addr, register u32 nBytes) {
   nofralloc
@@ -243,7 +167,6 @@ asm void ICInvalidateRange(register void* addr, register u32 nBytes) {
   blr
 }
 
-
 asm void ICFlashInvalidate(void) {
   nofralloc
   mfspr r3, HID0
@@ -262,40 +185,12 @@ asm void ICEnable(void) {
 }
 
 // UNUSED: the game never calls this; dead-stripped at link.
-asm void ICDisable(void) {
-  nofralloc
-  isync
-  mfspr r3, HID0
-  rlwinm r3, r3, 0, 17, 15
-  mtspr HID0, r3
-  blr
-}
 
 // UNUSED: the game never calls this; dead-stripped at link.
-asm void ICFreeze(void) {
-  nofralloc
-  isync
-  mfspr r3, HID0
-  ori r3, r3, 0x2000
-  mtspr HID0, r3
-  blr
-}
 
 // UNUSED: the game never calls this; dead-stripped at link.
-asm void ICUnfreeze(void) {
-  nofralloc
-  mfspr r3, HID0
-  rlwinm r3, r3, 0, 19, 17
-  mtspr HID0, r3
-  blr
-}
 
 // UNUSED: the game never calls this; dead-stripped at link.
-asm void ICBlockInvalidate(register void * addr) {
-  nofralloc
-  icbi r0, addr
-  blr
-}
 
 // UNUSED: the game never calls this; dead-stripped at link.
 asm void ICSync(void) {
@@ -377,7 +272,6 @@ void LCEnable(void) {
   OSRestoreInterrupts(enabled);
 }
 
-
 asm void LCDisable(void) {
   nofralloc
   lis     r3, LC_BASE_PREFIX
@@ -394,15 +288,6 @@ asm void LCDisable(void) {
 }
 
 // UNUSED: the game never calls this; dead-stripped at link.
-asm void LCAllocOneTag(register BOOL invalidate, register void * tag) {
-  nofralloc
-  cmpwi invalidate, 0
-  beq @1
-  dcbi r0, tag
-@1
-  dcbz_l r0, tag
-  blr
-}
 
 // UNUSED: the game never calls this; dead-stripped at link.
 asm void LCAllocTags(register BOOL invalidate, register void * startTag, register u32 numBlocks) {
@@ -472,18 +357,6 @@ void LCAlloc(void * addr, u32 nBytes) {
 }
 
 // UNUSED: the game never calls this; dead-stripped at link.
-void LCAllocNoInvalidate(void * addr, u32 nBytes) {
-    unsigned long numBlocks = nBytes >> 5;
-    unsigned long hid2 = PPCMfhid2();
-
-    ASSERTMSGLINE(0x55F, !((u32)addr & 31), "LCAllocNoFlush(): addr must be 32 byte aligned");
-    ASSERTMSGLINE(0x561, !((u32)nBytes & 31), "LCAllocNoFlush(): nBytes must be 32 byte aligned");
-
-    if ((hid2 & 0x10000000) == 0) {
-        LCEnable();
-    }
-    LCAllocTags(0, addr, numBlocks);
-}
 
 // UNUSED: the game never calls this; dead-stripped at link.
 u32 LCLoadData(void* destAddr, void* srcAddr, u32 nBytes) {
@@ -549,24 +422,6 @@ asm void LCQueueWait(register u32 len) {
 }
 
 // UNUSED: the game never calls this; dead-stripped at link.
-void LCFlushQueue() {
-    union {
-        unsigned long val; // offset 0x0, size 0x4
-        struct {
-            // total size: 0x4
-            unsigned long lcAddr : 27; // offset 0x0, size 0x4
-            unsigned long dmaLd : 1; // offset 0x0, size 0x4
-            unsigned long dmaLenL : 2; // offset 0x0, size 0x4
-            unsigned long dmaTrigger : 1; // offset 0x0, size 0x4
-            unsigned long dmaFlush : 1; // offset 0x0, size 0x4
-        } f; // offset 0x0, size 0x4
-    } dmaL; // r1+0x8
-    dmaL.val = 0;
-    dmaL.f.dmaFlush = 1;
-    PPCMtdmaU(0);
-    PPCMtdmaL(dmaL.val);
-    PPCSync();
-}
 
 static void L2Init(void) {
   u32 oldMSR;
@@ -602,22 +457,8 @@ void L2GlobalInvalidate(void) {
 }
 
 // UNUSED: the game never calls this; dead-stripped at link.
-void L2SetDataOnly(BOOL dataOnly) {
-    if (dataOnly) {
-        PPCMtl2cr(PPCMfl2cr() | 0x400000);
-        return;
-    }
-    PPCMtl2cr(PPCMfl2cr() & 0xFFBFFFFF);
-}
 
 // UNUSED: the game never calls this; dead-stripped at link.
-void L2SetWriteThrough(BOOL writeThrough) {
-    if (writeThrough) {
-        PPCMtl2cr(PPCMfl2cr() | 0x80000);
-        return;
-    }
-    PPCMtl2cr(PPCMfl2cr() & 0xFFF7FFFF);
-}
 
 void DMAErrorHandler(OSError error, OSContext* context, ...) {
   u32 hid2 = PPCMfhid2();

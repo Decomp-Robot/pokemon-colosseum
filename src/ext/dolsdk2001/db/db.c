@@ -49,20 +49,7 @@ BOOL __DBIsExceptionMarked(__OSException exception)
 }
 
 // UNUSED: the game never calls this; dead-stripped at link.
-void __DBMarkException(u8 exception, int value)
-{
-    u32 mask = (1 << exception);
-
-    if (value != 0)
-        __DBInterface->exceptionMask = __DBInterface->exceptionMask | mask;
-    else
-        __DBInterface->exceptionMask = __DBInterface->exceptionMask & ~mask;
-}
 
 // UNUSED: the game never calls this; dead-stripped at link.
-void __DBSetPresent(u32 value)
-{
-    __DBInterface->bPresent = value;
-}
 
 void DBPrintf(char *str, ...) {}

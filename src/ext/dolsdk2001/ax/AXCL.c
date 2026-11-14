@@ -126,16 +126,5 @@ void __AXClQuit(void) {
 }
 
 // UNUSED: the game never calls this; dead-stripped at link.
-void AXSetMode(u32 mode) {
-    if (__AXClMode != mode) {
-        if (mode == 1) {
-            memset(&__AXHRTFHistory, 0, 0x100);
-        }
-        __AXClMode = mode;
-    }
-}
 
 // UNUSED: the game never calls this; dead-stripped at link.
-u32 AXGetMode(void) {
-    return __AXClMode;
-}

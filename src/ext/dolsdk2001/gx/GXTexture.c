@@ -363,19 +363,6 @@ void *GXGetTexObjUserData(const GXTexObj *obj)
 }
 
 // UNUSED: the game never calls this; dead-stripped at link.
-void GXGetTexObjAll(const GXTexObj *obj, void **image_ptr, u16 *width, u16 *height, GXTexFmt *format, GXTexWrapMode *wrap_s, GXTexWrapMode *wrap_t, u8 *mipmap)
-{
-    const __GXTexObjInt *t = (const __GXTexObjInt *)obj;
-
-    ASSERTMSGLINE(0x359, obj, "Texture Object Pointer is null");
-    *image_ptr = (void *)(GET_REG_FIELD(t->image3, 21, 0) << 5);
-    *width = (u32)GET_REG_FIELD(t->image0, 10, 0) + 1;
-    *height = (u32)GET_REG_FIELD(t->image0, 10, 10) + 1;
-    *format = t->fmt;
-    *wrap_s = GET_REG_FIELD(t->mode0, 2, 0);
-    *wrap_t = GET_REG_FIELD(t->mode0, 2, 2);
-    *mipmap = (t->flags & 1) == 1;
-}
 
 // UNUSED: the game never calls this; dead-stripped at link.
 void *GXGetTexObjData(const GXTexObj *to)
@@ -440,25 +427,6 @@ GXBool GXGetTexObjMipMap(const GXTexObj *to)
 }
 
 // UNUSED: the game never calls this; dead-stripped at link.
-void GXGetTexObjLODAll(const GXTexObj *tex_obj, GXTexFilter *min_filt, GXTexFilter *mag_filt, f32 *min_lod, f32 *max_lod, f32 *lod_bias, u8 *bias_clamp, u8 *do_edge_lod, GXAnisotropy *max_aniso)
-{
-    s16 tmp;
-    const __GXTexObjInt *t = (const __GXTexObjInt *)tex_obj;
-
-    ASSERTMSGLINE(0x3A0, tex_obj, "Texture Object Pointer is null");
-    *min_filt = HW2GXFiltConv[GET_REG_FIELD(t->mode0, 3, 5)];
-    *mag_filt = GET_REG_FIELD(t->mode0, 1, 4);
-    *min_lod = (u8)t->mode1 / 16.0f;
-    *max_lod = (u32)GET_REG_FIELD(t->mode1, 8, 8) / 16.0f;
-    tmp = (s32)GET_REG_FIELD(t->mode0, 8, 9);
-    if (tmp & 0x80) {
-        tmp = -(tmp & 0x7F);
-    }
-    *lod_bias = 32.0f * tmp;
-    *bias_clamp = (u32)GET_REG_FIELD(t->mode0, 1, 21);
-    *do_edge_lod = !GET_REG_FIELD(t->mode0, 1, 8);
-    *max_aniso = GET_REG_FIELD(t->mode0, 2, 19);
-}
 
 // UNUSED: the game never calls this; dead-stripped at link.
 GXTexFilter GXGetTexObjMinFilt(const GXTexObj *tex_obj)
@@ -479,36 +447,10 @@ GXTexFilter GXGetTexObjMagFilt(const GXTexObj *tex_obj)
 }
 
 // UNUSED: the game never calls this; dead-stripped at link.
-f32 GXGetTexObjMinLOD(const GXTexObj *tex_obj)
-{
-    const __GXTexObjInt *t = (const __GXTexObjInt *)tex_obj;
-
-    ASSERTMSGLINE(0x3BF, tex_obj, "Texture Object Pointer is null");
-    return (u32)GET_REG_FIELD(t->mode1, 8, 0) / 16.0f;
-}
 
 // UNUSED: the game never calls this; dead-stripped at link.
-f32 GXGetTexObjMaxLOD(const GXTexObj *tex_obj)
-{
-    const __GXTexObjInt *t = (const __GXTexObjInt *)tex_obj;
-
-    ASSERTMSGLINE(0x3C5, tex_obj, "Texture Object Pointer is null");
-    return (u32)GET_REG_FIELD(t->mode1, 8, 8) / 16.0f;
-}
 
 // UNUSED: the game never calls this; dead-stripped at link.
-f32 GXGetTexObjLODBias(const GXTexObj *tex_obj)
-{
-    s16 tmp;
-    const __GXTexObjInt *t = (const __GXTexObjInt *)tex_obj;
-
-    ASSERTMSGLINE(0x3CC, tex_obj, "Texture Object Pointer is null");
-    tmp = (s32)GET_REG_FIELD(t->mode0, 8, 9);
-    if (tmp & 0x80) {
-        tmp = -(tmp & 0x7F);
-    }
-    return 32.0f * tmp;
-}
 
 // UNUSED: the game never calls this; dead-stripped at link.
 GXBool GXGetTexObjBiasClamp(const GXTexObj *tex_obj)
@@ -538,13 +480,6 @@ GXAnisotropy GXGetTexObjMaxAniso(const GXTexObj *tex_obj)
 }
 
 // UNUSED: the game never calls this; dead-stripped at link.
-u32 GXGetTexObjTlut(const GXTexObj *tex_obj)
-{
-    const __GXTexObjInt *t = (const __GXTexObjInt *)tex_obj;
-
-    ASSERTMSGLINE(0x3E7, tex_obj, "Texture Object Pointer is null");
-    return t->tlutName;
-}
 
 void GXLoadTexObjPreLoaded(GXTexObj *obj, GXTexRegion *region, GXTexMapID id)
 {
@@ -613,15 +548,6 @@ void GXInitTlutObj(GXTlutObj *tlut_obj, void *lut, GXTlutFmt fmt, u16 n_entries)
 }
 
 // UNUSED: the game never calls this; dead-stripped at link.
-void GXGetTlutObjAll(const GXTlutObj *tlut_obj, void **data, GXTlutFmt *format, u16 *numEntries)
-{
-    const __GXTlutObjInt *t = (const __GXTlutObjInt *)tlut_obj;
-
-    ASSERTMSGLINE(0x472, tlut_obj, "TLut Object Pointer is null");
-    *data = (void *)(GET_REG_FIELD(t->loadTlut0, 21, 0) << 5);
-    *format = GET_REG_FIELD(t->tlut, 2, 10);
-    *numEntries = t->numEntries;
-}
 
 // UNUSED: the game never calls this; dead-stripped at link.
 void *GXGetTlutObjData(const GXTlutObj *tlut_obj)
@@ -642,13 +568,6 @@ GXTlutFmt GXGetTlutObjFmt(const GXTlutObj *tlut_obj)
 }
 
 // UNUSED: the game never calls this; dead-stripped at link.
-u16 GXGetTlutObjNumEntries(const GXTlutObj *tlut_obj)
-{
-    const __GXTlutObjInt *t = (const __GXTlutObjInt *)tlut_obj;
-
-    ASSERTMSGLINE(0x489, tlut_obj, "TLut Object Pointer is null");
-    return t->numEntries;
-}
 
 void GXLoadTlut(GXTlutObj *tlut_obj, u32 tlut_name)
 {
@@ -752,49 +671,6 @@ void GXInitTexPreLoadRegion(GXTexRegion *region, u32 tmem_even, u32 size_even, u
 }
 
 // UNUSED: the game never calls this; dead-stripped at link.
-void GXGetTexRegionAll(const GXTexRegion *region, u8 *is_cached, u8 *is_32b_mipmap, u32 *tmem_even, u32 *size_even, u32 *tmem_odd, u32 *size_odd)
-{
-    const __GXTexRegionInt *t = (const __GXTexRegionInt *)region;
-
-    ASSERTMSGLINE(0x54D, region, "TexRegion Object Pointer is null");
-    *tmem_even = GET_REG_FIELD(t->image1, 15, 0) << 5;
-    *tmem_odd = GET_REG_FIELD(t->image2, 15, 0) << 5;
-    if (t->isCached) {
-        switch (GET_REG_FIELD(t->image1, 3, 15)) {
-        case 3:
-            *size_even = 0x8000;
-            break;
-        case 4:
-            *size_even = 0x20000;
-            break;
-        case 5:
-            *size_even = 0x80000;
-            break;
-        default:
-            *size_even = 0;
-            break;
-        }
-        switch (GET_REG_FIELD(t->image2, 3, 15)) {
-        case 3:
-            *size_odd = 0x8000;
-            break;
-        case 4:
-            *size_odd = 0x20000;
-            break;
-        case 5:
-            *size_odd = 0x80000;
-            break;
-        default:
-            *size_odd = 0;
-            break;
-        }
-    } else {
-        *size_even = t->sizeEven << 5;
-        *size_odd = t->sizeOdd << 5;
-    }
-    *is_32b_mipmap = t->is32bMipmap;
-    *is_cached = t->isCached;
-}
 
 void GXInitTlutRegion(GXTlutRegion *region, u32 tmem_addr, GXTlutSize tlut_size)
 {
@@ -812,14 +688,6 @@ void GXInitTlutRegion(GXTlutRegion *region, u32 tmem_addr, GXTlutSize tlut_size)
 }
 
 // UNUSED: the game never calls this; dead-stripped at link.
-void GXGetTlutRegionAll(const GXTlutRegion *region, u32 *tmem_addr, GXTlutSize *tlut_size)
-{
-    const __GXTlutRegionInt *t = (const __GXTlutRegionInt *)region;
-
-    ASSERTMSGLINE(0x59E, region, "TLutRegion Object Pointer is null");
-    *tmem_addr = (GET_REG_FIELD(t->loadTlut1, 10, 0) << 9) + 0x80000;
-    *tlut_size = GET_REG_FIELD(t->loadTlut1, 11, 10);
-}
 
 // UNUSED: the game never calls this; dead-stripped at link.
 void GXInvalidateTexRegion(GXTexRegion *region)
@@ -1179,8 +1047,3 @@ void __GXSetSUTexRegs(void)
 }
 
 // UNUSED: the game never calls this; dead-stripped at link.
-void __GXGetSUTexSize(GXTexCoordID coord, u16 *width, u16 *height)
-{
-    *width = (u16)gx->suTs0[coord] + 1;
-    *height = (u16)gx->suTs1[coord] + 1;
-}

@@ -234,17 +234,6 @@ void GXInitLightDir(GXLightObj *lt_obj, f32 nx, f32 ny, f32 nz)
 }
 
 // UNUSED: the game never calls this; dead-stripped at link.
-void GXGetLightDir(GXLightObj *lt_obj, f32 *nx, f32 *ny, f32 *nz)
-{
-    struct __GXLightObjInt_struct *obj;
-
-    ASSERTMSGLINE(0x155, lt_obj != NULL, "Light Object Pointer is null");
-    obj = (struct __GXLightObjInt_struct *)lt_obj;
-
-    *nx = -obj->ldir[0];
-    *ny = -obj->ldir[1];
-    *nz = -obj->ldir[2];
-}
 
 // UNUSED: the game never calls this; dead-stripped at link.
 void GXInitSpecularDir(GXLightObj *lt_obj, f32 nx, f32 ny, f32 nz)
@@ -272,21 +261,6 @@ void GXInitSpecularDir(GXLightObj *lt_obj, f32 nx, f32 ny, f32 nz)
 }
 
 // UNUSED: the game never calls this; dead-stripped at link.
-void GXInitSpecularDirHA(GXLightObj *lt_obj, f32 nx, f32 ny, f32 nz, f32 hx, f32 hy, f32 hz)
-{
-    struct __GXLightObjInt_struct *obj;
-
-    ASSERTMSGLINE(0x18E, lt_obj != NULL, "Light Object Pointer is null");
-    obj = (struct __GXLightObjInt_struct *)lt_obj;
-    CHECK_GXBEGIN(0x18F, "GXInitSpecularHA");
-
-    obj->ldir[0] = hx;
-    obj->ldir[1] = hy;
-    obj->ldir[2] = hz;
-    obj->lpos[0] = -nx * 1048576.0f;
-    obj->lpos[1] = -ny * 1048576.0f;
-    obj->lpos[2] = -nz * 1048576.0f;
-}
 
 void GXInitLightColor(GXLightObj *lt_obj, GXColor color)
 {

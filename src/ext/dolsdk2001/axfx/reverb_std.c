@@ -414,42 +414,9 @@ static void ReverbSTDFree(struct AXFX_REVSTD_WORK * rv) {
 }
 
 // UNUSED: the game never calls this; dead-stripped at link.
-int AXFXReverbStdInit(struct AXFX_REVERBSTD * rev) {
-    int ret;
-    int old;
-
-    old = OSDisableInterrupts();
-    rev->tempDisableFX = 0;
-    ret = ReverbSTDCreate(&rev->rv, rev->coloration, rev->time, rev->mix, rev->damping, rev->preDelay);
-    OSRestoreInterrupts(old);
-    return ret;
-}
 
 // UNUSED: the game never calls this; dead-stripped at link.
-int AXFXReverbStdShutdown(struct AXFX_REVERBSTD * rev) {
-    int old;
-
-    old = OSDisableInterrupts();
-    ReverbSTDFree(&rev->rv);
-    OSRestoreInterrupts(old);
-    return 1;
-}
 
 // UNUSED: the game never calls this; dead-stripped at link.
-int AXFXReverbStdSettings(struct AXFX_REVERBSTD * rev) {
-    int old;
-
-    old = OSDisableInterrupts();
-    rev->tempDisableFX = 1;
-    ReverbSTDModify(&rev->rv, rev->coloration, rev->time, rev->mix, rev->damping, rev->preDelay);
-    rev->tempDisableFX = 0;
-    OSRestoreInterrupts(old);
-    return 1;
-}
 
 // UNUSED: the game never calls this; dead-stripped at link.
-void AXFXReverbStdCallback(struct AXFX_BUFFERUPDATE * bufferUpdate, struct AXFX_REVERBSTD * reverb) {
-    if (reverb->tempDisableFX == 0) {
-        ReverbSTDCallback(bufferUpdate->left, bufferUpdate->right, bufferUpdate->surround, &reverb->rv);
-    }
-}

@@ -58,12 +58,6 @@ void GXFlush(void)
 }
 
 // UNUSED: the game never calls this; dead-stripped at link.
-void GXResetWriteGatherPipe(void)
-{
-    while (PPCMfwpar() & 1) {
-    }
-    PPCMtwpar(OSUncachedToPhysical((void *)GXFIFO_ADDR));
-}
 
 static inline void __GXAbortWait(u32 clocks)
 {
@@ -212,10 +206,6 @@ void __GXBypass(u32 reg)
     gx->bpSent = 1;
 }
 
-u16 __GXReadPEReg(u32 reg)
-{
-    return __peReg[reg];
-}
 #endif
 
 void GXPokeAlphaMode(GXCompare func, u8 threshold)
@@ -307,37 +297,10 @@ void GXPokeZMode(GXBool compare_enable, GXCompare func, GXBool update_enable)
 }
 
 // UNUSED: the game never calls this; dead-stripped at link.
-void GXPeekARGB(u16 x, u16 y, u32 *color)
-{
-    u32 addr = (u32)OSPhysicalToUncached(0x08000000);
-
-    SET_REG_FIELD(0x2DC, addr, 10, 2, x);
-    SET_REG_FIELD(0x2DD, addr, 10, 12, y);
-    SET_REG_FIELD(0x2DE, addr, 2, 22, 0);
-    *color = *(u32 *)addr;
-}
 
 // UNUSED: the game never calls this; dead-stripped at link.
-void GXPokeARGB(u16 x, u16 y, u32 color)
-{
-    u32 addr = (u32)OSPhysicalToUncached(0x08000000);
-
-    SET_REG_FIELD(0x2E6, addr, 10, 2, x);
-    SET_REG_FIELD(0x2E7, addr, 10, 12, y);
-    SET_REG_FIELD(0x2E8, addr, 2, 22, 0);
-    *(u32 *)addr = color;
-}
 
 // UNUSED: the game never calls this; dead-stripped at link.
-void GXPeekZ(u16 x, u16 y, u32 *z)
-{
-    u32 addr = (u32)OSPhysicalToUncached(0x08000000);
-
-    SET_REG_FIELD(0x2F0, addr, 10, 2, x);
-    SET_REG_FIELD(0x2F1, addr, 10, 12, y);
-    SET_REG_FIELD(0x2F2, addr, 2, 22, 1);
-    *z = *(u32 *)addr;
-}
 
 // UNUSED: the game never calls this; dead-stripped at link.
 void GXPokeZ(u16 x, u16 y, u32 z)

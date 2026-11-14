@@ -50,18 +50,6 @@ asm static void __SetTime(long long time) {
 }
 
 // UNUSED: the game never calls this; dead-stripped at link.
-void __OSSetTime(long long time) {
-    int enabled;
-    long long * timeAdjustAddr;
-
-    timeAdjustAddr = (long long *)0x800030D8;
-    enabled = OSDisableInterrupts();
-
-    *timeAdjustAddr += OSGetTime() - time;
-    __SetTime(time);
-    EXIProbeReset();
-    OSRestoreInterrupts(enabled);
-}
 
 long long __OSGetSystemTime() {
     int enabled;
@@ -77,13 +65,6 @@ long long __OSGetSystemTime() {
 }
 
 // UNUSED: the game never calls this; dead-stripped at link.
-asm void __OSSetTick(register unsigned long newTicks) {
-    // clang-format off
-    nofralloc
-    mttbl newTicks
-    blr
-    // clang-format on
-}
 
 static int IsLeapYear(int year) {
     return (year % 4 == 0 && year % 100 != 0) || (year % 400 == 0);
@@ -168,33 +149,3 @@ void OSTicksToCalendarTime(long long ticks, OSCalendarTime* td) {
 }
 
 // UNUSED: the game never calls this; dead-stripped at link.
-OSTime OSCalendarTimeToTicks(OSCalendarTime* td) {
-    long long secs;
-    int ov_mon;
-    int mon;
-    int year;
-
-    ov_mon = td->mon / MONTH_MAX;
-    mon = td->mon - (ov_mon * MONTH_MAX);
-
-    if (mon < 0) {
-        mon += MONTH_MAX;
-        ov_mon--;
-    }
-
-    ASSERTLINE(0x182, (ov_mon <= 0 && 0 <= td->year + ov_mon) || (0 < ov_mon && td->year <= INT_MAX - ov_mon));
-    
-    year = td->year + ov_mon;
-
-    // clang-format off
-    secs = (s64)SECS_IN_YEAR * year +
-              (s64)SECS_IN_DAY * (GetLeapDays(year) + GetYearDays(year, mon) + td->mday - 1) +
-              (s64)SECS_IN_HOUR * td->hour +
-              (s64)SECS_IN_MIN * td->min +
-              td->sec -
-              (s64)0xEB1E1BF80ULL;
-    // clang-format on
-
-    return OS_SEC_TO_TICKS(secs) + OS_MSEC_TO_TICKS((s64)td->msec) +
-           OS_USEC_TO_TICKS((s64)td->usec);
-}

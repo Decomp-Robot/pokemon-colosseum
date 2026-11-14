@@ -14,6 +14,3 @@ unsigned long __get_time(void) {
 }
 
 // UNUSED: the game never calls this; dead-stripped at link.
-int __to_gm_time() {
-    return 0;
-}

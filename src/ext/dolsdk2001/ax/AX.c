@@ -17,14 +17,3 @@ void AXInit(void) {
 }
 
 // UNUSED: the game never calls this; dead-stripped at link.
-void AXQuit(void) {
-#ifdef DEBUG
-    OSReport("Shutting down AX\n");
-#endif
-    __AXAllocQuit();
-    __AXVPBQuit();
-    __AXSPBQuit();
-    __AXAuxQuit();
-    __AXClQuit();
-    __AXOutQuit();
-}

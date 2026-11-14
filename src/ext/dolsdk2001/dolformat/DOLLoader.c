@@ -83,9 +83,3 @@ void *DOLLoadImage(u8 *buffer, BOOL verbose)
 }
 
 // UNUSED: the game never calls this; dead-stripped at link.
-asm void DOLRunApp(register void *entryPoint)
-{
-    nofralloc
-    mtlr entryPoint
-    blr
-}

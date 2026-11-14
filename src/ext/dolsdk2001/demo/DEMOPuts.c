@@ -158,11 +158,6 @@ struct OSFontHeader * DEMOInitROMFont() {
     return FontData;
 }
 
-void DEMOSetROMFontSize(s16 size, s16 space) {
-    FontSize = size * 0x10;
-    FontSpace = space * 0x10;
-}
-
 static void DrawFontChar(int x, int y, int z, int xChar, int yChar) {
     s16 posLeft = x;
     s16 posRight = posLeft + ((FontSize * FontData->cellWidth) / FontData->cellWidth);
@@ -236,57 +231,6 @@ int DEMORFPuts(s16 x, s16 y, s16 z, char * string) {
     return (width + 0xF) / 16;
 }
 
-int DEMORFPutsEx(s16 x, s16 y, s16 z, char * string, s16 maxWidth, int length) {
-    long cx;
-    void * image;
-    long xChar;
-    long yChar;
-    long width;
-    char * end;
-
-    ASSERTLINE(0x23D, FontData);
-    LastSheet = NULL;
-    GXClearVtxDesc();
-    GXSetVtxDesc(9, 1);
-    GXSetVtxDesc(0xD, 1);
-    GXSetVtxAttrFmt(0, 9, 1, 3, 4);
-    GXSetVtxAttrFmt(0, 0xD, 1, 3, 0);
-
-    x *= 0x10;
-    y *= 0x10;
-    z *= 0x10;
-    maxWidth *= 0x10;
-
-    end = (char*)&string[length];
-    width = 0;
-    while(*string && string < end) {
-        if (*string == 0xA) {
-            width = 0;
-            y += FontData->leading * 0x10;
-            string++;
-        } else {
-            string = OSGetFontTexture(string, &image, &xChar, &yChar, &cx);
-            if (maxWidth < width + (FontSize * cx / FontData->cellWidth) + FontSpace) {
-                width = 0;
-                y += FontData->leading * 0x10;
-            }
-            LoadSheet(image, 0);
-            DrawFontChar(x + width, y, z, xChar, yChar);
-            width = FontSpace + (FontSize * cx / FontData->cellWidth) + width;
-        }
-    }
-    return (width + 0xF) / 16;
-}
-
-int DEMORFPrintf(s16 x, s16 y, s16 z, char * fmt, ...) {
-    va_list vlist;
-    char buf[256];
-
-    va_start(vlist, fmt);
-    vsprintf(buf, fmt, vlist);
-    DEMORFPuts(x, y, z, buf);
-}
-
 char * DEMODumpROMFont(char * string) {
     unsigned long image[288];
     void * temp;
@@ -313,15 +257,3 @@ char * DEMODumpROMFont(char * string) {
     return string;
 }
 
-int DEMOGetRFTextWidth(char * string) {
-    long cx;
-    long width;
-
-    ASSERTLINE(0x2C3, FontData);
-    width = 0;
-    while(*string != 0) {
-        string = OSGetFontWidth(string, &cx);
-        width = FontSpace + ((FontSize * cx) / FontData->cellWidth) + width;
-    }
-    return (width + 0xF) / 16;
-}

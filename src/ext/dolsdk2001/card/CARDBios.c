@@ -153,32 +153,6 @@ void __CARDUnlockedHandler(s32 chan, OSContext *context) {
 }
 
 // UNUSED: the game never calls this; dead-stripped at link.
-int __CARDReadNintendoID(s32 chan, u32 *id) {
-    BOOL err;
-    u32 cmd;
-
-    ASSERTLINE(0x16F, 0 <= chan && chan < 2);
-
-    if (!EXISelect(chan, 0, 0)) {
-        return CARD_RESULT_NOCARD;
-    }
-    cmd = 0;
-    err = 0;
-    err |= !EXIImm(chan, &cmd, 2, 1, 0);
-    err |= !EXISync(chan);
-    err |= !EXIImm(chan, id, 4, 0, 0);
-    err |= !EXISync(chan);
-    err |= !EXIDeselect(chan);
-    if (err)
-    {
-        return CARD_RESULT_NOCARD;
-    }
-    if ((*id & 0xFFFF0000) || (*id & 3))
-    {
-        return CARD_RESULT_WRONGDEVICE;
-    }
-    return CARD_RESULT_READY;
-}
 
 s32 __CARDEnableInterrupt(s32 chan, BOOL enable) {
     BOOL err;
@@ -238,47 +212,8 @@ s32 __CARDClearStatus(s32 chan) {
 }
 
 // UNUSED: the game never calls this; dead-stripped at link.
-long __CARDSleep(long chan) {
-    int err;
-    unsigned long cmd;
-
-    ASSERTLINE(0x1CB, 0 <= chan && chan < 2);
-
-    if (!EXISelect(chan, 0, 4)) {
-        return CARD_RESULT_NOCARD;
-    }
-    cmd = 0x88000000;
-    err = 0;
-    err |= !EXIImm(chan, &cmd, 1, 1, 0);
-    err |= !EXISync(chan);
-    err |= !EXIDeselect(chan);
-
-    if(err) {
-        return CARD_RESULT_NOCARD;
-    }
-    return CARD_RESULT_READY;
-}
 
 // UNUSED: the game never calls this; dead-stripped at link.
-long __CARDWakeup(long chan) {
-    int err;
-    unsigned long cmd;
-
-    ASSERTLINE(0x1DE, 0 <= chan && chan < 2);
-    if (!EXISelect(chan, 0, 4)) {
-        return CARD_RESULT_NOCARD;
-    }
-    cmd = 0x87000000;
-    err = 0;
-    err |= !EXIImm(chan, &cmd, 1, 1, 0);
-    err |= !EXISync(chan);
-    err |= !EXIDeselect(chan);
-
-    if(err) {
-        return CARD_RESULT_NOCARD;
-    }
-    return CARD_RESULT_READY;
-}
 
 static void TimeoutHandler(OSAlarm *alarm, OSContext *context) {
     s32 chan;
@@ -782,46 +717,10 @@ s32 CARDFreeBlocks(s32 chan, s32 *byteNotUsed, s32 *filesNotUsed) {
 }
 
 // UNUSED: the game never calls this; dead-stripped at link.
-long CARDGetEncoding(long chan, unsigned short * encode) {
-    struct CARDControl * card;
-    struct CARDID * id;
-    long result;
-
-    result = __CARDGetControlBlock(chan, &card);
-    if (result < 0) {
-        return result;
-    }
-    id = card->workArea;
-    *encode = id->encode;
-    return __CARDPutControlBlock(card, 0);
-}
 
 // UNUSED: the game never calls this; dead-stripped at link.
-long CARDGetMemSize(long chan, unsigned short * size) {
-    struct CARDControl * card;
-    long result;
-
-    result = __CARDGetControlBlock(chan, &card);
-    if (result < 0) {
-        return result;
-    }
-    *size = card->size;
-    return __CARDPutControlBlock(card, 0);
-}
 
 // UNUSED: the game never calls this; dead-stripped at link.
-s32 CARDGetSectorSize(s32 chan, u32 *size) {
-    struct CARDControl *card;
-    long result;
-
-    result = __CARDGetControlBlock(chan, &card);
-    if (result < 0)
-    {
-        return result;
-    }
-    *size = card->sectorSize;
-    return __CARDPutControlBlock(card, 0);
-}
 
 // UNUSED: the game never calls this; dead-stripped at link.
 s32 __CARDSync(s32 chan) {

@@ -597,15 +597,3 @@ void OSDumpHeap(int heap) {
 }
 
 // UNUSED: the game never calls this; dead-stripped at link.
-void OSVisitAllocated(void (* visitor)(void *, unsigned long)) {
-    unsigned long heap;
-    struct Cell * cell;
-
-    for(heap = 0; heap < NumHeaps; heap++) {
-        if (HeapArray[heap].size >= 0) {
-            for(cell = HeapArray[heap].allocated; cell; cell = cell->next) {
-                visitor((char*)cell+HEADERSIZE, cell->size);
-            }
-        }
-    }
-}

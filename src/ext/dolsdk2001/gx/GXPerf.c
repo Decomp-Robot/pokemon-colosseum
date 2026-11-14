@@ -491,34 +491,5 @@ void GXInitXfRasMetric(void)
 }
 
 // UNUSED: the game never calls this; dead-stripped at link.
-void GXReadXfRasMetric(u32 *xf_wait_in, u32 *xf_wait_out, u32 *ras_busy, u32 *clocks)
-{
-    u32 ctrl, ctrh;
-
-    ctrl = __cpReg[32]; ctrh = __cpReg[33];
-    *ras_busy = (ctrh << 16) | ctrl;
-
-    ctrl = __cpReg[34]; ctrh = __cpReg[35];
-    *clocks = (ctrh << 16) | ctrl;
-
-    ctrl = __cpReg[36]; ctrh = __cpReg[37];
-    *xf_wait_in = (ctrh << 16) | ctrl;
-
-    ctrl = __cpReg[38]; ctrh = __cpReg[39];
-    *xf_wait_out = (ctrh << 16) | ctrl;
-}
 
 // UNUSED: the game never calls this; dead-stripped at link.
-u32 GXReadClksPerVtx(void)
-{
-    u32 perfCnt;
-    u32 ctrh;
-
-    GXDrawDone();
-    __cpReg[49] = 0x1007;
-    __cpReg[48] = 0x1007;
-
-    ctrh = __cpReg[50];
-    perfCnt = ctrh >> 8;
-    return perfCnt;
-}

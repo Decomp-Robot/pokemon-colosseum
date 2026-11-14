@@ -103,21 +103,3 @@ int __DVDDequeueWaitingQueue(struct DVDCommandBlock * block) {
 }
 
 // UNUSED: the game never calls this; dead-stripped at link.
-int __DVDIsBlockInWaitingQueue(struct DVDCommandBlock * block) {
-    unsigned long i;
-    struct DVDCommandBlock * start;
-    struct DVDCommandBlock * q;
-
-    for(i = 0; i < 4; i++) {
-        start = (struct DVDCommandBlock *)&WaitingQueue[i];
-        if (start->next == start) {
-            continue;
-        }
-        for(q = start->next; q != start; q = q->next) {
-            if (q == block) {
-                return 1;
-            }
-        }
-    }
-    return 0;
-}

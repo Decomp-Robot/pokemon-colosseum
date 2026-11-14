@@ -78,9 +78,6 @@ void OSRegisterResetFunction(struct OSResetFunctionInfo * info) {
 }
 
 // UNUSED: the game never calls this; dead-stripped at link.
-void OSUnregisterResetFunction(struct OSResetFunctionInfo * info) {
-    DEQUEUE_INFO(info, &ResetFunctionQueue);
-}
 
 int CallResetFunctions(int final) {
     struct OSResetFunctionInfo * info;

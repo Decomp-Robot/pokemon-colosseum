@@ -256,16 +256,6 @@ struct _GXRenderModeObj * DEMOGetRenderModeObj() {
     return rmode;
 }
 
-u32 DEMOGetCurrentBuffer(void) {
-    return (u32)DemoCurrentBuffer;
-}
-
-void DEMOEnableBypassWorkaround(unsigned long timeoutFrames) {
-    BypassWorkaround = 1;
-    FrameMissThreshold = timeoutFrames;
-    VISetPreRetraceCallback(__BypassRetraceCallback);
-}
-
 static void __BypassRetraceCallback() {
     FrameCount += 1;
 }

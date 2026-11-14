@@ -20,10 +20,6 @@ u32 DSPCheckMailFromDSP(void)
 }
 
 // UNUSED: the game never calls this; dead-stripped at link.
-u32 DSPReadCPUToDSPMbox(void)
-{
-    return (__DSPRegs[0] << 16) | __DSPRegs[1];
-}
 
 u32 DSPReadMailFromDSP(void)
 {
@@ -113,17 +109,6 @@ void DSPHalt(void)
 }
 
 // UNUSED: the game never calls this; dead-stripped at link.
-void DSPUnhalt(void)
-{
-    BOOL old;
-    u16 tmp;
-
-    old = OSDisableInterrupts();
-    tmp = __DSPRegs[5];
-    tmp = (tmp & ~0xAC);
-    __DSPRegs[5] = tmp;
-    OSRestoreInterrupts(old);
-}
 
 u32 DSPGetDMAStatus(void)
 {

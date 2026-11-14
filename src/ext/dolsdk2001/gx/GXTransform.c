@@ -487,25 +487,6 @@ void GXSetScissor(u32 left, u32 top, u32 wd, u32 ht)
 }
 
 // UNUSED: the game never calls this; dead-stripped at link.
-void GXGetScissor(u32 *left, u32 *top, u32 *wd, u32 *ht)
-{
-    u32 tp;
-    u32 lf;
-    u32 bm;
-    u32 rt;
-
-    ASSERTMSGLINE(0x3DD, left && top && wd && ht, "GXGet*: invalid null pointer");
-
-    tp = gx->suScis0 & 0x7FF;
-    lf = (gx->suScis0 & 0x7FF000) >> 12;
-    bm = gx->suScis1 & 0x7FF;
-    rt = (gx->suScis1 & 0x7FF000) >> 12;
-
-    *left = lf - 342;
-    *top = tp - 342;
-    *wd = rt - lf + 1;
-    *ht = bm - tp + 1;
-}
 
 void GXSetScissorBoxOffset(s32 x_off, s32 y_off)
 {

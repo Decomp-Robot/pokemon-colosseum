@@ -84,39 +84,6 @@ asm void PSMTXCopy(register Mtx src, register Mtx dst) {
 }
 
 // UNUSED: the game never calls this; dead-stripped at link.
-void C_MTXConcat(Mtx a, Mtx b, Mtx ab) {
-    Mtx mTmp;
-    f32 (*m)[4];
-
-    ASSERTMSGLINE(0x128, a, "MTXConcat():  NULL MtxPtr 'a'  ");
-    ASSERTMSGLINE(0x129, b, "MTXConcat():  NULL MtxPtr 'b'  ");
-    ASSERTMSGLINE(0x12A, ab, "MTXConcat():  NULL MtxPtr 'ab' ");
-
-    if (ab == a || ab == b) {
-        m = mTmp;
-    } else {
-        m = ab;
-    }
-
-    m[0][0] =       0 +  a[0][2] * b[2][0] + ((a[0][0] * b[0][0]) + (a[0][1] * b[1][0]));
-    m[0][1] =       0 +  a[0][2] * b[2][1] + ((a[0][0] * b[0][1]) + (a[0][1] * b[1][1]));
-    m[0][2] =       0 +  a[0][2] * b[2][2] + ((a[0][0] * b[0][2]) + (a[0][1] * b[1][2]));
-    m[0][3] = a[0][3] + (a[0][2] * b[2][3] +  (a[0][0] * b[0][3]  + (a[0][1] * b[1][3])));
-
-    m[1][0] =       0 +  a[1][2] * b[2][0] + ((a[1][0] * b[0][0]) + (a[1][1] * b[1][0]));
-    m[1][1] =       0 +  a[1][2] * b[2][1] + ((a[1][0] * b[0][1]) + (a[1][1] * b[1][1]));
-    m[1][2] =       0 +  a[1][2] * b[2][2] + ((a[1][0] * b[0][2]) + (a[1][1] * b[1][2]));
-    m[1][3] = a[1][3] + (a[1][2] * b[2][3] +  (a[1][0] * b[0][3]  + (a[1][1] * b[1][3])));
-
-    m[2][0] =       0 +  a[2][2] * b[2][0] + ((a[2][0] * b[0][0]) + (a[2][1] * b[1][0]));
-    m[2][1] =       0 +  a[2][2] * b[2][1] + ((a[2][0] * b[0][1]) + (a[2][1] * b[1][1]));
-    m[2][2] =       0 +  a[2][2] * b[2][2] + ((a[2][0] * b[0][2]) + (a[2][1] * b[1][2]));
-    m[2][3] = a[2][3] + (a[2][2] * b[2][3] +  (a[2][0] * b[0][3]  + (a[2][1] * b[1][3])));
-
-    if (m == mTmp) {
-        C_MTXCopy(mTmp, ab);
-    }
-}
 
 asm void PSMTXConcat(register Mtx mA, register Mtx mB, register Mtx mAB) {
     nofralloc
@@ -174,35 +141,6 @@ asm void PSMTXConcat(register Mtx mA, register Mtx mB, register Mtx mAB) {
 }
 
 // UNUSED: the game never calls this; dead-stripped at link.
-void C_MTXTranspose(Mtx src, Mtx xPose) {
-    Mtx mTmp;
-    f32 (* m)[4];
-
-    ASSERTMSGLINE(0x22D, src, "MTXTranspose():  NULL MtxPtr 'src' ");
-    ASSERTMSGLINE(0x22E, xPose, "MTXTranspose():  NULL MtxPtr 'xPose' ");
-
-    if (src == xPose) {
-        m = mTmp;
-    } else {
-        m = xPose;
-    }
-
-    m[0][0] = src[0][0];
-    m[0][1] = src[1][0];
-    m[0][2] = src[2][0];
-    m[0][3] = 0;
-    m[1][0] = src[0][1];
-    m[1][1] = src[1][1];
-    m[1][2] = src[2][1];
-    m[1][3] = 0;
-    m[2][0] = src[0][2];
-    m[2][1] = src[1][2];
-    m[2][2] = src[2][2];
-    m[2][3] = 0;
-    if (m == mTmp) {
-        C_MTXCopy(mTmp, xPose);
-    }
-}
 
 void PSMTXTranspose(register Mtx src, register Mtx xPose) {
     register f32 c_zero = 0;
@@ -241,50 +179,6 @@ void PSMTXTranspose(register Mtx src, register Mtx xPose) {
 }
 
 // UNUSED: the game never calls this; dead-stripped at link.
-u32 C_MTXInverse(Mtx src, Mtx inv) {
-    Mtx mTmp;
-    f32 (*m)[4];
-    f32 det;
-
-    ASSERTMSGLINE(0x290, src, "MTXInverse():  NULL MtxPtr 'src' ");
-    ASSERTMSGLINE(0x291, inv, "MTXInverse():  NULL MtxPtr 'inv' ");
-
-    if (src == inv) {
-        m = mTmp;
-    } else {
-        m = inv;
-    }
-    det = ((((src[2][1] * (src[0][2] * src[1][0])) 
-          + ((src[2][2] * (src[0][0] * src[1][1])) 
-           + (src[2][0] * (src[0][1] * src[1][2])))) 
-           - (src[0][2] * (src[2][0] * src[1][1]))) 
-           - (src[2][2] * (src[1][0] * src[0][1]))) 
-           - (src[1][2] * (src[0][0] * src[2][1]));
-    if (0 == det) {
-        return 0;
-    }
-    det = 1 / det;
-    m[0][0] = (det * +((src[1][1] * src[2][2]) - (src[2][1] * src[1][2])));
-    m[0][1] = (det * -((src[0][1] * src[2][2]) - (src[2][1] * src[0][2])));
-    m[0][2] = (det * +((src[0][1] * src[1][2]) - (src[1][1] * src[0][2])));
-
-    m[1][0] = (det * -((src[1][0] * src[2][2]) - (src[2][0] * src[1][2])));
-    m[1][1] = (det * +((src[0][0] * src[2][2]) - (src[2][0] * src[0][2])));
-    m[1][2] = (det * -((src[0][0] * src[1][2]) - (src[1][0] * src[0][2])));
-
-    m[2][0] = (det * +((src[1][0] * src[2][1]) - (src[2][0] * src[1][1])));
-    m[2][1] = (det * -((src[0][0] * src[2][1]) - (src[2][0] * src[0][1])));
-    m[2][2] = (det * +((src[0][0] * src[1][1]) - (src[1][0] * src[0][1])));
-
-    m[0][3] = ((-m[0][0] * src[0][3]) - (m[0][1] * src[1][3])) - (m[0][2] * src[2][3]);
-    m[1][3] = ((-m[1][0] * src[0][3]) - (m[1][1] * src[1][3])) - (m[1][2] * src[2][3]);
-    m[2][3] = ((-m[2][0] * src[0][3]) - (m[2][1] * src[1][3])) - (m[2][2] * src[2][3]);
-
-    if (m == mTmp) {
-        C_MTXCopy(mTmp, inv);
-    }
-    return 1;
-}
 
 asm u32 PSMTXInverse(register Mtx src, register Mtx inv) {
     psq_l f0, 0(src), 1, 0
@@ -352,50 +246,6 @@ skip_return:
 }
 
 // UNUSED: the game never calls this; dead-stripped at link.
-u32 C_MTXInvXpose(Mtx src, Mtx invX) {
-    Mtx mTmp;
-    f32 (*m)[4];
-    f32 det;
-
-    ASSERTMSGLINE(0x380, src, "MTXInvXpose(): NULL MtxPtr 'src' ");
-    ASSERTMSGLINE(0x381, invX, "MTXInvXpose(): NULL MtxPtr 'invX' ");
-
-    if (src == invX) {
-        m = mTmp;
-    } else {
-        m = invX;
-    }
-    det = ((((src[2][1] * (src[0][2] * src[1][0])) 
-          + ((src[2][2] * (src[0][0] * src[1][1])) 
-          +  (src[2][0] * (src[0][1] * src[1][2])))) 
-          -  (src[0][2] * (src[2][0] * src[1][1]))) 
-          -  (src[2][2] * (src[1][0] * src[0][1]))) 
-          -  (src[1][2] * (src[0][0] * src[2][1]));
-    if (0 == det) {
-        return 0;
-    }
-    det = 1 / det;
-    m[0][0] = (det * +((src[1][1] * src[2][2]) - (src[2][1] * src[1][2])));
-    m[0][1] = (det * -((src[1][0] * src[2][2]) - (src[2][0] * src[1][2])));
-    m[0][2] = (det * +((src[1][0] * src[2][1]) - (src[2][0] * src[1][1])));
-
-    m[1][0] = (det * -((src[0][1] * src[2][2]) - (src[2][1] * src[0][2])));
-    m[1][1] = (det * +((src[0][0] * src[2][2]) - (src[2][0] * src[0][2])));
-    m[1][2] = (det * -((src[0][0] * src[2][1]) - (src[2][0] * src[0][1])));
-
-    m[2][0] = (det * +((src[0][1] * src[1][2]) - (src[1][1] * src[0][2])));
-    m[2][1] = (det * -((src[0][0] * src[1][2]) - (src[1][0] * src[0][2])));
-    m[2][2] = (det * +((src[0][0] * src[1][1]) - (src[1][0] * src[0][1])));
-
-    m[0][3] = 0;
-    m[1][3] = 0;
-    m[2][3] = 0;
-
-    if (m == mTmp) {
-        C_MTXCopy(mTmp, invX);
-    }
-    return 1;
-}
 
 asm u32 PSMTXInvXpose(register Mtx src, register Mtx invX) {
 	psq_l f0, 0(src), 1, 0
@@ -716,29 +566,6 @@ void MTXQuat(register Mtx m, register Quaternion* q) {
 }
 
 // UNUSED: the game never calls this; dead-stripped at link.
-void MTXReflect(Mtx m, Vec *p, Vec *n) {
-    f32 vxy;
-    f32 vxz;
-    f32 vyz;
-    f32 pdotn;
-
-    vxy = -2 * n->x * n->y;
-    vxz = -2 * n->x * n->z;
-    vyz = -2 * n->y * n->z;
-    pdotn = 2 * VECDotProduct(p, n);
-    m[0][0] = (1 - (2 * n->x * n->x));
-    m[0][1] = vxy;
-    m[0][2] = vxz;
-    m[0][3] = (pdotn * n->x);
-    m[1][0] = vxy;
-    m[1][1] = (1 - (2 * n->y * n->y));
-    m[1][2] = vyz;
-    m[1][3] = (pdotn * n->y);
-    m[2][0] = vxz;
-    m[2][1] = vyz;
-    m[2][2] = (1 - (2 * n->z * n->z));
-    m[2][3] = (pdotn * n->z);
-}
 
 void MTXLookAt(Mtx m, Vec *camPos, Vec *camUp, Vec *target) {
     Vec vLook;

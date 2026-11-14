@@ -108,37 +108,6 @@ s32 CARDFastOpen(s32 chan, s32 fileNo, CARDFileInfo *fileInfo) {
 }
 
 // UNUSED: the game never calls this; dead-stripped at link.
-s32 CARDOpen(s32 chan, char *fileName, CARDFileInfo *fileInfo) {
-    CARDControl *card;
-    s32 result;
-    CARDDir *dir;
-    CARDDir *ent;
-    s32 fileNo;
-
-    ASSERTLINE(0x11A, 0 <= chan && chan < 2);
-
-    fileInfo->chan = -1;
-    result = __CARDGetControlBlock(chan, &card);
-    if (result < 0)
-        return result;
-
-    result = __CARDGetFileNo(card, fileName, &fileNo);
-    if (result >= 0)
-    {
-        dir = __CARDGetDirBlock(card);
-        ent = &dir[fileNo];
-        if (!CARDIsValidBlockNo(card, ent->startBlock))
-            result = CARD_RESULT_BROKEN;
-        else
-        {
-            fileInfo->chan = chan;
-            fileInfo->fileNo = fileNo;
-            fileInfo->offset = 0;
-            fileInfo->iBlock = ent->startBlock;
-        }
-    }
-    return __CARDPutControlBlock(card, result);
-}
 
 s32 CARDClose(CARDFileInfo *fileInfo) {
     CARDControl *card;

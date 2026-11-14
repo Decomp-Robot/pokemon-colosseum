@@ -372,35 +372,6 @@ static f32 verts[20][3] = {
 };
 
 // UNUSED: the game never calls this; dead-stripped at link.
-void GXDrawDodeca(void)
-{
-    u32 i;
-    f32 *p0;
-    f32 *p1;
-    f32 *p2;
-    f32 u[3];
-    f32 v[3];
-    f32 n[3];
-
-    GetVertState();
-    for (i = 0; i < 12; i++) {
-        p0 = verts[polygons[i][0]];
-        p1 = verts[polygons[i][1]];
-        p2 = verts[polygons[i][2]];
-        vsub(p1, p2, u);
-        vsub(p1, p0, v);
-        vcross(u, v, n);
-        normalize(n);
-        GXBegin(GX_TRIANGLEFAN, GX_VTXFMT3, 5);
-        myvertex(verts[polygons[i][4]], n);
-        myvertex(verts[polygons[i][3]], n);
-        myvertex(p2, n);
-        myvertex(p1, n);
-        myvertex(p0, n);
-        GXEnd();
-    }
-    RestoreVertState();
-}
 
 static f32 odata[6][3] = {
     {  1.0f,  0.0f,  0.0f },
@@ -423,16 +394,6 @@ static u8 ondex[8][3] = {
 };
 
 // UNUSED: the game never calls this; dead-stripped at link.
-void GXDrawOctahedron(void)
-{
-    s32 i;
-
-    GetVertState();
-    for (i = 7; i >= 0; i--) {
-        SubDivTriangle(0, i, odata, ondex);
-    }
-    RestoreVertState();
-}
 
 static f32 idata[12][3] = {
     { -0.5257311f,  0.0f,        0.8506508f },
@@ -473,28 +434,8 @@ static u8 index[20][3] = {
 };
 
 // UNUSED: the game never calls this; dead-stripped at link.
-void GXDrawIcosahedron(void)
-{
-    s32 i;
-
-    GetVertState();
-    for (i = 19; i >= 0; i--) {
-        SubDivTriangle(0, i, idata, index);
-    }
-    RestoreVertState();
-}
 
 // UNUSED: the game never calls this; dead-stripped at link.
-void GXDrawSphere1(u8 depth)
-{
-    s32 i;
-
-    GetVertState();
-    for (i = 19; i >= 0; i--) {
-        SubDivTriangle(depth, i, idata, index);
-    }
-    RestoreVertState();
-}
 
 // UNUSED: the game never calls this; dead-stripped at link.
 static u32 CmpNormal32(f32 n1[3], f32 n2[3])
@@ -569,14 +510,3 @@ static void SubDivNrm(u8 depth, u8 i, f32 (*data)[3], u8 (*ndx)[3])
 }
 
 // UNUSED: the game never calls this; dead-stripped at link.
-u32 GXGenNormalTable(u8 depth, f32 *table)
-{
-    s32 i;
-
-    nrm_cnt = 0;
-    nrm_tab = table;
-    for (i = 7; i >= 0; i--) {
-        SubDivNrm(depth, i, odata, ondex);
-    }
-    return nrm_cnt;
-}

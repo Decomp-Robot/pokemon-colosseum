@@ -23,27 +23,5 @@ AXPROFILE * __AXGetCurrentProfile(void) {
 }
 
 // UNUSED: the game never calls this; dead-stripped at link.
-void AXInitProfile(AXPROFILE * profile, u32 maxProfiles) {
-    ASSERTLINE(0x3A, profile);
-    ASSERTLINE(0x3B, maxProfiles);
-
-    __AXProfile = profile;
-    __AXMaxProfiles = maxProfiles;
-    __AXCurrentProfile = 0;
-    __AXProfileInitialized = 1;
-}
 
 // UNUSED: the game never calls this; dead-stripped at link.
-u32 AXGetProfile(void) {
-    int old;
-    u32 n;
-
-    old = OSDisableInterrupts();
-    n = __AXCurrentProfile;
-    if (n != 0) {
-        n -= 1;
-    }
-    __AXCurrentProfile = 0;
-    OSRestoreInterrupts(old);
-    return n;
-}

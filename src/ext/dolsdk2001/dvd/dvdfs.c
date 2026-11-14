@@ -408,41 +408,6 @@ static void cbForSeekAsync(long result, struct DVDCommandBlock * block) {
 }
 
 // UNUSED: the game never calls this; dead-stripped at link.
-long DVDSeekPrio(struct DVDFileInfo * fileInfo, long offset, long prio) {
-    int result;
-    struct DVDCommandBlock * block;
-    long state;
-    int enabled;
-    long retVal;
-
-    ASSERTMSGLINE(0x3A1, fileInfo, "DVDSeek(): null pointer is specified to file info address  ");
-    ASSERTMSGLINE(0x3A5, !(offset & 3), "DVDSeek(): offset must be multiple of 4 byte  ");
-    ASSERTMSGLINE(0x3A9, (offset >= 0) && ((u32) offset < (u32) fileInfo->length), "DVDSeek(): offset is out of the file  ");
-
-    block = &fileInfo->cb;
-    result = DVDSeekAbsAsyncPrio(block, (u32)(char*)fileInfo->startAddr + offset, cbForSeekSync, prio);
-    if (!result) {
-        return -1;
-    }
-    enabled = OSDisableInterrupts();
-
-    while(1) {
-        state = ((volatile DVDCommandBlock*)block)->state;
-        if (state == 0) {
-            retVal = 0;
-            break;
-        } else if (state == -1) {
-            retVal = -1;
-            break;
-        } else if (state == 10) {
-            retVal = -3;
-            break;
-        }
-        OSSleepThread(&__DVDThreadQueue);
-    }
-    OSRestoreInterrupts(enabled);
-    return retVal;
-}
 
 // UNUSED: the game never calls this; dead-stripped at link.
 static void cbForSeekSync() {
@@ -450,9 +415,6 @@ static void cbForSeekSync() {
 }
 
 // UNUSED: the game never calls this; dead-stripped at link.
-long DVDGetFileInfoStatus(struct DVDFileInfo * fileInfo) {
-    return fileInfo->cb.state;
-}
 
 // UNUSED: the game never calls this; dead-stripped at link.
 int DVDOpenDir(char * dirName, DVDDir * dir) {
@@ -475,24 +437,8 @@ int DVDOpenDir(char * dirName, DVDDir * dir) {
 }
 
 // UNUSED: the game never calls this; dead-stripped at link.
-int DVDReadDir(DVDDir * dir, DVDDirEntry* dirent) {
-    unsigned long loc;
-
-    loc = dir->location;
-    if ((loc <= (u32) dir->entryNum) || ((u32) dir->next <= loc)) {
-        return 0;
-    }
-    dirent->entryNum = loc;
-    dirent->isDir = entryIsDir(loc);
-    dirent->name = FstStringStart + stringOff(loc);
-    dir->location = entryIsDir(loc) ? nextDir(loc) : loc + 1;
-    return 1;
-}
 
 // UNUSED: the game never calls this; dead-stripped at link.
-int DVDCloseDir(DVDDir* dir) {
-    return 1;
-}
 
 // UNUSED: the game never calls this; dead-stripped at link.
 void * DVDGetFSTLocation() {
@@ -500,32 +446,3 @@ void * DVDGetFSTLocation() {
 }
 
 // UNUSED: the game never calls this; dead-stripped at link.
-s32 DVDGetTransferredSize(DVDFileInfo* fileinfo) {
-    s32 bytes;
-    DVDCommandBlock* cb;
-
-    cb = &(fileinfo->cb);
-
-    switch (cb->state) {
-        case DVD_STATE_COVER_CLOSED:
-        case DVD_STATE_NO_DISK:
-        case DVD_STATE_COVER_OPEN:
-        case DVD_STATE_WRONG_DISK:
-        case DVD_STATE_FATAL_ERROR:
-        case DVD_STATE_MOTOR_STOPPED:
-        case DVD_STATE_CANCELED:
-        case DVD_STATE_END:
-            bytes = (s32)cb->transferredSize;
-            break;
-        case DVD_STATE_WAITING:
-            bytes = 0;
-            break;
-        case DVD_STATE_BUSY:
-            bytes = (s32)(cb->transferredSize + (cb->currTransferSize - __DIRegs[6]));
-            break;
-        default:
-            ASSERTLINE(0x524, FALSE);
-            break;
-  }
-  return bytes;
-}

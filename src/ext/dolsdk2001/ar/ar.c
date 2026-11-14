@@ -84,24 +84,8 @@ u32 ARAlloc(u32 length) {
 }
 
 // UNUSED: the game never calls this; dead-stripped at link.
-u32 ARFree(u32 * length) {
-    int old;
-
-    old = OSDisableInterrupts();
-    __AR_BlockLength -= 1;
-    if (length) {
-        *length = *__AR_BlockLength;
-    }
-    __AR_StackPointer -= *__AR_BlockLength;
-    __AR_FreeBlocks += 1;
-    OSRestoreInterrupts(old);
-    return __AR_StackPointer;
-}
 
 // UNUSED: the game never calls this; dead-stripped at link.
-int ARCheckInit(void) {
-    return __AR_init_flag;
-}
 
 u32 ARInit(u32 * stack_index_addr, u32 num_entries) {
     int old;
@@ -132,9 +116,6 @@ u32 ARInit(u32 * stack_index_addr, u32 num_entries) {
 }
 
 // UNUSED: the game never calls this; dead-stripped at link.
-void ARReset(void) {
-    __AR_init_flag = 0;
-}
 
 // UNUSED: the game never calls this; dead-stripped at link.
 void ARSetSize(void) {
@@ -152,9 +133,6 @@ u32 ARGetSize(void) {
 }
 
 // UNUSED: the game never calls this; dead-stripped at link.
-u32 ARGetInternalSize(void) {
-    return __AR_InternalSize;
-}
 
 // UNUSED: the game never calls this; dead-stripped at link.
 void ARClear(u32 flag) {
