@@ -484,6 +484,11 @@ ext/dolsdk2001/demo/DEMOStats.c:
 ext/dolsdk2001/demo/DEMOWin.c:
 	.text       start:0x800CF708 end:0x800CF708
 
+ext/musyx_sdk/runtime/hw_volconv.c:
+	.text       start:0x8015D7D0 end:0x8015DEC0
+	.data       start:0x80369A68 end:0x80369C8C
+	.sdata2     start:0x8047D430 end:0x8047D464
+
 ext/musyx_sdk/runtime/hardware.c:
 	.text       start:0x8016221C end:0x80163214
 	.rodata     start:0x80273448 end:0x80273548

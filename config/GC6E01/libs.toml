@@ -3123,3 +3123,9 @@ extra_cflags = ["-i src/ext/musyx_sdk/include", "-i src/ext/dolsdk2001/include",
 completed = true
 
 
+# SAL volume/pan conversion for the game's v1.5.3 runtime.
+[[lib.object]]
+name = "ext/musyx_sdk/runtime/hw_volconv.c"
+extra_cflags = ["-i src/ext/musyx_sdk/include", "-i src/ext/musyx_sdk/msl", "-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/include/libc", "-DMUSY_TARGET=MUSY_TARGET_DOLPHIN", "-DMUSY_VERSION_MAJOR=1", "-DMUSY_VERSION_MINOR=5", "-DMUSY_VERSION_PATCH=3", "-fp_contract off"]
+completed = true
+
