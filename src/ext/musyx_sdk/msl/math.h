@@ -30,5 +30,6 @@ float cosf(float x);
 static inline float powf(float x, float y) { return (float)pow(x, y); }
 
 static inline float fmodf(float x, float y) { return (float)fmod(x, y); }
+static inline float floorf(float x) { return (float)floor(x); }
 
 #endif /* _MSL_MATH_H */

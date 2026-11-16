@@ -484,6 +484,13 @@ ext/dolsdk2001/demo/DEMOStats.c:
 ext/dolsdk2001/demo/DEMOWin.c:
 	.text       start:0x800CF708 end:0x800CF708
 
+ext/musyx_sdk/runtime/seq.c:
+	.text       start:0x8014635C end:0x8014A23C
+	.data       start:0x80368A30 end:0x80368A80
+	.bss        start:0x804271D0 end:0x80434A10
+	.sbss       start:0x8047AEF8 end:0x8047AF18
+	.sdata2     start:0x8047D350 end:0x8047D370
+
 ext/musyx_sdk/runtime/synth.c:
 	.text       start:0x8014A23C end:0x8014D598
 	.bss        start:0x80434A10 end:0x80435FF4

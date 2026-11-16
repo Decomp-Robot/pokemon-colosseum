@@ -3122,6 +3122,73 @@ name = "ext/musyx_sdk/runtime/hw_memory.c"
 extra_cflags = ["-i src/ext/musyx_sdk/include", "-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/include/libc", "-DMUSY_VERSION_MAJOR=1", "-DMUSY_VERSION_MINOR=5", "-DMUSY_VERSION_PATCH=3"]
 completed = true
 
+# MusyX sequencer core, the runtime.a member src/musyx/runtime/seq.c.  The source is byte-identical
+# to the reference text (no recovered-code edits); only compiler settings and symbol names are
+# provided here.  The member's linked image is one contiguous .text run at 0x8014635C-0x8014A23C
+# (0x3EE0 bytes, 16 functions) in the retail order: seqGetPrivateId 0x68, seqStartPlay 0xAC4,
+# StartPause 0x64, seqPause 0x27C, seqStop 0x2B0, seqSpeed 0xE4, seqContinue 0x108, seqMute 0xBC,
+# seqVolume 0x1CC, seqCrossFade 0xB58, GenerateNextTrackEvent 0x218, HandleEvent 0xA94,
+# InitTrackEvents 0x174, HandleTrackEvents 0x49C, seqHandle 0x9F4, seqInit 0x1A8.  It starts where
+# the previous audio member's run ends and ends at 0x8014A23C, which is synth.c's synthSetBpm; all
+# 16 bodies reproduce with zero differing words (sda21/ADDR16_HA/ADDR16_LO/REL24 operands resolved
+# against symbols.txt and the runtime _SDA_BASE_ 0x80480820).
+# Inlining: the file's 23 private helpers stay `static`, as in the reference.  -O4,p -inline auto
+# (archive preset) emits 0x5104 bytes of text: the 16 entry points with the helper bodies inlined
+# into them, plus one out-of-line copy of every helper (ClearNotes 0xD4, ResetNotes 0xD8,
+# KillNotes 0x90, AllocateNote 0xF0, FreeNote 0x6C, HandleNotes 0x12C, KeyOffNotes 0xD0,
+# seqFreeKeyOffNote 0x60, HandleKeyOffNotes 0x100, InitPublicIds 0xC, GetPublicId 0x98,
+# DoPrgChange 0xD0, BuildTransTab 0x9C, SetTickDelta 0xE0, HandleMasterTrack 0xE8,
+# RewindMTrack 0x1D8, GetStreamValue 0x8C, InitStream 0xD0, HandleStream 0xE4,
+# InsertGlobalEvent 0x74, GetNextEventTime 0x1C, GetGlobalEvent 0x30, InitTrackEventsSection
+# 0x194 = 0x1138) and the two seqKill* exports (seqKillAllInstances 0x5C,
+# seqKillInstancesByGroupID 0x90 = 0xEC).  No live code references those 25 bodies - the helpers
+# have no remaining caller and seqKill* are only reached from snd_synthapi.c's never-called
+# sndFXCtrl14/sndFXSilence - so Metrowerks' unreferenced-function elimination drops them and lays
+# the 16 entry points out as the retail 0x3EE0 run; the linked ELF carries exactly those 16
+# symbols at 0x8014635C-0x8014A23C and the DOL matches bit for bit.  Nothing present in the target
+# was deleted to obtain this, and the dead seqKill* definitions are kept in the source.
+# Float: SetTickDelta stores (u16)floorf(tickDelta) and the retail sequence is `bl floor`, `frsp
+# f0,f1`, `fctiwz f0,f0` - a single-precision wrapper over floor() that is inlined, not a call to a
+# library floorf.  This tree's MSL math.h is the C89 subset plus single-precision wrappers
+# (powf/fmodf), so floorf is provided there the same way (static inline in msl/math.h); without it
+# the member references an undefined `floorf` and the inlined SetTickDelta copies in
+# HandleTrackEvents and seqHandle come out 4 and 8 instructions (0x50 bytes) short.
+# Version: the binary pins MUSY_VERSION to 1.5.4 <= v < 2.0.0 for this member.  HandleEvent's
+# GetStreamValue inlines take the 1.5.4+ `extsh/rlwinm/or/sth` shape at 0x80148700, and with
+# MUSY_VERSION_PATCH=3 the same source leaves 62 differing instructions in HandleEvent (the 1.5.2
+# variant reads the stream value as a single halfword).  Every live version boundary of the 16
+# bodies is identical from 1.5.4 through 2.0.0, so the reference text compiles unchanged in that
+# window; the game's runtime is v1.5.4 (as synth.c/synthvoice.c/snd_synthapi.c), so PATCH=4 is used.
+# Data: .data 0x80368A30-0x80368A80 (0x50) is HandleEvent's 20-entry event jump table, emitted as
+# the compiler's local `@1614` and byte-identical to the DOL (words 0x80148AA8, 0x80148AD8,
+# 0x80148AFC, 14x 0x80148BD4, 0x80148B24, 0x80148BD4, 0x80148B3C).  .sdata2 0x8047D350-0x8047D370
+# (0x20) is the member's five float/double constant objects (@553/@554/@555/@556/@558), bytes
+# 0x32D1B717, 0x3B800000, 0x47800000, 0x0, 0x40F00000, 0x0, 0x43300000, 0x0, byte-identical to the
+# DOL and immediately before synth.c's .sdata2.  .bss 0x804271D0-0x80434A10 (0xD840) holds seqNote
+# (0x1400 at 0x804271D0), seqInstance (0xC340 at 0x804285D0) and seqMIDIPriority (0x100 at
+# 0x80434910); the object emits the same 0xD840 bytes in that same internal order (the source's
+# declaration order is also its first-use order), which the linked ELF reproduces at the retail
+# addresses.  .sbss 0x8047AEF8-0x8047AF18 (0x20) is the member's eight scalar statics in object
+# order (seq_next_id 0x8047AEF8, curFadeOutState 0x8047AEFC, curSeqId 0x8047AF00, noteFree
+# 0x8047AF04, cseq 0x8047AF08, seqFreeRoot 0x8047AF0C, seqPausedRoot 0x8047AF10, seqActiveRoot
+# 0x8047AF14), immediately before synth.c's .sbss - the exact slots the member's sda21 accesses
+# resolve to.
+# Symbols: symbols.txt carries the source-level names for this member (seqStartPlay at 0x801463C4,
+# HandleEvent at 0x801485FC and the .data/.bss/.sbss/.sdata2 objects above, the last ones under the
+# compiler's own `@` labels).  seqCrossFade's four out-of-line peer calls resolve to symbols whose
+# definitions live in other runtime.a members and that were still `zz_` placeholders: sndSeqSpeed
+# 0x8014D600 and sndSeqContinue 0x8014D648 (seq_api.c, in the same run as the already-named
+# seqGetMIDIPriority/sndSeqMute/sndSeqVolume) and seqPlaySong 0x8015A21C and sndSeqPlayEx
+# 0x8015A368 (s_data.c).  The retail bl targets at 0x801481A4, 0x801481EC, 0x801482A0 and
+# 0x8014839C are exactly those addresses, so only the names were added - no bytes moved.
+# Compiler: the archive default GC/2.6 reproduces all 16 bodies; no override is needed.
+# Include order: the musyx headers plus the MSL tree before dolsdk2001/include/libc, so math.h
+# resolves to msl/.
+[[lib.object]]
+name = "ext/musyx_sdk/runtime/seq.c"
+extra_cflags = ["-i src/ext/musyx_sdk/include", "-i src/ext/musyx_sdk/msl", "-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/include/libc", "-DMUSY_TARGET=MUSY_TARGET_DOLPHIN", "-DMUSY_VERSION_MAJOR=1", "-DMUSY_VERSION_MINOR=5", "-DMUSY_VERSION_PATCH=4"]
+completed = true
+
 # 3D emitter/listener manager of the game's MusyX runtime - the runtime.a member
 # src/musyx/runtime/snd3d.c, kept byte-identical to the reference text.  The member's live image
 # is one contiguous .text run at 0x8015DEC0-0x8015FE88 (0x1FC8) in source declaration order:
