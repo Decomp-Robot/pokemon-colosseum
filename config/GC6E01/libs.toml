@@ -3165,6 +3165,72 @@ mw_version = "GC/1.3.2r"
 extra_cflags = ["-i src/ext/musyx_sdk/include", "-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/include/libc", "-DMUSY_TARGET=MUSY_TARGET_DOLPHIN", "-DMUSY_VERSION_MAJOR=1", "-DMUSY_VERSION_MINOR=5", "-DMUSY_VERSION_PATCH=3", "-fp_contract off"]
 completed = true
 
+# MusyX MIDI-controller state manager, the runtime.a member src/musyx/runtime/snd_midictrl.c
+# (inpSetGlobalMIDIDirtyFlag..inpSetExCtrl).  Its whole image is one contiguous .text run at
+# 0x8016039C-0x80162070 (0x1CD4) in source declaration order, starting where snd_math.c's run
+# ends and ending at the sndRand/sndSin/sndBSearch/sndConvert* helper cluster that belongs to the
+# neighbouring (not yet integrated) snd_* member at 0x80162070.  All 30 functions reproduced by
+# the compile match the retail words with zero differing words, including the four private RPN
+# helpers and the two GetInputValue/GetGlobalInputValue wrappers, which the retail unit only
+# carries inlined: nothing is emitted for them unless they are declared inline, and with the
+# declarations inlined the member is exactly 0x1CD4 bytes, so inpSetMidiCtrl's 0x608-byte body
+# (both the set!=0xFF and the set==0xFF RPN dispatch, inlined twice) and inpInit/inpGetAuxA/
+# inpGetAuxB keep their inlined copies.  This is the one revision difference against the
+# reference text: the reference revision ships those helpers as plain static (and
+# inpSetRPNHi/Lo/Dec/Inc as extern) definitions, which MWCC emits out-of-line in addition to
+# inlining them (0x20B0 total, 0x3DC of duplicates the binary does not contain: measured by
+# recompiling the pristine reference text here with the same flags, it emits
+# inpResetGlobalMIDIDirtyFlags 0xAC, inpResetGlobalMIDIDirtyFlag 0x38, inpSetRPNHi 0xC4,
+# inpSetRPNLo 0x4, inpSetRPNDec 0xC0, inpSetRPNInc 0xC0, GetInputValue 0x44 and
+# GetGlobalInputValue 0x6C out-of-line; the retail member is 0x20B0-0x3DC = 0x1CD4 bytes and
+# holds the inlined copies only).
+# Emitted data:
+#  * .rodata 0x80273338-0x80273446: inpColdMIDIDefaults (0x80273338, 134 bytes) and
+#    inpWarmMIDIDefaults (0x802733C0, 134 bytes, at +0x88 because the first table rounds up to
+#    8-byte alignment), the two tables inpResetMidiCtrl selects between with the lis/addi
+#    operands 0x80270000+0x3338 (coldReset) and +0x33C0 (warm).  The two trailing bytes up to
+#    hardware.c's .rodata at 0x80273448 are inter-object padding.
+#  * .data 0x80369C90-0x80369D1C: the two static dirtyMask[4] vectors of inpGetAuxA
+#    (0x80000001..0x80000008) and inpGetAuxB (0x80000010..0x80000080), followed by the three
+#    9-entry MWCC switch tables of inpTranslateExCtrl (0x80369CB0), inpGetExCtrl (0x80369CD4)
+#    and inpSetExCtrl (0x80369CF8).
+#  * .bss 0x80449390-0x8044FB90 (0x6800): inpGlobalMIDIDirtyFlags (0x200), midi_ctrl (0x4300),
+#    inpChannelDefaults (0x80), fx_ctrl (0x2180), inpFXChannelDefaults (0x40), midi_lastNote
+#    (0x80), fx_lastNote (0x40), i.e. the member's array order and sizes are the ones this
+#    source emits.  The base comes straight out of the retail code: inpSetGlobalMIDIDirtyFlag
+#    is `lis r6,0x8045; addi r0,r6,-0x6C70` (0x80449390), inpResetMidiCtrl adds -0x6A70/-0x26F0
+#    to the same 0x80450000 base for midi_ctrl (+0x200 = 0x80449590) and fx_ctrl (+0x4580 =
+#    0x8044D910), and inpSetMidiLastNote adds -0x530/-0x4B0 for midi_lastNote (+0x6740 =
+#    0x8044FAD0) and fx_lastNote (+0x67C0 = 0x8044FB50).  The block ends exactly at
+#    hw_aramdma.c's aramQueueLo (0x8044FB90), which the following split claims.
+#  * .sdata2: nothing belongs to this member in the target.  The only .sdata2 content the
+#    compile emits is the 0x20 bytes of unreferenced static locals that dolsdk2001/include/libc's
+#    extern inline sqrt/sqrtf bodies register (_half$localstatic3$sqrt(f)__Ff,
+#    _three$localstatic4$sqrt(f)__Ff, the same artifact snd_math.c documents); they are dropped
+#    at link and the retail .sdata2 runs straight from snd_math.c's block ending at 0x8047D4D4
+#    to hardware.c's block at 0x8047D4D8 through 4 bytes of inter-object padding.
+# inpTranslateExCtrl (0x80161D20, 0x70) sits inside the same run even though the detected
+# function inventory does not list it: it is live code of this member, inpAddCtrl calls it
+# out-of-line (the member's only REL24 reference to it, at member offset 0xBC8 = 0x80160F64), inpGetExCtrl
+# and inpSetExCtrl carry inlined copies (each owns one of the .data switch tables below), and
+# it is reproduced by the compile with zero differing words, so it is claimed here.
+# Version macros follow the game's v1.5.3 runtime (the same as snd_math.c/hardware.c/hw_*): the
+# 1.5.x paths (no RPN/LPF #if blocks of the 2.x reference) are what the binary contains, and
+# the artifact cannot distinguish 1.5.2/1.5.3/1.5.4/2.0.0 because every live boundary in this
+# file is 2.0.1 - recompiling the same source with 1.5.2, 1.5.4 and 2.0.0 produces byte-identical
+# .text (0x1CD4), .rodata (0x10E), .data (0x8C) and .bss (0x6800), while 1.5.1 takes the
+# `MUSY_VERSION < 1.5.2` branch (portamento state and inpGetMidiPortState, .text 0x1DA4, .bss
+# 0x68C0) and 2.0.1 takes the RPN/LPF branches (.text 0x27E8, .bss 0x6E00); v1.5.3 is used, the
+# same patch level as the sibling runtime members.
+# Compiler: no override - the archive default GC/2.6 emits this unit exactly (0x1CD4, zero
+# differing words), as do GC/1.3.2/1.3.2r/2.0/2.5/2.7, while GC/1.3 and earlier do not
+# (inpSetExCtrl shrinks to 0x9C).  -fp_contract on, the project default, is correct: the unit
+# has no fmul/fadd chains to fold.
+[[lib.object]]
+name = "ext/musyx_sdk/runtime/snd_midictrl.c"
+extra_cflags = ["-i src/ext/musyx_sdk/include", "-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/include/libc", "-DMUSY_TARGET=MUSY_TARGET_DOLPHIN", "-DMUSY_VERSION_MAJOR=1", "-DMUSY_VERSION_MINOR=5", "-DMUSY_VERSION_PATCH=3"]
+completed = true
+
 
 # MusyX autotune pitch conversion (sndPitchUpOne/sndGetPitch). The unit needs no
 # target-version override: with the runtime archive settings, all GC/1.3 through

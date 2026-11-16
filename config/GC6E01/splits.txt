@@ -532,6 +532,12 @@ ext/musyx_sdk/runtime/snd_math.c:
 	.text       start:0x8015FFDC end:0x8016039C
 	.sdata2     start:0x8047D4B8 end:0x8047D4D4
 
+ext/musyx_sdk/runtime/snd_midictrl.c:
+	.text       start:0x8016039C end:0x80162070
+	.rodata     start:0x80273338 end:0x80273446
+	.data       start:0x80369C90 end:0x80369D1C
+	.bss        start:0x80449390 end:0x8044FB90
+
 ext/musyx_sdk/runtime/hardware.c:
 	.text       start:0x8016221C end:0x80163214
 	.rodata     start:0x80273448 end:0x80273548
