@@ -528,6 +528,10 @@ ext/musyx_sdk/runtime/hw_volconv.c:
 	.data       start:0x80369A68 end:0x80369C8C
 	.sdata2     start:0x8047D430 end:0x8047D464
 
+ext/musyx_sdk/runtime/snd_math.c:
+	.text       start:0x8015FFDC end:0x8016039C
+	.sdata2     start:0x8047D4B8 end:0x8047D4D4
+
 ext/musyx_sdk/runtime/hardware.c:
 	.text       start:0x8016221C end:0x80163214
 	.rodata     start:0x80273448 end:0x80273548
