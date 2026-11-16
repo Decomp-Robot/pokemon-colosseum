@@ -3545,6 +3545,60 @@ completed = true
 # and seq.c ownership are unchanged.
 # Include order: the musyx headers plus the MSL tree before dolsdk2001/include/libc, like the
 # sibling runtime members, so <math.h> resolves to msl/.
+# MusyX sequencer front-end API, the runtime.a member src/musyx/runtime/seq_api.c, kept
+# byte-identical to the reference text.  The member's linked image is one contiguous .text run at
+# 0x8014D598-0x8014D75C (0x1C4 bytes, 7 functions) in source declaration order: sndSeqGetValid
+# 0x30, sndSeqPause 0x38, sndSeqSpeed 0x48, sndSeqContinue 0x38, sndSeqMute 0x58, sndSeqVolume
+# 0x68, seqGetMIDIPriority 0x1C.  The run starts where synth.c's synthExit ends (0x8014D598) and
+# ends at snd_synthapi.c's sndFXCtrl (0x8014D75C), so no other member's code sits inside it.
+# The file declares 20 functions (0x780 bytes of .text).  The other 13 - sndSeqCrossFade 0x4C,
+# sndSeqCrossFadeDone 0x24, sndSeqGetLoopCnt 0x50, sndSeqGetLoopCntEx 0x80, sndSeqStop 0x38,
+# sndSeqLoop 0xA4, sndSeqLoopEx 0xE0, sndSeqGetVolGroup 0x48, sndSeqAssignVolGroup2Track 0x78,
+# sndSeqGetMidiCtrl 0x84, sndSeqGetMidiCtrl14 0x84, sndSeqSetMidiCtrl 0x7C and
+# sndSeqSetMidiCtrl14 0x7C (= 0x5BC) - have no remaining caller in this build, so Metrowerks'
+# unreferenced-function elimination drops them exactly as retail did (0x780 - 0x5BC = 0x1C4);
+# their definitions stay in the source, and nothing present in the target was deleted to obtain
+# this.  seqGetInstanceForVoice is not compiled at all: it is gated by
+# MUSY_VERSION >= MUSY_VERSION_CHECK(2, 0, 2) and the binary carries no such body.
+# Address map: the detected inventory named the five already-named sources (sndSeqSpeed
+# 0x8014D600, sndSeqContinue 0x8014D648, sndSeqMute 0x8014D680, sndSeqVolume 0x8014D6D8,
+# seqGetMIDIPriority 0x8014D740).  The two bodies in front of them were still zz_ placeholders
+# although they are this member's first two kept functions (object offsets 0x0/0x30, in
+# declaration order, byte-identical at 0x8014D598/0x8014D5C8): zz_8014D598_ is sndSeqGetValid (bl
+# seqGetPrivateId, `!= -1` equivalence test, no other side effect) and zz_8014D5C8_ is sndSeqPause
+# (hwDisableIrq / seqPause / hwEnableIrq).  Retail kept both because the not-yet-decompiled game
+# code in the auto unit at 0x801653BC calls them (bl 0x80166788 sndSeqGetValid, bl 0x8016698C
+# sndSeqPause); the 0x68-byte auto text unit that used to own those bytes
+# (auto_01_8014D598_text) is claimed here instead and symbols.txt carries the source names, so the
+# whole member - not just its five named functions - links from this object.
+# Cross-member references, all resolved against symbols.txt at their retail targets: sndSeqVolume
+# 0x8014D6D8 from seq.c (0x80147D08/0x80147D28/0x80147D40/0x801481B8) and from the game unit
+# (0x801668A4/0x80166984/0x801673E8/0x80167568), sndSeqContinue 0x8014D648 from seq.c 0x801481A4
+# and 0x80166890, sndSeqSpeed 0x8014D600 from seq.c 0x801481EC, sndSeqMute 0x8014D680 from seq.c
+# 0x801481D4/0x801483C8, seqGetMIDIPriority 0x8014D740 from synthmacros.c 0x80156E4C.
+# Data: the member has none of its own.  seqInstance and seqMIDIPriority are seq.c's objects
+# (.bss 0x804285D0/0x80434910) accessed through externs; the object emits no .data/.bss/.sdata;
+# the dropped bodies' MUSY_ASSERT_MSG/MUSY_DEBUG strings vanish because MUSY_BUILD_DEBUG is
+# undefined (assert.h defines both macros away).  The split is therefore .text only.
+# Include order: <math.h> must resolve to the SDK MSL tree before dolsdk2001/include/libc, like the
+# sibling seq.c/snd_synthapi.c members.  With the libc header first, its unused extern-inline
+# sqrt/sqrtf bodies register four 8-byte localstatics (_half$localstatic3$sqrt[f]__Ff etc.) and the
+# object grows a 0x20-byte .sdata2 section the target object does not have; it is unreferenced and
+# stripped at link (the DOL is identical either way), but the MSL order reproduces the target
+# object's section set exactly.
+# Compiler: the archive-scope default GC/2.6 reproduces all 7 linked bodies word for word (the
+# object's whole 0x780-byte .text is unchanged under GC/1.3.2r as well), so no per-object compiler
+# override is needed.  -fp_contract/the preset's other flags are irrelevant here: the file performs
+# no floating-point arithmetic.
+# Version: every live boundary of this member is identical from 1.5.3 through 2.0.0 (its .text is
+# bit-identical at 1.5.3/1.5.4/2.0.0), so the artifact only pins MUSY_VERSION < 2.0.2; PATCH=4
+# follows the game's v1.5.4 runtime as evidenced by seq.c/synth.c, which do discriminate the patch
+# level.  MUSY_TARGET_DOLPHIN matches hardware.c and the sibling members.
+[[lib.object]]
+name = "ext/musyx_sdk/runtime/seq_api.c"
+extra_cflags = ["-i src/ext/musyx_sdk/include", "-i src/ext/musyx_sdk/msl", "-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/include/libc", "-DMUSY_TARGET=MUSY_TARGET_DOLPHIN", "-DMUSY_VERSION_MAJOR=1", "-DMUSY_VERSION_MINOR=5", "-DMUSY_VERSION_PATCH=4"]
+completed = true
+
 [[lib.object]]
 name = "ext/musyx_sdk/runtime/snd_synthapi.c"
 extra_cflags = ["-i src/ext/musyx_sdk/include", "-i src/ext/musyx_sdk/msl", "-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/include/libc", "-DMUSY_TARGET=MUSY_TARGET_DOLPHIN", "-DMUSY_VERSION_MAJOR=2", "-DMUSY_VERSION_MINOR=0", "-DMUSY_VERSION_PATCH=0"]
