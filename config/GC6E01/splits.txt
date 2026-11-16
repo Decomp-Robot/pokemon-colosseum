@@ -495,6 +495,9 @@ ext/musyx_sdk/runtime/synth_ac.c:
 	.data       start:0x80368EC8 end:0x803692C8
 	.sdata2     start:0x8047D3F0 end:0x8047D408
 
+ext/musyx_sdk/runtime/synth_dbtab.c:
+	.data       start:0x803692C8 end:0x80369A50
+
 ext/musyx_sdk/runtime/synth_adsr.c:
 	.text       start:0x80158CD4 end:0x80159494
 	.sdata2     start:0x8047D408 end:0x8047D430

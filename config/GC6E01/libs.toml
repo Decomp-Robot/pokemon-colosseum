@@ -3164,3 +3164,15 @@ name = "ext/musyx_sdk/runtime/synth.c"
 mw_version = "GC/1.3.2r"
 extra_cflags = ["-i src/ext/musyx_sdk/include", "-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/include/libc", "-DMUSY_VERSION_MAJOR=1", "-DMUSY_VERSION_MINOR=5", "-DMUSY_VERSION_PATCH=4", "-fp_contract off"]
 completed = true
+
+# MusyX runtime DSP data tables (dspAttenuationTab, dspScale2IndexTab, dspDLSVolTab).
+# Pure initialised-data member: no code and no version-dependent constants, so the
+# runtime archive settings apply as-is.  The three tables are byte-identical to the
+# target .data block at 0x803692C8-0x80369A50 (0x184 + 0x400 + 0x204 = 0x788), and the
+# member emits no .sdata2: <math.h> (pulled in by musyx/musyx.h) must resolve to the
+# SDK's MSL tree, otherwise the dolsdk2001 libc header's extern inline sqrt/sqrtf add
+# their two 0.5/3.0 float pairs here as well.
+[[lib.object]]
+name = "ext/musyx_sdk/runtime/synth_dbtab.c"
+extra_cflags = ["-i src/ext/musyx_sdk/include", "-i src/ext/musyx_sdk/msl", "-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/include/libc"]
+completed = true
