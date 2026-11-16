@@ -538,6 +538,11 @@ ext/musyx_sdk/runtime/snd_midictrl.c:
 	.data       start:0x80369C90 end:0x80369D1C
 	.bss        start:0x80449390 end:0x8044FB90
 
+ext/musyx_sdk/runtime/snd_service.c:
+	.text       start:0x80162070 end:0x8016221C
+	.data       start:0x80369D20 end:0x8036A520
+	.sdata      start:0x80478BF0 end:0x80478BF4
+
 ext/musyx_sdk/runtime/hardware.c:
 	.text       start:0x8016221C end:0x80163214
 	.rodata     start:0x80273448 end:0x80273548

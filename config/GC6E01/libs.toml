@@ -3231,6 +3231,88 @@ name = "ext/musyx_sdk/runtime/snd_midictrl.c"
 extra_cflags = ["-i src/ext/musyx_sdk/include", "-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/include/libc", "-DMUSY_TARGET=MUSY_TARGET_DOLPHIN", "-DMUSY_VERSION_MAJOR=1", "-DMUSY_VERSION_MINOR=5", "-DMUSY_VERSION_PATCH=3"]
 completed = true
 
+# MusyX service helpers, the runtime.a member src/musyx/runtime/snd_service.c:
+# sndRand (0x80162070, 0x1C), sndSin (0x8016208C, 0x8C), sndBSearch (0x80162118, 0xA4),
+# sndConvertMs (0x801621BC, 0x10), sndConvertTicks (0x801621CC, 0x48) and sndConvert2Ms
+# (0x80162214, 0x8).  The member's image is one contiguous .text run at
+# 0x80162070-0x8016221C (0x1AC) in source declaration order, starting where snd_midictrl's
+# run ends (inpSetExCtrl ends at 0x80162070) and ending where hardware.c's first body
+# (snd_handle_irq at 0x8016221C) begins; the six body sizes add up to exactly 0x1AC, so the
+# whole gap between the two integrated neighbours is this member and nothing else lives in it.
+# Emitted data, both blocks confirmed against the target bytes:
+#  * .data 0x80369D20-0x8036A520 (0x800): sndSintab, the 1024-entry s16 sine table.  Its base
+#    comes out of the target's own sndSin instructions (lis r3,0x8037 / addi r3,r3,-0x62E0 =
+#    0x80369D20, the four quarter-wave branches indexed with lhax), the block is byte-identical
+#    to the retail table, and it ends exactly at dsp_import.c's .data (dspSlave at 0x8036A520).
+#    The four bytes in front of it (0x80369D1C-0x80369D20) are inter-object .data alignment
+#    padding: .data splits are 32-aligned and snd_midictrl's section ends at 0x80369D1C.
+#  * .sdata 0x80478BF0-0x80478BF4: last_rnd, the LCG state.  sndRand is
+#    `lis r3,0xA835 / lwz r4,-31792(r13) / addi r0,r3,0x1D63 / mullw / stw r0,-31792(r13)`,
+#    i.e. multiply by 2822053219; with _SDA_BASE_ = 0x80480820 (the value the other integrated
+#    runtime members cross-check, e.g. synthmacros' sbss cluster) the @sda21 displacement
+#    -31792 (0x83D0) resolves to 0x80478BF0, and the target holds the initializer 0x00000001
+#    there.  The next four bytes are inter-object padding: hardware.c's .sdata starts at
+#    0x80478BF8 and both objects emit .sdata with 2**3 section alignment.
+#  * .sdata2: nothing belongs to this member in the target - the retail .sdata2 runs from
+#    snd_math's block (ends 0x8047D4D4) through 4 pad bytes to hardware.c's block at
+#    0x8047D4D8.  With <math.h> resolving to the SDK's MSL tree the compiled member emits no
+#    .sdata2 at all, which is why that include path is used here (the same reason as
+#    hw_volconv.c/synth_ac.c: dolsdk2001/include/libc's header would register 0x20 bytes of
+#    unreferenced extern-inline sqrt/sqrtf statics in .sdata2).
+# Version macros follow the game's v1.5.3 runtime (the same as snd_math.c/snd_midictrl.c/
+# hardware.c).  The only version-sensitive part of this source is the
+# `MUSY_VERSION >= 2.0.1` block: the sndSqrt/sndCos bodies (the MWERKS frsqrte / ps_* asm
+# variants) plus the i2fMagic/sqrtConsts/_sinConsts literals they read.  Those are the two
+# source exports the target does not contain, and the reason is the revision, not stripping:
+# their only callers in the archive are hardware.c's hwLowPassFrqToCoef/hwSetFilter, which sit
+# inside the same `MUSY_VERSION >= 2.0.1` guard in the pristine text and are absent from the
+# already-integrated hardware member (0x8016221C-0x80163214 has no such body at any address,
+# and no linked symbol sndSqrt/sndCos/hwLowPassFrqToCoef/hwSetFilter exists; independently, no
+# frsqrte instruction occurs anywhere in the target's .text - every DOL text segment scanned for
+# `word & 0xFC0007FE == 0x34` - and the sndSqrt asm body cannot compile without one), while
+# snd_midictrl's target code takes the pre-2.0.1 RPN/LPF shape (0x1CD4 .text, 0x6800 .bss,
+# against 0x27E8/0x6E00 at 2.0.1).  The archive is therefore built with MUSY_VERSION < 2.0.1,
+# so no sndSqrt/sndCos body and no such .sdata2 literal block is emitted here at all - which is
+# also why the target's .sdata2 has nothing for this member and why the emitted sndSin is the
+# sndSintab quarter-wave shape the target carries.  Between 1.5.2/1.5.3/1.5.4/2.0.0 the
+# artifact cannot distinguish anything here (every live boundary in this file is 2.0.1);
+# v1.5.3 is used, the same patch level as the sibling runtime members, and recompiling with
+# PATCH=4 or 2.0.0 produces byte-identical .text/.data/.sdata.
+# Compiler: no override beyond the archive's evidenced GC/1.3.2r (synth.c, synthmacros.c,
+# synthvoice.c, synth_vsamples.c) - it reproduces all six bodies with zero differing words
+# (only the 13 relocated fields differ before linking: two sda21 last_rnd operands, eight
+# @ha/@l sndSintab operands, the _savegpr_24/_restgpr_24 calls of sndBSearch and the
+# synthGetTicksPerSecond call of sndConvertTicks).  GC/1.3, 1.3.2, 1.3.2r and 2.0 are
+# byte-identical here; GC/1.2.5n shrinks the run to 0x184; the archive default GC/2.6 (and
+# 2.7) grows it to 0x1B4, and all eight bytes of that growth are in sndSin (148 = 0x94 against
+# the retail 140 = 0x8C): 2.6 keeps the raw angle in a second register (an extra clrlwi r4,r3,16
+# ahead of the first compare) and re-masks it in each quarter-wave branch (an extra clrlwi
+# r0,r4,20 before the second compare, rlwinm r0,r4,1,19,30 for the first index) instead of
+# folding the masks onto r0 as the 1.3-era code does.  sndBSearch is the same 0xA4 under GC/2.6
+# as under 1.3.2r: its 0x30-byte frame and the _savegpr_24 (0x800C47CC) / _restgpr_24
+# (0x800C4818) pair are what the retail body carries, so the prologue is not what separates the
+# two compilers and there are no eight bytes of it to reclaim.  -use_lmw_stmw stays off (project
+# default): turning it on under GC/2.6 does replace that pair with an lmw/stmw frame (sndBSearch
+# 0x9C, no helper calls), but the member then totals 0x1AC only because the extra sndSin masking
+# remains, and the result still differs from the retail image in 74 words (the 13 relocated
+# fields apart), so no setting of that flag reproduces the target.  -fp_contract on (project
+# default) is correct: the unit has no fmul/fadd chains to fold.
+# Source: byte-identical to the pristine archive text of this member
+# (.sdk-cache/musyx src/musyx/runtime/snd_service.c at 717404d, sha1
+# 6033c492376f9308af41309a91afa5e89346605d); no function, literal or comment was added,
+# removed or rewritten.  That includes sndBSearch's chained-assignment argument
+# `if ((c = cmp(key, (ptr = (void *)((size_t)base + len * ((m = (l + r) >> 1) - 1))))) == 0)`
+# and the `// This is kind of gross....` note above it (pristine line 138): both are the SDK's
+# own text, not decompiler output, and splitting them into separate statements would replace
+# evidenced archive source with a hand-simplified variant.  A split-statement trial gives
+# identical code (m still in r29, ptr in r27, same 0xA4 body), which is what the original
+# expression already produces, so the pristine form is kept.
+[[lib.object]]
+name = "ext/musyx_sdk/runtime/snd_service.c"
+mw_version = "GC/1.3.2r"
+extra_cflags = ["-i src/ext/musyx_sdk/include", "-i src/ext/musyx_sdk/msl", "-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/include/libc", "-DMUSY_TARGET=MUSY_TARGET_DOLPHIN", "-DMUSY_VERSION_MAJOR=1", "-DMUSY_VERSION_MINOR=5", "-DMUSY_VERSION_PATCH=3"]
+completed = true
+
 
 # MusyX autotune pitch conversion (sndPitchUpOne/sndGetPitch). The unit needs no
 # target-version override: with the runtime archive settings, all GC/1.3 through
