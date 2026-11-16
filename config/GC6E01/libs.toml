@@ -3176,3 +3176,30 @@ completed = true
 name = "ext/musyx_sdk/runtime/synth_dbtab.c"
 extra_cflags = ["-i src/ext/musyx_sdk/include", "-i src/ext/musyx_sdk/msl", "-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/include/libc"]
 completed = true
+
+# MusyX virtual-sample streaming engine (vsInit, vsSampleStartNotify, vsSampleEndNotify,
+# vsUpdateBuffer, vsSampleUpdates) for the game's v2.0.0 runtime.  The binary places the
+# whole member in one contiguous .text run at 0x80159494-0x80159C48 (0xBC + 0x248 + 0xA8
+# + 0x1F8 + 0x210 = 0x7B4) and its `vs` state in the 0x950-byte .bss object at
+# 0x80446F10.  Version evidence: vsSampleUpdates carries the VS_STATE_DRAINING_ABORT
+# dispatch and the hwBreak/macSampleEndNotify vs voiceKill split (MUSY_VERSION >= 2.0.0),
+# while vsSampleStartNotify still takes the u8 voice argument and has no
+# SAMPLE_TYPE_PCM16_VIRTUAL case and no vid/seq bookkeeping (MUSY_VERSION < 2.0.2), so the
+# member is compiled with the 2.0.0 version macros.  The archive default compiler (GC/2.6)
+# leaves four words in the inlined vsNewInstanceID copy inside vsSampleStartNotify (the
+# numBuffers/nextInstID load pair is scheduled in the opposite order and one loop branch
+# displacement follows it); GC/1.3 through GC/2.0p1 reproduce all five functions with zero
+# differing words, so this member takes the archive's evidenced 1.3-era compiler, the same
+# GC/1.3.2r that the sibling synth.c member requires.  The member keeps its pristine
+# definition list: the
+# helpers MWCC inlines into vsSampleStartNotify (vsNewInstanceID, vsAllocateBuffer,
+# vsFreeBuffer) and the six virtual-sample API entry points the game never reaches
+# (sndVirtualSampleAllocateBuffers/FreeBuffers/SetCallback/EndPlayback, vsARAMDMACallback,
+# sndVirtualSampleARAMUpdate) stay in the source and are dead-stripped at link, exactly as
+# the target omits them.  <math.h> (via musyx/musyx.h) must resolve to the SDK's MSL tree
+# so the dolsdk2001 libc header's extern inline sqrt/sqrtf do not add a .sdata2 pair.
+[[lib.object]]
+name = "ext/musyx_sdk/runtime/synth_vsamples.c"
+mw_version = "GC/1.3.2r"
+extra_cflags = ["-i src/ext/musyx_sdk/include", "-i src/ext/musyx_sdk/msl", "-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/include/libc", "-DMUSY_TARGET=MUSY_TARGET_DOLPHIN", "-DMUSY_VERSION_MAJOR=2", "-DMUSY_VERSION_MINOR=0", "-DMUSY_VERSION_PATCH=0"]
+completed = true

@@ -502,6 +502,10 @@ ext/musyx_sdk/runtime/synth_adsr.c:
 	.text       start:0x80158CD4 end:0x80159494
 	.sdata2     start:0x8047D408 end:0x8047D430
 
+ext/musyx_sdk/runtime/synth_vsamples.c:
+	.text       start:0x80159494 end:0x80159C48
+	.bss        start:0x80446F10 end:0x80447860
+
 ext/musyx_sdk/runtime/hw_volconv.c:
 	.text       start:0x8015D7D0 end:0x8015DEC0
 	.data       start:0x80369A68 end:0x80369C8C
