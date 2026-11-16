@@ -3136,6 +3136,18 @@ name = "ext/musyx_sdk/runtime/synth_ac.c"
 extra_cflags = ["-i src/ext/musyx_sdk/include", "-i src/ext/musyx_sdk/msl", "-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/include/libc"]
 completed = true
 
+# MusyX ADSR envelope engine (adsrConvertTimeCents, salChangeADSRState, adsrSetup,
+# adsrStartRelease, adsrRelease, adsrHandle, adsrHandleLowPrecision).
+# Reproduces the retail unit exactly with the archive settings (no mw_version /
+# flags override): GC/1.3.2r through GC/2.7 all emit identical text and an
+# identical 0x28-byte .sdata2 block for this translation unit, so the archive
+# default GC/2.6 applies.  Version macros follow the game's v1.5.3 runtime, the
+# same as hw_volconv.c.
+[[lib.object]]
+name = "ext/musyx_sdk/runtime/synth_adsr.c"
+extra_cflags = ["-i src/ext/musyx_sdk/include", "-i src/ext/musyx_sdk/msl", "-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/include/libc", "-DMUSY_VERSION_MAJOR=1", "-DMUSY_VERSION_MINOR=5", "-DMUSY_VERSION_PATCH=3"]
+completed = true
+
 # SAL volume/pan conversion for the game's v1.5.3 runtime.
 [[lib.object]]
 name = "ext/musyx_sdk/runtime/hw_volconv.c"

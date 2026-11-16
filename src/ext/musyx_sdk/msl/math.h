@@ -27,6 +27,8 @@ float tanf(float x);
 float sinf(float x);
 float cosf(float x);
 
+static inline float powf(float x, float y) { return (float)pow(x, y); }
+
 static inline float fmodf(float x, float y) { return (float)fmod(x, y); }
 
 #endif /* _MSL_MATH_H */
