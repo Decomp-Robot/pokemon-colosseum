@@ -3129,3 +3129,13 @@ name = "ext/musyx_sdk/runtime/hw_volconv.c"
 extra_cflags = ["-i src/ext/musyx_sdk/include", "-i src/ext/musyx_sdk/msl", "-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/include/libc", "-DMUSY_TARGET=MUSY_TARGET_DOLPHIN", "-DMUSY_VERSION_MAJOR=1", "-DMUSY_VERSION_MINOR=5", "-DMUSY_VERSION_PATCH=3", "-fp_contract off"]
 completed = true
 
+# MusyX synth/voice-engine translation unit for the game's v1.5.4 runtime.  This archive
+# member carries its own build settings: with the SDK-era GC/1.3.2r compiler all 26
+# functions in the target range reproduce with zero differing words, while GC/2.0 and
+# GC/2.6 leave two XOR operand orders in do_voice_portamento (25/26 functions, 2 words).
+# Floating-point contraction must stay off (-fp_contract on gives 24/26, 387 words).
+[[lib.object]]
+name = "ext/musyx_sdk/runtime/synth.c"
+mw_version = "GC/1.3.2r"
+extra_cflags = ["-i src/ext/musyx_sdk/include", "-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/include/libc", "-DMUSY_VERSION_MAJOR=1", "-DMUSY_VERSION_MINOR=5", "-DMUSY_VERSION_PATCH=4", "-fp_contract off"]
+completed = true
