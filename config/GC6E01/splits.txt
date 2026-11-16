@@ -495,6 +495,13 @@ ext/musyx_sdk/runtime/synthdata.c:
 	.bss        start:0x804378F8 end:0x80445F30
 	.sbss       start:0x8047AF68 end:0x8047AFAC
 
+ext/musyx_sdk/runtime/synthmacros.c:
+	.text       start:0x801525E4 end:0x80157280
+	.data       start:0x80368A80 end:0x80368EC8
+	.bss        start:0x80445F30 end:0x80445F50
+	.sbss       start:0x8047AFB0 end:0x8047AFD0
+	.sdata2     start:0x8047D3C8 end:0x8047D3F0
+
 ext/musyx_sdk/runtime/synth_ac.c:
 	.text       start:0x80158BB4 end:0x80158CD4
 	.data       start:0x80368EC8 end:0x803692C8

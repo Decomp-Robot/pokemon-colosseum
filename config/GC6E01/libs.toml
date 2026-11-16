@@ -3222,3 +3222,85 @@ completed = true
 name = "ext/musyx_sdk/runtime/synthdata.c"
 extra_cflags = ["-i src/ext/musyx_sdk/include", "-i src/ext/musyx_sdk/msl", "-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/include/libc", "-DMUSY_TARGET=MUSY_TARGET_DOLPHIN", "-DMUSY_VERSION_MAJOR=1", "-DMUSY_VERSION_MINOR=5", "-DMUSY_VERSION_PATCH=3"]
 completed = true
+
+# MusyX macro-command interpreter / macro scheduler (runtime.a member): mcmdWait..varGet,
+# the voice-state machine (macHandleActive, macHandle, macStart, ...) and macInit.
+# The member's image is one contiguous .text run at 0x801525E4-0x80157280 (0x4C9C bytes, 49
+# functions) in source declaration order: the 46 assigned entries plus mcmdSetSurroundPanning,
+# mcmdPostAuxBSelect and mcmdAuxBFXSelect (see the roster-shift note below; the three names
+# the detection map prints for 0x80153910/0x8015480C/0x80154D98 are the shifted hints, every
+# roster address is covered by this member).  Its storage is .data 0x80368A80-0x80368EC8
+# (kf[13] 0x1A, midi2TimeTab 0x200, mask/dirty 0x60, the macHandleActive command jump table
+# 0x1C8), .bss 0x80445F30-0x80445F50 (newsmp 0x20), .sbss 0x8047AFB0-0x8047AFC9 (cstep 8,
+# macRealTime 8, macTimeQueueRoot 4, macActiveMacroRoot 4, DebugMacroSteps 1) and .sdata2
+# 0x8047D3C8-0x8047D3F0 (7 float / double literals).  Every one of those blocks is confirmed
+# independently of the address map: the .data bytes and the whole .sdata2 block are
+# byte-identical to the target, the command jump table in .data is filled with the same
+# handler addresses in the same order, and the r13 small-data displacements inside the
+# target's own instructions resolve to _SDA_BASE_+0x5870/0x5868/0x5860/0x585C/0x5858, i.e.
+# exactly the five .sbss objects at 0x8047AFB0..0x8047AFC9 (r13 = 0x80480820, cross-checked
+# against synthVoice and synthMessageCallback at 0x8047AF48/0x8047AF4C).
+# The source is the pristine upstream text for this member: src/.../synthmacros.c is
+# byte-identical to the reference file, no function was added, removed or rewritten, and the
+# compiled object reproduces all 49 functions and all four data blocks with zero differing
+# words.  The object is larger than the image (99 function symbols, .text 0x6194) because
+# MWCC 1.3.2 -inline auto emits an out-of-line body next to every inlined copy of the small
+# helpers (SendSingleKeyOff, ExecuteTrap, mcmdWaitMs, mcmdEndOfMacro, the mcmdIf*/mcmdSet*
+# command helpers, DoPanningSetup, SelectSource, varGet32/varSet32/varSet, macPostMessage,
+# ...); no call site reaches those bodies, so the Metrowerks linker discards them and the
+# linked image keeps exactly the target's 49 functions at their recorded addresses (macInit
+# at 0x80157218, macHandleActive at 0x801557EC, mcmdWait at 0x801525E4, ...; the other 50
+# bodies are absent from build/GC6E01/main.elf, and the resulting DOL is byte-identical to
+# the original).  macPostMessage is one of them: the target has no
+# standalone body for it - both of its call sites inside mcmdSendMessage are inlined
+# (bl vidGetInternalId at 0x801554F4/0x801555E8), which is also why this member needs no
+# out-of-line definition for the macros.h declaration that snd_synthapi.c uses.
+# Revision difference evidenced by the binary: the DoSetPitch register allocation follows the
+# MUSY_VERSION >= 1.5.4 u8 oKey / sInfo >> 24 shape (0x801530D4..0x80153274); with the
+# 1.5.2/1.5.3 shape 5 words differ, so the member is compiled with PATCH=4 while the rest of
+# the archive stays at PATCH=3.
+# Compiler: the archive's evidenced GC/1.3.2r reproduces everything with zero differing
+# words; the archive default GC/2.6 differs in 58 words (varGet/mcmdVarCalculation/
+# mcmdIfVarCompare/mcmdGetVID address and shift sequences plus the macHandleActive
+# MCMD_TRAP_EVENT cFlags XOR operand order).
+# Include order: <math.h> (via musyx/musyx.h) must resolve to the SDK's MSL tree before
+# dolsdk2001/include/libc, otherwise that header's extern inline sqrt/sqrtf add two extra
+# literals to this member's .sdata2 (0x48 bytes instead of the target's 0x28).
+# Split note: the .sbss range is written 0x8047AFB0-0x8047AFD0 because dtk requires 8-aligned
+# .sbss split boundaries (with 0x8047AFC9 it fails: "Invalid alignment for split:
+# auto_08_8047AFC9_sbss .sbss 8:0x8047AFC9"); the member's own section is 0x19 bytes (four
+# 4-aligned counters plus the 1-byte DebugMacroSteps) and the remaining 7 bytes are the
+# alignment pad in front of the next member's block.  .bss 0x80445F30-0x80445F50 is exactly
+# the 0x20 bytes of newsmp.  The 4 bytes at 0x8047AFAC..0x8047AFB0 belong to no built unit:
+# they are inter-object .sbss alignment padding between synthdata's section (ends at
+# 0x8047AFAC, 0x8047AF68 + 0x44) and this one (starts at 0x8047AFB0), because both compiled
+# objects emit .sbss with section alignment 2**3, so the linker rounds the next .sbss up to
+# 0x8047AFB0.  They carry no image content (.sbss is NOBITS) and nothing references the
+# address (no @sda21 operand in any split asm points at 0x8047AFAC).  The auto-generated
+# placeholder lbl_8047AFAC that the original address map carried for that padding therefore
+# had to be dropped from symbols.txt instead of being claimed by this unit: once both
+# neighbours are owned by source files dtk creates no split for the remaining 4-byte fragment
+# (config.json has no auto_08_8047AFAC_sbss unit, only auto_08_8047AF60_sbss and
+# auto_08_8047AFD0_sbss), no linked object defines it, and the validator rejects the link
+# with "ERROR Expected to find symbol lbl_8047AFAC (type Object, size 0x4) at 0x8047AFAC".
+# Dropping it loses nothing (4 bytes of alignment pad, no data, no reference) and the DOL
+# stays byte-identical.  This explanation lives here rather than in symbols.txt because the
+# split step rewrites that map and strips comment lines (a '#' line added to symbols.txt is
+# gone after the next build).
+# Data symbol names: the .data/.bss/.sbss/.sdata2 entries for this member in symbols.txt use
+# the internal names the compiled object emits for them (kf$414, mask$949, @1594, ...), so
+# the recorded names, sizes and offsets match the source object one to one.
+# Address-map notes: the interleaved helpers were unnamed zz_* placeholders and are named
+# after the source function that is byte-identical at each address.  That renames three
+# roster hints, because the detection names in the panning/select run are shifted by one
+# function: the pi=1 body at 0x80153910 is mcmdSetSurroundPanning (mcmdSetPanning, pi=0, is at
+# 0x80153874), the post-aux-B body at 0x8015480C is mcmdPostAuxBSelect and the aux-B body at
+# 0x80154D98 is mcmdAuxBFXSelect.  The eleven cross-member callees this member needs (sndRand,
+# sndConvert2Ms, voiceAllocate/Free/SetPriority, seqGetMIDIPriority, the inp* entries) were
+# unnamed zz_* placeholders in other runtime members and are named from this member's own
+# branch relocations, so the link resolves them.
+[[lib.object]]
+name = "ext/musyx_sdk/runtime/synthmacros.c"
+mw_version = "GC/1.3.2r"
+extra_cflags = ["-i src/ext/musyx_sdk/include", "-i src/ext/musyx_sdk/msl", "-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/include/libc", "-DMUSY_TARGET=MUSY_TARGET_DOLPHIN", "-DMUSY_VERSION_MAJOR=1", "-DMUSY_VERSION_MINOR=5", "-DMUSY_VERSION_PATCH=4"]
+completed = true
