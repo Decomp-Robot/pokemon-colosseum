@@ -503,6 +503,12 @@ ext/musyx_sdk/runtime/seq_api.c:
 ext/musyx_sdk/runtime/snd_synthapi.c:
 	.text       start:0x8014D75C end:0x8014DDD8
 
+ext/musyx_sdk/runtime/stream.c:
+	.text       start:0x8014DDD8 end:0x80150C78
+	.bss        start:0x80435FF8 end:0x804378F8
+	.sbss       start:0x8047AF60 end:0x8047AF68
+	.sdata2     start:0x8047D3B0 end:0x8047D3C4
+
 ext/musyx_sdk/runtime/synthdata.c:
 	.text       start:0x80150C78 end:0x801525E4
 	.bss        start:0x804378F8 end:0x80445F30

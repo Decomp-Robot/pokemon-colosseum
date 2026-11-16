@@ -3781,3 +3781,88 @@ name = "ext/musyx_sdk/runtime/synthvoice.c"
 mw_version = "GC/1.3.2r"
 extra_cflags = ["-i src/ext/musyx_sdk/include", "-i src/ext/musyx_sdk/msl", "-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/include/libc", "-DMUSY_TARGET=MUSY_TARGET_DOLPHIN", "-DMUSY_VERSION_MAJOR=1", "-DMUSY_VERSION_MINOR=5", "-DMUSY_VERSION_PATCH=4"]
 completed = true
+
+# MusyX stream engine, the runtime.a member src/musyx/runtime/stream.c: 16 linked bodies
+# (streamInit, SetHWMix, streamHandle, streamCorrectLoops, streamKill, GetPrivateIndex,
+# sndStreamARAMUpdate, CheckOutputMode, SetupVolumeAndPan, streamOutputModeChanged,
+# sndStreamAllocEx, sndStreamAllocLength, sndStreamMixParameterEx, sndStreamFree,
+# sndStreamActivate, sndStreamDeactivate) over one contiguous .text run at
+# 0x8014DDD8-0x80150C78 (0x2EA0 bytes), between snd_synthapi.c's sndOutputMode run and
+# synthdata.c's dataInsertKeymap.  The detection inventory named only eight of the bodies
+# (the rest were auto-named zz_*), but the run is a single archive member: the other eight
+# bodies are exactly the functions this source emits at the matching sizes and in the
+# matching order, so they stay claimed here and the six remaining zz_* placeholders are
+# replaced by their source names.
+# Source: byte-identical to the pristine .sdk-cache copy apart from the documented
+# OSReport/OSPanic include adaptation below and one declaration spelling, i.e. no
+# recovered-code edits: sndStreamMixParameterVolume's slot-index local is written `u32 i;`
+# where the pristine text spells it `unsigned long i;`, i.e. the one spelling the file no
+# longer uses - every other slot-index local in this TU is `u32 i;` (18 declarations over the
+# other 17 functions, streamKill having one per #if branch).  musyx.h typedefs u32 as
+# unsigned long, so the two spellings denote the same type, and this function is compiled out
+# at MUSY_VERSION 2.0.0 anyway: the object's .text/.bss/.sbss/.sdata2 sizes and bytes are
+# unchanged by the edit.  The pristine text's two "only matches" notes (streamHandle's
+# voice-cached-in-a-local branch and streamKill's state/voice-cached variant) are kept verbatim
+# as reference-source wording; the constructs they annotate are independently required by the
+# retail bytes - the direct `hwInitSamplePlayback(si->voice, ...)` form compiles streamHandle to
+# 0x8B0 against the retail 0x8AC, so the local caching is the retail behaviour and only the
+# note's phrasing is reconstruction prose.
+# Fidelity: .text 0x2EA0/0x2EA0 and .sdata2 0x14/0x14 bytes match the retail bytes; all 16
+# bodies resolve to zero differing words (sda21/ADDR16_HA/ADDR16_LO/REL24 operands resolved
+# against symbols.txt and _SDA_BASE_ 0x80480820), so the unit reports 100% code/data/function
+# match.  .bss 0x1900 and the .sbss half of this split are NOBITS, so the retail DOL carries
+# only their addresses and sizes and there are no file bytes to compare: the object reproduces
+# the 0x1900-byte streamInfo extent and emits 6 bytes of .sbss (nextPublicID 4,
+# streamCallDelay 1, streamCallCnt 1) inside the split's 8-byte 0x8047AF60-0x8047AF68 range,
+# whose 2 spare bytes at 0x8047AF66 are link alignment padding before synthdata.c's result$560
+# at 0x8047AF68.
+# Dead stripping: -O4,p -inline auto (archive preset) emits 22 bodies / 0x4554 bytes of text
+# for the whole TU: the 16 entry points above plus GeneratePublicID 0x14C,
+# sndStreamCallbackFrq 0x38, sndStreamAllocStereo 0x2C0, sndStreamADPCMParameter 0x6FC,
+# sndStreamMixParameter 0x50C and sndStreamFrq 0x668 (0x16B4 bytes; 0x4554 - 0x16B4 = 0x2EA0,
+# exactly the retail run).  None of those six is referenced from the 16 live bodies - their
+# only internal calls are the self-recursion in sndStreamMixParameter and sndStreamFrq, i.e.
+# a closed, unreferenced set - so Metrowerks' unreferenced-function elimination drops them
+# and the 16 entry points lay out as the retail run.  All six definitions stay in the source;
+# nothing present in the target was deleted.
+# Compiler: the archive default GC/2.6 reproduces 15 of the 16 bodies but schedules
+# SetHWMix differently (33% of that body, .text 99.214%); GC/2.0, GC/2.5 and GC/2.7 give the
+# same 99.214% and GC/3.0a3/GC/3.0a5 fall to 38.128%.  GC/1.3.2r reproduces all 16 bodies
+# (0x2EA0/0x2EA0) and is therefore the evidenced per-object override; it is the compiler the
+# neighbouring float-heavy runtime members snd3d.c, snd_math.c and snd_service.c already use.
+# -fp_contract on (the archive "base" preset) already yields SetHWMix's retail fmuls/fsubs
+# sequence, so unlike those members this object needs no fp_contract override.
+# Version: the binary pins MUSY_VERSION to 2.0.0 exactly.  <= 1.5.3 leaves .text at 82.857%
+# and .bss at 50% (streamInfo slot size differs); 1.5.4 leaves 90.089% because it re-enables
+# the `<= 1.5.4` streamHandle prologue (`si->adpcmInfo.loopPS = ... = *(u8*)si->buffer` and
+# DCInvalidateRange, neither of which the target imports) and gives sndStreamARAMUpdate 0x2C4,
+# sndStreamAllocStereo 0x2C4, sndStreamFrq 0x654, sndStreamFree 0x6B8, sndStreamActivate 0x634
+# and sndStreamDeactivate 0x700 against the retail 0x2E4/0x2C0/0x668/0x6D4/0x658/0x714.
+# 2.0.1 is byte-identical to 2.0.0 except streamHandle's `mulli r7,r3,1028`
+# (synthVoice[v] element size), which is 1112 there; the retail word at 0x8014E01C is
+# 1c e3 04 04, i.e. 1028, so PATCH=0 is required.  2.0.2 and later are excluded by the
+# streamDefaults/streamInfo layout change, the extra sndStreamGetARAMAddress /
+# sndStreamLPFParameter bodies and the .bss size: the retail member has exactly 0x1900 bytes
+# of bss (64 streamInfo slots of 0x64) and none of those bodies.
+# Data: .bss 0x80435FF8-0x804378F8 is streamInfo (STREAM_MAX_SLOTS 64 x sizeof(STREAM_INFO)
+# 0x64); .sbss 0x8047AF60-0x8047AF68 holds nextPublicID (4), streamCallDelay (1),
+# streamCallCnt (1) and 2 bytes of alignment padding.  .sdata2 0x8047D3B0-0x8047D3C4 is the
+# member's whole literal pool - 1/127.f at 0x8047D3B0, the 2^52 double at 0x8047D3B8 (4 bytes
+# of compiler padding at 0x8047D3B4) and 4096.f at 0x8047D3C0 - i.e. 0x14 bytes, which is
+# exactly what the compiled object emits.  The 8-byte auto symbol that previously spanned
+# 0x8047D3C0-0x8047D3C8 is shortened to the 4 bytes of its literal and the split ends at
+# 0x8047D3C4; the remaining 4 zero bytes up to 0x8047D3C8 are the link alignment padding
+# before snd_synthapi.c's literal section and are left as unclaimed original bytes.
+# Interface: the pristine text includes "dolphin/os.h" after MusyX's own const-qualified
+# OSReport/OSPanic declarations, which conflicts with dolsdk2001's mutable-string prototypes.
+# As in the already accepted hw_aramdma.c and synth_vsamples.c, the two names are macro-
+# renamed around that single include so the MusyX declarations stay authoritative and the
+# real imports are untouched.
+# Symbols: the six unnamed bodies are renamed to streamInit, sndStreamARAMUpdate,
+# SetupVolumeAndPan, sndStreamAllocEx, sndStreamMixParameterEx and sndStreamActivate, and the
+# data objects to streamInfo, nextPublicID, streamCallDelay and streamCallCnt.
+[[lib.object]]
+name = "ext/musyx_sdk/runtime/stream.c"
+mw_version = "GC/1.3.2r"
+extra_cflags = ["-i src/ext/musyx_sdk/include", "-i src/ext/musyx_sdk/msl", "-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/include/libc", "-DMUSY_TARGET=MUSY_TARGET_DOLPHIN", "-DMUSY_VERSION_MAJOR=2", "-DMUSY_VERSION_MINOR=0", "-DMUSY_VERSION_PATCH=0"]
+completed = true
