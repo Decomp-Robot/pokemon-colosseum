@@ -490,6 +490,11 @@ ext/musyx_sdk/runtime/synth.c:
 	.sbss       start:0x8047AF18 end:0x8047AF60
 	.sdata2     start:0x8047D370 end:0x8047D3B0
 
+ext/musyx_sdk/runtime/synth_ac.c:
+	.text       start:0x80158BB4 end:0x80158CD4
+	.data       start:0x80368EC8 end:0x803692C8
+	.sdata2     start:0x8047D3F0 end:0x8047D408
+
 ext/musyx_sdk/runtime/hw_volconv.c:
 	.text       start:0x8015D7D0 end:0x8015DEC0
 	.data       start:0x80369A68 end:0x80369C8C
