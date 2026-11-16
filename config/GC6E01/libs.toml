@@ -3122,6 +3122,74 @@ name = "ext/musyx_sdk/runtime/hw_memory.c"
 extra_cflags = ["-i src/ext/musyx_sdk/include", "-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/include/libc", "-DMUSY_VERSION_MAJOR=1", "-DMUSY_VERSION_MINOR=5", "-DMUSY_VERSION_PATCH=3"]
 completed = true
 
+# 3D emitter/listener manager of the game's MusyX runtime - the runtime.a member
+# src/musyx/runtime/snd3d.c, kept byte-identical to the reference text.  The member's live image
+# is one contiguous .text run at 0x8015DEC0-0x8015FE88 (0x1FC8) in source declaration order:
+# CheckRoomStatus 0x4B4, CalcEmitter 0x51C, sndCheckEmitter 0x20, AddEmitter 0x3F8,
+# sndAddEmitter 0x58, sndUpdateListener 0x204, sndAddListener 0x220, AddStartingEmitter 0x14C,
+# StartContinousEmitters 0x3B0, s3dHandle 0x82C, s3dInit 0x38, s3dExit 0x4.  The object itself
+# declares 45 functions (0x360C); the other 33 - UpdateRoomDistances, sndAddRoom, sndRemoveRoom,
+# sndUpdateRoom, AddListener2Room, RemoveListenerFromRoom, CalcDoorParameters, CheckDoorStatus,
+# sndAddDoor, sndRemoveDoor, clip127, clip3FFF, SetFXParameters, EmitterShutdown,
+# sndUpdateEmitter, sndAddEmitterEx, sndAddEmitterPara(Ex), sndAddEmitter2Studio(Para)(Ex),
+# sndRemoveEmitter, sndEmitterVoiceID, s3dKillAllEmitter, s3dKillEmitterByFXID,
+# MakeListenerMatrix, sndAddListenerEx, sndRemoveListener, ClearStartList, AddRunningEmitter,
+# sndSetup3DStudios and sndGet3DParameters - are unreferenced in this build, so mwld's
+# unreferenced-function elimination drops them exactly as retail did (0x360C - 0x1644 = 0x1FC8)
+# and the surviving run is the whole retail run.  The auto text units that used to own
+# zz_8015DEC0_/zz_8015E374_/zz_8015E890_/zz_8015E8B0_/zz_8015ECA8_/zz_8015ED00_/zz_8015EF04_/
+# zz_8015F124_/zz_8015F270_/zz_8015FE4C_/zz_8015FE84_ were the same bodies, so they are claimed
+# here and symbols.txt carries their source names (the five file-local bodies - CheckRoomStatus,
+# CalcEmitter, AddEmitter, AddStartingEmitter, StartContinousEmitters - as scope:local, which is
+# how the object emits them).  With the names restored, the call graph closes inside this
+# member: the external callers of sndCheckEmitter/sndAddEmitter/sndUpdateListener/sndAddListener/
+# s3dInit/s3dExit/s3dHandle are other units, while every zz_* reference of the old auto units
+# came from this same member, so no cross-unit symbol is left dangling.
+# Data: the member owns the whole 0xE50-byte .bss block 0x80448540-0x80449390 (tmp_em$481 0x50,
+# startGroup 0x400, runList 0x300, startListNum 0x700 in the order the object lays them out (the
+# source declares startGroup, startGroupNum, startListNum, startListNumnum, runList, runListNum,
+# so the emission order is the compiler's); the last static, the 0x50-byte sndGet3DParameters
+# scratch em$1118, is only referenced by dropped bodies and is stripped, which is exactly why the
+# claimed block ends at 0x80449390 where snd_midictrl.c's .bss begins), the 0x1D-byte .sbss block
+# 0x8047B030-0x8047B04D (runListNum, startListNumnum, startGroupNum, s3dUseMaxVoices,
+# snd_max_studios, snd_base_studio, snd_used_studios, s3dDoorRoot, s3dRoomRoot, s3dListenerRoot,
+# s3dEmitterRoot, s3dCallCnt in object order, with the 2-byte alignment gap after snd_base_studio
+# and the 3 bytes up to hardware.c's .sbss at 0x8047B050) and the 0x4C-byte .sdata2 pool
+# 0x8047D468-0x8047D4B4 (the 4-byte floats 0.0f, -1.0f, 1.2e-07f, 127.0f, 1.0f, 1/60, 64.0f,
+# 8192.0f, 1/127, 0.08f, 0.15f and 0.3f interleaved with three 8-byte doubles: 2**52 at
+# 0x8047D470 - the u32->float magic the lis 0x4330/stw/lfd/fsubs conversions load - and the
+# sqrtf Newton constants 0.5 at 0x8047D480 and 3.0 at 0x8047D490, which are the lfd operands
+# beside frsqrte in CalcEmitter; those three entries are 8-byte objects at 8-byte-aligned
+# addresses, which is what the 4-byte pad at 0x8047D46C in front of the first of them shows).
+# The pool's leading 0x20 bytes are the member's four unreferenced inline-sqrt localstatics,
+# dropped exactly like the sibling snd_math.c member's, so the first live literal (@39, 0.0f)
+# lands on 0x8047D468.  The four zero bytes at 0x8047D4B4-0x8047D4B8 are inter-object padding in
+# front of snd_math.c's 2**3-aligned .sdata2 block, so the 0x8047D4B0 entry records size 0x4
+# (@1106, 0.3f) instead of the 0x8 the address map guessed.  All three data blocks use the
+# symbol names the object emits (tmp_em$481, startGroup, runList, startListNum, the twelve
+# statics and @39...@1106) so that the target and the compiled member resolve to the same
+# symbols, as symbols.txt does for the other integrated runtime members.
+# Compiler: the archive's evidenced GC/1.3.2r (synth.c, synthmacros.c, synthvoice.c,
+# snd_math.c).  Recompiling this member under the archive default GC/2.6 with these exact flags
+# yields an object that is identical in every allocated section (.text 0x360C, .bss 0xEA0,
+# .sbss 0x1D, .sdata2 0x6C, same bytes) and differs in exactly one byte of the whole file - the
+# CodeWarrior version byte inside the non-allocated .comment section (0x07 under 2.6, 0x02 under
+# 1.3.2r) - so the pinned version is the archive-scope setting, not a code-changing override
+# (that .comment byte being the one artifact which distinguishes the two versions);
+# what the member does need is -fp_contract off: the preset's -fp_contract on folds its separate
+# fmuls/fadds and gives CheckRoomStatus/CalcEmitter 0x4A4/0x4A4 where the retail run has
+# 0x4B4/0x51C, while off reproduces all twelve bodies word for word.
+# Version macros follow the game's v1.5.3 runtime (as snd_math.c/hardware.c/hw_*) with the
+# MUSY_TARGET_DOLPHIN target of hardware.c; this member's object is byte-identical for
+# 1.5.2/1.5.3/1.5.4/2.0.0, so the artifact cannot distinguish the patch level.
+# <math.h> resolves to dolsdk2001/include/libc, matching the inline sqrtf/frsqrte expansion the
+# sibling snd_math.c documents.
+[[lib.object]]
+name = "ext/musyx_sdk/runtime/snd3d.c"
+mw_version = "GC/1.3.2r"
+extra_cflags = ["-i src/ext/musyx_sdk/include", "-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/include/libc", "-DMUSY_TARGET=MUSY_TARGET_DOLPHIN", "-DMUSY_VERSION_MAJOR=1", "-DMUSY_VERSION_MINOR=5", "-DMUSY_VERSION_PATCH=3", "-fp_contract off"]
+completed = true
+
 # SAL vector/matrix math (salApplyMatrix, salNormalizeVector, salCrossProduct,
 # salInvertMatrix) - the runtime.a member src/musyx/runtime/snd_math.c, kept byte-identical to
 # the reference text.  The member's whole image is one contiguous .text run at

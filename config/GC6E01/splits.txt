@@ -531,6 +531,12 @@ ext/musyx_sdk/runtime/hw_volconv.c:
 	.data       start:0x80369A68 end:0x80369C8C
 	.sdata2     start:0x8047D430 end:0x8047D464
 
+ext/musyx_sdk/runtime/snd3d.c:
+	.text       start:0x8015DEC0 end:0x8015FE88
+	.bss        start:0x80448540 end:0x80449390
+	.sbss       start:0x8047B030 end:0x8047B04D
+	.sdata2     start:0x8047D468 end:0x8047D4B4
+
 ext/musyx_sdk/runtime/snd_math.c:
 	.text       start:0x8015FFDC end:0x8016039C
 	.sdata2     start:0x8047D4B8 end:0x8047D4D4
