@@ -3203,3 +3203,22 @@ name = "ext/musyx_sdk/runtime/synth_vsamples.c"
 mw_version = "GC/1.3.2r"
 extra_cflags = ["-i src/ext/musyx_sdk/include", "-i src/ext/musyx_sdk/msl", "-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/include/libc", "-DMUSY_TARGET=MUSY_TARGET_DOLPHIN", "-DMUSY_VERSION_MAJOR=2", "-DMUSY_VERSION_MINOR=0", "-DMUSY_VERSION_PATCH=0"]
 completed = true
+
+# MusyX sample/macro/curve/keymap/layer/FX data manager (runtime.a member).
+# The member's code is one contiguous .text run at 0x80150C78-0x801525E4 (0x196C bytes) in
+# source declaration order; its storage is the .bss block at 0x804378F8-0x80445F30
+# (keymap 0x800, layer 0xC00, curve 0x4000, sdir 0x600, fx 0x400, macro main 0x800,
+# macro sub 0x8000, function statics 0x36 plus 0x2 alignment) and the .sbss block at
+# 0x8047AF68-0x8047AFAC (data counters).
+# Revision difference evidenced by the binary: dataMacSubTabmem holds 4096 entries here
+# (dataInsertMacro compares dataMacTotal against 4096 and the table spans 0x8000 bytes of
+# .bss), where the 2.0.2+ reference source uses 2048.  dataRemoveSDir and dataRemoveFX are
+# kept from the pristine definition list and are dead-stripped at link, as the target lacks
+# them.  MUSY_VERSION 1.5.3 versus the sibling units' 2.0.0 does not change this file's
+# generated code (every live boundary is 1.5.1/2.0.1/2.0.2), so the artifact cannot
+# distinguish them; the archive default compiler (GC/2.6) reproduces the target byte for
+# byte.
+[[lib.object]]
+name = "ext/musyx_sdk/runtime/synthdata.c"
+extra_cflags = ["-i src/ext/musyx_sdk/include", "-i src/ext/musyx_sdk/msl", "-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/include/libc", "-DMUSY_TARGET=MUSY_TARGET_DOLPHIN", "-DMUSY_VERSION_MAJOR=1", "-DMUSY_VERSION_MINOR=5", "-DMUSY_VERSION_PATCH=3"]
+completed = true
