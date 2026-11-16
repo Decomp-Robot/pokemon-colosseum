@@ -3356,6 +3356,65 @@ mw_version = "GC/1.3.2r"
 extra_cflags = ["-i src/ext/musyx_sdk/include", "-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/include/libc", "-DMUSY_VERSION_MAJOR=1", "-DMUSY_VERSION_MINOR=5", "-DMUSY_VERSION_PATCH=4", "-fp_contract off"]
 completed = true
 
+# MusyX high-level synth/FX/studio API, the runtime.a member src/musyx/runtime/snd_synthapi.c.
+# The member's linked image is one contiguous .text run at 0x8014D75C-0x8014DDD8 (0x67C bytes,
+# 13 functions) in source declaration order: sndFXCtrl 0x60, sndFXKeyOff 0x40, sndFXStartEx 0x84,
+# sndFXCheck 0x40, sndSetReceiveMessageCallback 0x8, sndVolume 0x60, sndMasterVolume 0x94,
+# sndOutputMode 0xEC, sndSetAuxProcessingCallbacks 0x158, synthActivateStudio 0xA8,
+# synthDeactivateStudio 0xF0, synthAddStudioInput 0x20, synthRemoveStudioInput 0x20.  The run
+# starts where seq_api.c's seqGetMIDIPriority ends (0x8014D740) and ends at 0x8014DDD8, the
+# 0xBC-byte body that no snd_synthapi.c declaration produces: it walks synthInfo.voiceNum and
+# clears byte 0xC of every 0x64-byte voice record at 0x80435FF8 plus the 0x8047AF60/0x8047AF64/
+# 0x8047AF65 counters, i.e. another runtime member's voice-table init helper, which stays with
+# the auto unit.  Only sndFXKeyOff and sndOutputMode were named in the address map; the other
+# eleven bodies of the run were zz_ placeholders and are this member's functions as well (see
+# the address-map note below), so the whole run is claimed here and no other member's code sits
+# inside it.
+# The member has no file-scope data: synthFlags, synthInfo, synthVoice, synthMessageCallback,
+# synthAuxACallback/BCallback/User/MIDI/ITDDefault and synthGlobalVariable all belong to the
+# already-integrated synth.c member, and the compiled object emits no .data/.bss/.sdata/.sdata2 of
+# its own, so the split is .text only (0x8014D75C-0x8014DDD8).
+# Compiler: all 13 linked bodies reproduce with zero differing words under the archive default
+# GC/2.6 and under the archive's evidenced 1.3-era GC/1.3.2r (checked word for word with every
+# sda21/ADDR16_HA/ADDR16_LO/REL24 operand resolved against symbols.txt and the runtime _SDA_BASE_
+# 0x80480820), so this member needs no compiler override and keeps the archive default.
+# Version: the binary pins MUSY_VERSION to 1.5.4 <= v < 2.0.2 for this member.  sndOutputMode
+# carries the 1.5.2+ synthFlags shape (SYNTH_FLAG_MONO/SURROUND read-modify-write, oldFlags
+# compare) *and* the 1.5.4+ streamOutputModeChanged() call at its tail (bl 0x8014ED10), while
+# sndFXCheck keeps the pre-2.0.2 vidGetInternalId form with no irq disable and sndFXStartEx calls
+# the five-argument synthFXStart (no key argument).  Every one of the 13 bodies' live
+# version boundaries is identical across that whole window, so the artifact cannot distinguish
+# the exact patch level inside it; the v2.0.0 reference text of this file compiles unchanged at
+# that point (only sndIsIdle's 2.0.0+ hwGlobalActivity() getter call needs 2.0.0, since the
+# 1.5.x header declares the setter form), so MAJOR=2/MINOR=0/PATCH=0 is used as for the sibling
+# synth_vsamples.c member, and the dead-stripped sndIsIdle cannot be evidenced either way.
+# Dead code: the pristine definition list is kept intact - sndFXCtrl14, sndFXStartPara,
+# sndFXStartParaInfo, sndReadFlag, sndWriteFlag, sndSendMessage, sndSilence, sndIsIdle,
+# sndFXAssignVolGroup2FXId, sndPauseVolume, sndUpdateAuxParameter, sndSetITDDefault,
+# sndActivateStudioEx, sndDeactivateStudio, synthChangeStudioMasterMix, sndChangeStudioMasterMix,
+# sndAddStudioInput, sndRemoveStudioInput and the MUSY_BUILD_DEBUG sndDbgGetActiveVoices stay in
+# the source; the game never references them, the Metrowerks linker discards their sections, and
+# the target omits them, so nothing present in the target was deleted.  Their undefined
+# references (macPostMessage, synthKillAllVoices, seqKillAllInstances, s3dKillAllEmitter,
+# hwChangeStudioMix, synthPauseVolume) are discarded with those bodies.
+# Address-map notes: the eleven zz_ placeholders of the run are renamed to the source functions
+# that are byte-identical at each address (the roster: sndFXCtrl 0x8014D75C,
+# sndFXStartEx 0x8014D7FC, sndFXCheck 0x8014D880, sndSetReceiveMessageCallback 0x8014D8C0,
+# sndVolume 0x8014D8C8, sndMasterVolume 0x8014D928, sndSetAuxProcessingCallbacks 0x8014DAA8,
+# synthActivateStudio 0x8014DC00, synthDeactivateStudio 0x8014DCA8, synthAddStudioInput
+# 0x8014DD98, synthRemoveStudioInput 0x8014DDB8).  The member's only cross-member callee that was
+# still unnamed is 0x8014635C, the u32 seqGetPrivateId(u32) body of the not-yet-integrated seq.c
+# member: this member's two relocations (0x8014DB08/0x8014DB7C, synthAuxAMIDISet/BMIDISet stores)
+# name it (into synthAuxAMIDISet/BMIDISet), and seq_api.c's sndSeqGetValid is built on the same
+# u32 seqGetPrivateId(SND_SEQID) body, so zz_8014635C_ is renamed seqGetPrivateId there; its bytes
+# and seq.c ownership are unchanged.
+# Include order: the musyx headers plus the MSL tree before dolsdk2001/include/libc, like the
+# sibling runtime members, so <math.h> resolves to msl/.
+[[lib.object]]
+name = "ext/musyx_sdk/runtime/snd_synthapi.c"
+extra_cflags = ["-i src/ext/musyx_sdk/include", "-i src/ext/musyx_sdk/msl", "-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/include/libc", "-DMUSY_TARGET=MUSY_TARGET_DOLPHIN", "-DMUSY_VERSION_MAJOR=2", "-DMUSY_VERSION_MINOR=0", "-DMUSY_VERSION_PATCH=0"]
+completed = true
+
 # MusyX runtime DSP data tables (dspAttenuationTab, dspScale2IndexTab, dspDLSVolTab).
 # Pure initialised-data member: no code and no version-dependent constants, so the
 # runtime archive settings apply as-is.  The three tables are byte-identical to the
