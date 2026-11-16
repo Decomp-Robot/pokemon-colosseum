@@ -502,6 +502,11 @@ ext/musyx_sdk/runtime/synthmacros.c:
 	.sbss       start:0x8047AFB0 end:0x8047AFD0
 	.sdata2     start:0x8047D3C8 end:0x8047D3F0
 
+ext/musyx_sdk/runtime/synthvoice.c:
+	.text       start:0x80157280 end:0x80158BB4
+	.bss        start:0x80445F50 end:0x80446F10
+	.sbss       start:0x8047AFD0 end:0x8047AFE8
+
 ext/musyx_sdk/runtime/synth_ac.c:
 	.text       start:0x80158BB4 end:0x80158CD4
 	.data       start:0x80368EC8 end:0x803692C8

@@ -3304,3 +3304,41 @@ name = "ext/musyx_sdk/runtime/synthmacros.c"
 mw_version = "GC/1.3.2r"
 extra_cflags = ["-i src/ext/musyx_sdk/include", "-i src/ext/musyx_sdk/msl", "-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/include/libc", "-DMUSY_TARGET=MUSY_TARGET_DOLPHIN", "-DMUSY_VERSION_MAJOR=1", "-DMUSY_VERSION_MINOR=5", "-DMUSY_VERSION_PATCH=4"]
 completed = true
+
+# MusyX voice/vid pool management (synthvoice.c).  .text runs from the end of synthmacros'
+# text (macInit ends at 0x80157280) to the start of synth_ac's (sndPitchUpOne at
+# 0x80158BB4) and carries this member's 17 linked bodies in order: vidInit 0xE0,
+# vidRemoveVoiceReferences 0x350, vidMakeRoot 0x14, vidMakeNew 0x104, vidGetInternalId 0x50,
+# voiceSetPriority 0x24C, voiceAllocate 0x460, voiceFree 0x1C4, synthInitAllocationAids 0x2A0,
+# voiceBlock 0xFC, voiceUnblock 0x218, voiceKill 0x234, voiceKillSound 0xC4,
+# voiceIsLastStarted 0x74, voiceSetLastStarted 0x54, voiceResetLastStarted 0x74,
+# voiceInitLastStarted 0x144.  0x80158328 is voiceBlock, the one body of the range outside
+# the assigned function list.  The member's file-scope helpers (get_vidlist, get_newvid,
+# vidRemove, voiceInitPrioSort, voiceRemovePriority, voiceInitFreeList, synthKillAllVoices,
+# synthKillVoicesByMacroReferences) are inlined at every call site and have no standalone body
+# in the image; voiceRemovePriority, synthKillAllVoices and synthKillVoicesByMacroReferences
+# are unreferenced as well, so the whole run belongs to this split.
+# Storage is .bss 0x80445F50-0x80446F10 (vidList 0x800, voicePrioSortVoices 0x100,
+# voicePrioSortVoicesRoot 0x100, voicePrioSortRootList 0x400, voiceList 0x100,
+# synth_last_fxstarted 0x40, synth_last_started 0x80, ending where synth_vsamples' .bss
+# begins) and .sbss 0x8047AFD0-0x8047AFE2, the eight small objects (vidFree, vidRoot,
+# vidCurrentId, voicePrioSortRootListRoot, voiceMusicRunning, voiceFxRunning,
+# voiceListInsert, voiceListRoot) in that order over 0x12 bytes; the split end is rounded up
+# to 0x8047AFE8 because dtk requires 8-aligned .sbss boundaries, and the 6 pad bytes belong
+# to no unit.
+# The member is built with MUSY_VERSION_PATCH=4, as synthmacros.c and synth.c are: vidInit
+# stores vidFree at the lowest .sbss address and voiceBlock sets allocId = 0xFFFF, which is
+# the 1.5.4 shape (1.5.3 rotates the three .sbss vids).
+# Compiler: GC/1.3.2r, like the other runtime members; the archive default GC/2.6 does not
+# reproduce voiceBlock's synthVoice[voice].id = voice | 0xFFFFFF00 sequence.
+# voiceKill's streamKill(vi) call reaches 0x8014E7D0, the 0x84-byte body between
+# streamCorrectLoops and GetPrivateIndex in the not-yet-integrated stream.c member, so the
+# zz_8014E7D0_ placeholder is named streamKill there; its bytes and stream.c ownership are
+# unchanged.
+# Include order: the musyx headers plus the MSL tree before dolsdk2001/include/libc, so
+# math.h resolves to msl/.
+[[lib.object]]
+name = "ext/musyx_sdk/runtime/synthvoice.c"
+mw_version = "GC/1.3.2r"
+extra_cflags = ["-i src/ext/musyx_sdk/include", "-i src/ext/musyx_sdk/msl", "-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/include/libc", "-DMUSY_TARGET=MUSY_TARGET_DOLPHIN", "-DMUSY_VERSION_MAJOR=1", "-DMUSY_VERSION_MINOR=5", "-DMUSY_VERSION_PATCH=4"]
+completed = true
