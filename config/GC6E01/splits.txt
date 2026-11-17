@@ -596,6 +596,9 @@ ext/musyx_sdk/runtime/hw_pc_output.c:
 ext/musyx_sdk/runtime/hw_pc_rate.c:
 	.text       start:0x801643D8 end:0x801643D8
 
+ext/musyx_sdk/runtime/hw_pc_vsample.c:
+	.text       start:0x801643D8 end:0x801643D8
+
 ext/musyx_sdk/runtime/hw_pc_song.c:
 	.text       start:0x801643D8 end:0x801643D8
 
