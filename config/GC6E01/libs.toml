@@ -4219,3 +4219,69 @@ completed = true
 name = "ext/musyx_sdk/runtime/StdReverb/reverb.c"
 extra_cflags = ["-i src/ext/musyx_sdk/include", "-i src/ext/musyx_sdk/msl", "-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/include/libc", "-common off", "-inline auto", "-fp_contract off", "-lang=c", "-DMUSY_TARGET=MUSY_TARGET_DOLPHIN", "-DMUSY_VERSION_MAJOR=1", "-DMUSY_VERSION_MINOR=5", "-DMUSY_VERSION_PATCH=3"]
 completed = true
+
+# profile.c is the Gekko performance-monitor profiling member
+# src/musyx/runtime/profile.c of runtime.a.  It contributes no .text, .data or
+# .bss to this DOL: the reference text is
+#
+#   #ifdef MUSY_BUILD_DEBUG                                    (pristine :9)
+#   SND_PROF_USERCALLBACK sndProfUserCallback = NULL;          (:10)
+#   #if MUSY_VERSION < MUSY_VERSION_CHECK(1, 5, 1)             (:13)
+#   ... sndProfSetCallback, sndProfUpdateMisc, sndProfResetPMC, sndProfStartPMC,
+#       sndProfPausePMC, sndProfStopPMC                        (:14-105)
+#   #endif
+#   #endif
+#
+# musyx/version.h:4-6 defines MUSY_BUILD_DEBUG only when the CodeWarrior debug
+# flag _DEBUG is set, and this project builds the archive as a release image
+# (-DNDEBUG=1, no _DEBUG), so the outer guard reduces the whole translation unit
+# to its five #includes.  The callback word sits between the two guards and is
+# therefore part of any MUSY_BUILD_DEBUG build, the game's v1.5.3 revision
+# included; only the six functions are version-gated by the reference's own
+# "1.5 Patch 1 (note 31): the Gekko performance counters are no longer used
+# internally".  The compiled object has no .text/.data/.bss at all: its only
+# allocated section is the 0x20-byte .sdata2 holding the weak
+# `_half$localstatic3$sqrtf__Ff`/`_three$localstatic4$sqrtf__Ff` (and `sqrt`)
+# doubles that libc/math.h's extern inline sqrtf/sqrt declare through musyx.h:7 -
+# no pass here references them, mwld drops them, and the image is unaffected
+# (cf. hw_pc_vsample.c).
+# The source keeps the reference includes and carries exactly one "// UNUSED:"
+# marker per definition the reference text has (sndProfUserCallback,
+# sndProfSetCallback, sndProfUpdateMisc, sndProfResetPMC, sndProfStartPMC,
+# sndProfPausePMC, sndProfStopPMC), the representation this project uses for
+# archive definitions that are absent from the image (cf. hw_pc_null.c,
+# hw_pc_sdl.c, PPCPm.c).
+# Binary evidence that no profiling body was linked into this image:
+#   * no sndProf* name (nor a voice-counter profile struct) exists anywhere in
+#     the image, and the only other user of profile.h - hardware.c's
+#     `static SND_PROFILE_INFO prof` and its PROF_START/PROF_PAUSE/PROF_STOP call
+#     sites (hardware.c:55-60) - is behind the same `MUSY_TARGET_DOLPHIN &&
+#     MUSY_VERSION < 1.5.1 && defined(MUSY_BUILD_DEBUG)` guard;
+#   * decoding every mtspr/mfspr in orig/GC6E01/sys/main.dol places every
+#     PMC/MMCR-family access (SPRs 952-959) outside the MusyX runtime:
+#     PPCArch.c's members write MMCR0 0x80098050 (PPCMtmmcr0), MMCR1 0x80098058
+#     (PPCMtmmcr1), PMC1 0x80098060, PMC2 0x80098068, PMC3 0x80098070 and PMC4
+#     0x80098078 (PPCMtpmc1..4) - all mtspr, no counter read - and MetroTRK
+#     spills and restores them:
+#     TRKSaveExtended1Block 0x800C2A10 reads SDA 0x800C2B4C, PMC1 0x800C2B64,
+#     PMC2 0x800C2B68, PMC3 0x800C2B6C, PMC4 0x800C2B70, SIA 0x800C2B74, MMCR0
+#     0x800C2B78 and MMCR1 0x800C2B7C, while TRKRestoreExtended1Block 0x800C2BC8
+#     writes PMC1-4/SIA/MMCR0/MMCR1 at 0x800C2C58-0x800C2C70.  Outside
+#     TRKSaveExtended1Block no mfspr of PMC1-4 exists at all - the counter latch
+#     (`info->_loadStores = PPCMfpmc2()` and friends) every reference body needs;
+#   * inside the runtime .text run 0x8014635C-0x801653BC no PMC/MMCR SPR is
+#     touched: the only SPRs the run's mtspr/mfspr name are LR and CTR.  That
+#     scan covers the three spans splits.txt cannot attribute yet
+#     (0x80159C48-0x8015D7D0, 0x8015FE88-0x8015FFDC and
+#     0x80163EE0-0x801643D8), so text coverage is not used as evidence here;
+#   * the reference bodies' MMCR constants 0x78400000 (MMCR1) and 0xC08B (MMCR0)
+#     occur as a literal word nowhere in the image's .text.
+# The member takes the zero-length .text slot the other non-emitting runtime.a
+# members share (0x801643D8), see its splits.txt entry.
+# Compiler: GC/2.6 (the runtime archive default) with the archive's include
+# tree; MUSY_TARGET_DOLPHIN and MUSY_VERSION 1.5.3 follow the sibling runtime
+# members.
+[[lib.object]]
+name = "ext/musyx_sdk/runtime/profile.c"
+extra_cflags = ["-i src/ext/musyx_sdk/include", "-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/include/libc", "-DMUSY_TARGET=MUSY_TARGET_DOLPHIN", "-DMUSY_VERSION_MAJOR=1", "-DMUSY_VERSION_MINOR=5", "-DMUSY_VERSION_PATCH=3"]
+completed = true

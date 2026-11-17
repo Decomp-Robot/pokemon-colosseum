@@ -608,6 +608,9 @@ ext/musyx_sdk/runtime/hw_pc_samples.c:
 ext/musyx_sdk/runtime/hw_pc_sdl.c:
 	.text       start:0x801643D8 end:0x801643D8
 
+ext/musyx_sdk/runtime/profile.c:
+	.text       start:0x801643D8 end:0x801643D8
+
 ext/musyx_sdk/runtime/hw_memory.c:
 	.text       start:0x801643D8 end:0x8016442C
 
