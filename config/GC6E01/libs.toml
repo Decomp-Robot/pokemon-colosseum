@@ -4285,3 +4285,28 @@ completed = true
 name = "ext/musyx_sdk/runtime/profile.c"
 extra_cflags = ["-i src/ext/musyx_sdk/include", "-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/include/libc", "-DMUSY_TARGET=MUSY_TARGET_DOLPHIN", "-DMUSY_VERSION_MAJOR=1", "-DMUSY_VERSION_MINOR=5", "-DMUSY_VERSION_PATCH=3"]
 completed = true
+
+# The MusyX debugger front end, src/musyx/debugger/debugger.c of debugger.a.
+# The member and musyx/debugger.h are both guarded by
+# `#if MUSY_TARGET == MUSY_TARGET_PC`, so on the MUSY_TARGET_DOLPHIN build used
+# by every MusyX member here it defines no code and contributes no image bytes.
+# It follows the disposition the non-emitting runtime.a members (profile.c,
+# hw_pc_null.c ...) use - includes kept, one `// UNUSED:` marker per reference
+# definition - but as a debugger.a object it takes a zero-length .text slot of
+# its own at 0x801653BC..0x801653BC in splits.txt, where it links after
+# runtime.a's last member, not the 0x801643D8 slot those members share.  Its
+# object is the same shape as theirs: no .text/.data/.bss, only a 0x20-byte
+# .sdata2 with the unreferenced `sqrtf`/`sqrt` extern-inline constants from
+# <math.h>, which mwld drops.
+# Compiler: GC/2.6, the MusyX archive default shared with the runtime.a members;
+# nothing in the unit is compiled for this target, so no emitted code and no
+# referenced data can distinguish further settings.
+[[lib]]
+name = "debugger"
+mw_version = "GC/2.6"
+cflags_preset = "base"
+progress_category = "sdk"
+[[lib.object]]
+name = "ext/musyx_sdk/debugger/debugger.c"
+extra_cflags = ["-i src/ext/musyx_sdk/include", "-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/include/libc", "-DMUSY_TARGET=MUSY_TARGET_DOLPHIN", "-DMUSY_VERSION_MAJOR=1", "-DMUSY_VERSION_MINOR=5", "-DMUSY_VERSION_PATCH=3"]
+completed = true
