@@ -3240,6 +3240,47 @@ name = "ext/musyx_sdk/runtime/hw_pc_samples.c"
 extra_cflags = ["-i src/ext/musyx_sdk/include", "-i src/ext/musyx_sdk/runtime", "-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/include/libc", "-DMUSY_TARGET=MUSY_TARGET_DOLPHIN", "-DMUSY_VERSION_MAJOR=1", "-DMUSY_VERSION_MINOR=5", "-DMUSY_VERSION_PATCH=3"]
 completed = true
 
+# hw_pc_sdl.c is the optional SDL3 device adapter of the PC build: in
+# CMakeLists.txt it is added under `if (MUSYX_ENABLE_SDL)` and hw_pc_null.c is
+# the `else` branch, so the two are mutually exclusive members of a build whose
+# MUSY_TARGET is MUSY_TARGET_PC.  The game's v1.5.3 Dolphin runtime.a extracts
+# nothing from it and the image holds none of its bytes:
+#   * The member opens an SDL audio device (SDL_InitSubSystem,
+#     SDL_OpenAudioDeviceStream, SDL_SetAudioStreamFormat), renders on an
+#     SDL_CreateThread worker named "MusyX Audio" and serialises through SDL
+#     mutexes.  Neither the musyx nor the dolsdk2001 include tree carries an SDL
+#     header (its <SDL3/SDL.h> cannot resolve in this build at all) and the DOL
+#     contains no SDL string and no "MusyX Audio" thread name.
+#   * Its six interrupt hooks are not the linked ones.  The image's hwInitIrq
+#     0x801642F8, hwExitIrq 0x80164324, hwEnableIrq 0x80164328, hwDisableIrq
+#     0x80164360, hwIRQEnterCritical 0x80164398 and hwIRQLeaveCritical
+#     0x801643B8 are hw_dolphin.c's hwIrqLevel nesting over
+#     OSDisableInterrupts/OSRestoreInterrupts/OSEnableInterrupts; hwExitIrq there
+#     is a bare `blr` of 0x4 bytes, where this member's SDL_DestroyMutex body
+#     could not be call-free.  The SDL stubs would instead tail-call
+#     salPCExternalEnter/salPCExternalLeave, which the image lacks.
+#   * The four sndPC* device hooks have no symbol in symbols.txt.  In the
+#     reference tree sndPCOpenAudio, sndPCStartAudio and sndPCPauseAudio have no
+#     external call site at all, and sndPCStopAudio's only two (snd_init.c:199 in
+#     sndQuit, hardware.c:217 in hwExit) are `#if MUSY_TARGET == MUSY_TARGET_PC`
+#     arms that the Dolphin build compiles out.  Their statics are SDL objects
+#     (mutex, stream, thread, running, paused), so the member emits no data
+#     either.
+#   * The archive range has no room for it: hw_aramdma.c ends at 0x80163EE0,
+#     hw_dolphin.c (salInitAi 0x80163FFC through hwIRQLeaveCritical 0x801643B8)
+#     fills 0x80163EE0-0x801643D8, and hw_memory.c starts at 0x801643D8.
+#     hw_dspctrl.c's code is outside this span (salInitDspCtrl is at 0x8015A484).
+# So, as for hw_pc_null.c/hw_pc_output.c/hw_pc_rate.c, the translation unit keeps
+# the reference includes and one "// UNUSED:" marker per removed definition,
+# compiles to an empty object and takes the zero-length .text slot at 0x801643D8
+# shared by the dropped PC members.  MUSY_TARGET_DOLPHIN states the archive target
+# explicitly as on those siblings and MUSY_VERSION follows the game's v1.5.3
+# runtime; both are unobservable because nothing in the unit is compiled here.
+[[lib.object]]
+name = "ext/musyx_sdk/runtime/hw_pc_sdl.c"
+extra_cflags = ["-i src/ext/musyx_sdk/include", "-i src/ext/musyx_sdk/runtime", "-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/include/libc", "-DMUSY_TARGET=MUSY_TARGET_DOLPHIN", "-DMUSY_VERSION_MAJOR=1", "-DMUSY_VERSION_MINOR=5", "-DMUSY_VERSION_PATCH=3"]
+completed = true
+
 # MusyX Dolphin library shim is intentionally declarations-only in the matched SDK source.
 [[lib.object]]
 name = "ext/musyx_sdk/runtime/hw_lib_dolphin.c"
