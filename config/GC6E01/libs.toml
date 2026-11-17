@@ -3149,6 +3149,42 @@ name = "ext/musyx_sdk/runtime/hw_pc_null.c"
 extra_cflags = ["-i src/ext/musyx_sdk/include", "-i src/ext/musyx_sdk/runtime", "-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/include/libc", "-DMUSY_TARGET=MUSY_TARGET_DOLPHIN", "-DMUSY_VERSION_MAJOR=1", "-DMUSY_VERSION_MINOR=5", "-DMUSY_VERSION_PATCH=4"]
 completed = true
 
+# hw_pc_rate.c is the sampling-rate adapter of the PC renderer, the runtime.a
+# member src/musyx/runtime/hw_pc_rate.c.  It defines exactly two functions,
+# salPCConvertStudioCycle and salPCConvertCycle, and emits no data.  The game's
+# Dolphin archive extracts nothing from it:
+#   * The two definitions have no caller outside hw_pc.c (salPCConvertStudioCycle
+#     at hw_pc.c:574, salPCConvertCycle at hw_pc.c:612 and hw_pc.c:624), the PC
+#     renderer that the Dolphin archive does not contain at all -- the image
+#     holds none of its sndPC*/salPC* API, no sndPCRender/salPCB* body and no PC
+#     renderer state.
+#   * The member cannot be part of a Dolphin link in the first place: its 64-bit
+#     phase arithmetic is spelled s64/u64, which musyx.h declares only in its
+#     MUSY_TARGET_PC arm (the reference build selects that arm on the command
+#     line: CMakeLists.txt sets MUSY_TARGET to MUSY_TARGET_PC).  Compiling the
+#     reference text with the object's Dolphin settings fails on the first s64
+#     declaration ("undefined identifier 's64'").
+#   * No salPC*/sndPC* string exists anywhere in the DOL, and the polyphase
+#     coefficients salPCRateCoefficients returns are hw_pc.c's zero-initialised
+#     .bss table (built at run time by initResampleTables), so this member emits
+#     no data that could be found in the image either.  The archive's Dolphin
+#     text range around it is fully claimed as well: hw_aramdma.c ends at
+#     0x80163EE0, hw_dspctrl (zz_80163EE0_ 0xA8, zz_80163F88_ 0x10,
+#     zz_80163F98_ 0x64) and hw_dolphin (salInitAi 0x80163FFC ...
+#     hwIRQLeaveCritical 0x801643B8+0x20) fill 0x80163EE0-0x801643D8, and
+#     hw_memory.c starts at 0x801643D8.
+# So, as for hw_pc_null.c and hw_pc_output.c, the translation unit keeps the
+# reference include and one "// UNUSED:" marker per removed definition, compiles
+# to an empty object and takes the zero-length .text slot shared by the dropped
+# members.  MUSY_TARGET_DOLPHIN states the archive target explicitly as on the
+# sibling PC members, and MUSY_VERSION follows the game's v1.5.3 runtime like
+# hardware.c/hw_aramdma.c/hw_dolphin.c; both are unobservable because nothing in
+# the unit is compiled for this target.
+[[lib.object]]
+name = "ext/musyx_sdk/runtime/hw_pc_rate.c"
+extra_cflags = ["-i src/ext/musyx_sdk/include", "-i src/ext/musyx_sdk/runtime", "-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/include/libc", "-DMUSY_TARGET=MUSY_TARGET_DOLPHIN", "-DMUSY_VERSION_MAJOR=1", "-DMUSY_VERSION_MINOR=5", "-DMUSY_VERSION_PATCH=3"]
+completed = true
+
 # MusyX Dolphin library shim is intentionally declarations-only in the matched SDK source.
 [[lib.object]]
 name = "ext/musyx_sdk/runtime/hw_lib_dolphin.c"
