@@ -3185,6 +3185,45 @@ name = "ext/musyx_sdk/runtime/hw_pc_rate.c"
 extra_cflags = ["-i src/ext/musyx_sdk/include", "-i src/ext/musyx_sdk/runtime", "-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/include/libc", "-DMUSY_TARGET=MUSY_TARGET_DOLPHIN", "-DMUSY_VERSION_MAJOR=1", "-DMUSY_VERSION_MINOR=5", "-DMUSY_VERSION_PATCH=3"]
 completed = true
 
+# hw_pc_song.c is the host song cache of the PC renderer, the runtime.a member
+# src/musyx/runtime/hw_pc_song.c (CMakeLists.txt:54, between hw_pc_vsample.c and
+# hw_pc_samples.c).  It defines exactly salPCAcquireSong, salPCReleaseSong and
+# salPCCollectSongs over the file-static `songs` list plus the file-static PCSong
+# type.  The game's v1.5.3 Dolphin archive extracts nothing from it:
+#   * Every call site of the three exports is an arm of `#if MUSY_TARGET ==
+#     MUSY_TARGET_PC` with no `#else`/`#elif` ahead of the call, so the Dolphin
+#     build compiles all of them out: salPCAcquireSong -- seq.c:409 (arm 408-412)
+#     and seq.c:937 (arm 932-945); salPCReleaseSong -- eight sites, all in seq.c:
+#     :728 and :729 (arm 727-733), :746 (arm 745-749), :896 (arm 895-899), :943
+#     (arm 932-945), :1336 (arm 1335-1338), :1583 and :1584 (arm 1582-1588); and
+#     salPCCollectSongs -- s_data.c:561 (arm 338-681, `#else` at :567),
+#     s_data.c:940 (arm 936-943, `#else` at :944), snd_init.c:207 (arm 196-208),
+#     seq_api.c:49 (arm 48-50) and seq_api.c:139 (arm 138-140).  With no
+#     undefined reference left, the link never pulls the member in, so it emits
+#     neither code nor data, and none of the three names is in symbols.txt.
+#   * salPCAcquireSong's decoder, salPCDecodeArrangement (hw_pc_assets.c:594),
+#     belongs to the PC asset/decoder pair hw_pc_assets.c/hw_pc_decode.c, which
+#     the image does not contain either.  The member's remaining externals are
+#     the allocator pair -- the reference's salMalloc/salFree, which this v1.5.3
+#     revision exports as salAlloc (0x801643D8) and salFree (0x80164400) from
+#     hw_memory.c.  That pair is linked, but a whole-image `bl` scan finds it
+#     called only from the Dolphin side (salAlloc from synthInit, salInitDspCtrl,
+#     aramInit, salInitAi and ReverbHICreate; salFree from synthExit,
+#     salExitDspCtrl, aramInit, salExitAi and ReverbHIModify), never from a body
+#     that allocates or frees a decoded song buffer.
+# So, as for hw_pc_null.c/hw_pc_output.c/hw_pc_rate.c/hw_pc_samples.c/
+# hw_pc_sdl.c, the translation unit keeps the reference includes and one
+# "// UNUSED:" marker per removed definition, compiles to an empty object and
+# takes the zero-length .text slot at 0x801643D8 shared by the dropped PC
+# members.  MUSY_TARGET_DOLPHIN states the archive target explicitly as on those
+# siblings and MUSY_VERSION follows the game's v1.5.3 runtime like
+# hardware.c/hw_aramdma.c/hw_dolphin.c; both are unobservable because nothing in
+# the unit is compiled for this target.
+[[lib.object]]
+name = "ext/musyx_sdk/runtime/hw_pc_song.c"
+extra_cflags = ["-i src/ext/musyx_sdk/include", "-i src/ext/musyx_sdk/runtime", "-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/include/libc", "-DMUSY_TARGET=MUSY_TARGET_DOLPHIN", "-DMUSY_VERSION_MAJOR=1", "-DMUSY_VERSION_MINOR=5", "-DMUSY_VERSION_PATCH=3"]
+completed = true
+
 # hw_pc_samples.c is the PC sample registry of the reference tree, the runtime.a
 # member src/musyx/runtime/hw_pc_samples.c.  The game's v1.5.3 Dolphin archive
 # extracts nothing from it, because the same registry lives in synthdata.c for
