@@ -3101,6 +3101,27 @@ name = "ext/musyx_sdk/runtime/hw_dolphin.c"
 extra_cflags = ["-i src/ext/musyx_sdk/include", "-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/include/libc", "-DMUSY_VERSION_MAJOR=1", "-DMUSY_VERSION_MINOR=5", "-DMUSY_VERSION_PATCH=3"]
 completed = true
 
+# hw_pc_output.c is the output stage of the PC renderer, the runtime.a member
+# src/musyx/runtime/hw_pc_output.c, and the PC counterpart of hw_dolphin.c.  The
+# game's Dolphin archive extracts nothing from it: it holds the host-facing sndPC*
+# API, the PC-side salPC* helpers and the AI-less salStartAi/salExitAi/salAiGetDest
+# stubs, none of which is in the image.  The three exports it shares with the
+# Dolphin backend are hw_dolphin.c's AI-DMA bodies rather than this member's PC
+# stubs, the two call sites that would pull in salPCChannels/salPCMixRate
+# (hw_volconv.c, synth_vsamples.c) sit inside `#if MUSY_TARGET == MUSY_TARGET_PC`,
+# and the rest is reached only from hw_pc.c, which the archive does not contain;
+# the member's large .bss/.data statics are absent as well.  So, as for
+# hw_pc_null.c, the translation unit keeps the reference includes and one
+# "// UNUSED:" marker per removed definition, emits no bytes and takes the
+# zero-length .text slot shared by the dropped members.  MUSY_TARGET_DOLPHIN states
+# the archive target explicitly as on the sibling PC member, and MUSY_VERSION
+# follows the game's v1.5.3 runtime like hardware.c/hw_aramdma.c/hw_dolphin.c; both
+# are unobservable because nothing in the unit is compiled for this target.
+[[lib.object]]
+name = "ext/musyx_sdk/runtime/hw_pc_output.c"
+extra_cflags = ["-i src/ext/musyx_sdk/include", "-i src/ext/musyx_sdk/runtime", "-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/include/libc", "-DMUSY_TARGET=MUSY_TARGET_DOLPHIN", "-DMUSY_VERSION_MAJOR=1", "-DMUSY_VERSION_MINOR=5", "-DMUSY_VERSION_PATCH=3"]
+completed = true
+
 # hw_pc_null.c is a runtime.a member in the reference SDK, but the game's
 # archive extracts nothing from it.  Upstream it is the PC host device backend
 # that CMakeLists.txt adds in the `else` branch of `if (MUSYX_ENABLE_SDL)`
