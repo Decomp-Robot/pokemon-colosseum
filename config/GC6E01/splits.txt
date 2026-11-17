@@ -590,6 +590,9 @@ ext/musyx_sdk/runtime/hw_aramdma.c:
 ext/musyx_sdk/runtime/hw_memory.c:
 	.text       start:0x801643D8 end:0x8016442C
 
+ext/musyx_sdk/runtime/StdReverb/reverb_fx.c:
+	.text       start:0x8016442C end:0x80164520
+
 ext/musyx_sdk/runtime/StdReverb/reverb.c:
 	.text       start:0x80164520 end:0x801653BC
 	.data       start:0x8036BF00 end:0x8036BF20
