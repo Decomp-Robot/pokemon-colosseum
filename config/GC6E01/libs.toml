@@ -3185,6 +3185,61 @@ name = "ext/musyx_sdk/runtime/hw_pc_rate.c"
 extra_cflags = ["-i src/ext/musyx_sdk/include", "-i src/ext/musyx_sdk/runtime", "-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/include/libc", "-DMUSY_TARGET=MUSY_TARGET_DOLPHIN", "-DMUSY_VERSION_MAJOR=1", "-DMUSY_VERSION_MINOR=5", "-DMUSY_VERSION_PATCH=3"]
 completed = true
 
+# hw_pc_samples.c is the PC sample registry of the reference tree, the runtime.a
+# member src/musyx/runtime/hw_pc_samples.c.  The game's v1.5.3 Dolphin archive
+# extracts nothing from it, because the same registry lives in synthdata.c for
+# every non-PC target:
+#   * The pristine reference synthdata.c guards its own sample-directory code
+#     with `#if MUSY_TARGET != MUSY_TARGET_PC` (synthdata.c:246-506) and defines
+#     dataInsertSDir, dataRemoveSDir, dataAddSampleReference,
+#     dataRemoveSampleReference and dataGetSample there; this member is the PC
+#     replacement for exactly those five definitions and adds the two host
+#     helpers salPCResetSampleData/salPCFinishSampleUpload, whose only callers
+#     are the PC arms (`#if MUSY_TARGET == MUSY_TARGET_PC` in synthdata.c's
+#     dataInit, and s_data.c).  Compiling the pristine text for this target and
+#     linking it would therefore produce duplicate definitions of all five
+#     data* entry points.
+#   * The four data* entry points that do exist in the image are synthdata.c's
+#     bodies, not this member's copies: dataInsertSDir 0x80151770 (0x188),
+#     dataAddSampleReference 0x801518F8 (0xD8), dataRemoveSampleReference
+#     0x801519D0 (0x98) and dataGetSample 0x801521B8 (0x128) all sit inside
+#     synthdata.c's split range.  dataGetSample walks the 128-entry SDIR_TAB
+#     table dataSmpSDirs (0x8043CCF8) counted by dataSmpSDirNum (0x8047AFAA)
+#     and searches it with the smpcmp comparator at 0x801521A8; dataInsertSDir
+#     brackets the same table with hwDisableIrq (0x80164360) / hwEnableIrq
+#     (0x80164328) and runs the per-entry duplicate-id scan.  This member has
+#     none of that state: it keeps its own `static SDIR_TAB directories[128]`,
+#     `directoryCount` and `uploading` plus a hand-rolled binary search, and
+#     compiles (sizes from the archive's GC/2.6 settings -O4,p -inline auto on a
+#     C89 spelling of the same text) to dataInsertSDir 0xE8,
+#     dataAddSampleReference 0x214, dataRemoveSampleReference 0x138 and
+#     dataGetSample 0x19C, none of which matches the image's bodies.
+#   * hwSaveSample 0x80163050 / hwRemoveSample 0x80163104, the only external
+#     hooks the member calls, are hardware.c's definitions and are reached in
+#     the image from synthdata.c:427/463/490 (its non-PC arm), not from here.
+#   * salPCResetSampleData/salPCFinishSampleUpload have no definition, caller or
+#     address anywhere in the DOL (symbols.txt names no salPC* symbol; the pair
+#     exists only under the PC arms that the Dolphin build compiles out).
+#   * The text itself is a PC-toolchain member, not a CodeWarrior one:
+#     CMakeLists.txt builds the runtime with MUSY_TARGET_PC and C11, and the
+#     pristine file uses C99 for-init declarations (hw_pc_samples.c:44) and
+#     mid-block declarations plus a compound-literal SDIR_TAB assignment in
+#     dataInsertSDir, so it does not compile under the archive's C89 -lang=c
+#     settings at all.
+# Nothing of this member is in the image, so the translation unit keeps the
+# reference includes and one "// UNUSED:" marker per removed definition,
+# compiles to an empty object and takes the zero-length .text slot shared by
+# the dropped PC members (0x801643D8, right after hw_pc_rate.c and before
+# hw_memory.c), the representation used for members that emit no bytes (see
+# hw_pc_null.c/hw_pc_output.c/hw_pc_rate.c).  MUSY_TARGET_DOLPHIN states the
+# archive target explicitly as on the sibling PC members, and MUSY_VERSION
+# follows the game's v1.5.3 runtime like hardware.c/hw_aramdma.c/hw_dolphin.c;
+# both are unobservable because nothing in the unit is compiled for this target.
+[[lib.object]]
+name = "ext/musyx_sdk/runtime/hw_pc_samples.c"
+extra_cflags = ["-i src/ext/musyx_sdk/include", "-i src/ext/musyx_sdk/runtime", "-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/include/libc", "-DMUSY_TARGET=MUSY_TARGET_DOLPHIN", "-DMUSY_VERSION_MAJOR=1", "-DMUSY_VERSION_MINOR=5", "-DMUSY_VERSION_PATCH=3"]
+completed = true
+
 # MusyX Dolphin library shim is intentionally declarations-only in the matched SDK source.
 [[lib.object]]
 name = "ext/musyx_sdk/runtime/hw_lib_dolphin.c"
