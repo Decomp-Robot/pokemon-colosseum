@@ -587,6 +587,9 @@ ext/musyx_sdk/runtime/hw_aramdma.c:
 	.bss        start:0x8044FB90 end:0x804504A0
 	.sbss       start:0x8047B060 end:0x8047B080
 
+ext/musyx_sdk/runtime/hw_pc_null.c:
+	.text       start:0x801643D8 end:0x801643D8
+
 ext/musyx_sdk/runtime/hw_memory.c:
 	.text       start:0x801643D8 end:0x8016442C
 

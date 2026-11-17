@@ -3101,6 +3101,33 @@ name = "ext/musyx_sdk/runtime/hw_dolphin.c"
 extra_cflags = ["-i src/ext/musyx_sdk/include", "-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/include/libc", "-DMUSY_VERSION_MAJOR=1", "-DMUSY_VERSION_MINOR=5", "-DMUSY_VERSION_PATCH=3"]
 completed = true
 
+# hw_pc_null.c is a runtime.a member in the reference SDK, but the game's
+# archive extracts nothing from it.  Upstream it is the PC host device backend
+# that CMakeLists.txt adds in the `else` branch of `if (MUSYX_ENABLE_SDL)`
+# (the SDL variant hw_pc_sdl.c is the alternative), and it defines the six
+# interrupt hooks plus four PC device hooks sndPCStartAudio/sndPCOpenAudio/
+# sndPCStopAudio/sndPCPauseAudio.  None of those ten definitions comes from
+# this member in the DOL:
+#   * The six interrupt hooks at 0x801642F8-0x801643D8 (hwInitIrq 0x2C,
+#     hwExitIrq 0x4, hwEnableIrq 0x38, hwDisableIrq 0x38, hwIRQEnterCritical
+#     0x20, hwIRQLeaveCritical 0x20) are hw_dolphin.c's bodies over
+#     hwIrqLevel/OSDisableInterrupts/OSRestoreInterrupts, and that member's
+#     .text is 0x4F8 bytes, byte-identical to the DOL span 0x80163EE0-
+#     0x801643D8 outside its relocation sites, i.e. exactly the span these
+#     symbols occupy; the null stubs here would instead be tail calls into
+#     salPCExternalEnter/salPCExternalLeave, which the image lacks.
+#   * No sndPC*/salPC* symbol appears in symbols.txt and no such string exists
+#     in the DOL, because their only callers belong to the PC-only renderer
+#     (hw_pc.c and friends), which the Dolphin archive does not contain.
+# Nothing of this member is in the image, so the translation unit keeps only the
+# reference includes and a marker per removed definition, compiles to an empty
+# object and gets a zero-length .text split, the representation this project
+# uses for members that emit no bytes (e.g. ext/dolsdk2001/base/PPCPm.c).
+[[lib.object]]
+name = "ext/musyx_sdk/runtime/hw_pc_null.c"
+extra_cflags = ["-i src/ext/musyx_sdk/include", "-i src/ext/musyx_sdk/runtime", "-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/include/libc", "-DMUSY_TARGET=MUSY_TARGET_DOLPHIN", "-DMUSY_VERSION_MAJOR=1", "-DMUSY_VERSION_MINOR=5", "-DMUSY_VERSION_PATCH=4"]
+completed = true
+
 # MusyX Dolphin library shim is intentionally declarations-only in the matched SDK source.
 [[lib.object]]
 name = "ext/musyx_sdk/runtime/hw_lib_dolphin.c"
