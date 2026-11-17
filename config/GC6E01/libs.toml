@@ -2319,28 +2319,18 @@ name = "ext/dolsdk2001/axfx/delay.c"
 extra_cflags = ["-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/os", "-i src/ext/dolsdk2001/include/libc"]
 completed = true
 
-# reverb_hi.o (axfx.a) IS linked by the original build: the game's snd library
-# registers AXFXReverbHiCallback as its AUX callback and the whole reverb
-# engine sits at .text 0x80164520-0x801653BC (ReverbHICreate/ReverbHIModify/
-# ReverbHICallback, detected by fingerprints; HandleReverb and the asm
-# DoCrossTalk lie between them, DoCrossTalk renamed at 0x80164C40 from
-# zz_80164C40_). Revision adaptations proved by the binary:
-#   * the three exported functions are NOT static in this drop - the snd
-#     library calls them directly from 0x80164474/0x801644BC/0x8016450C;
-#   * memory goes through the snd library's settable allocator hooks
-#     (installed at 0x801631AC into lbl_8047B054/lbl_8047B058) via the
-#     trampolines renamed salAlloc/salFree (0x801643D8/0x80164400), not
-#     OSAllocFromHeap/OSFreeToHeap - ReverbHICreate/ReverbHIModify and the
-#     inlined DLcreate/DLdelete bodies call those trampolines directly;
-#   * ReverbHICreate calls double-precision pow (renamed at 0x800CE358, the
-#     __ieee754_pow forwarder), not powf - the exponent is built with the
-#     0x4330 int->double magic against sdata2 double 10.0 (0x8047D508) and
-#     the result is frsp'd back to f32;
-#   * AXFXReverbHiInit/Shutdown/Settings/Callback and ReverbHIFree never
-#     link (nothing anywhere references the AXFXReverbHi family and the
-#     member's .text is exactly the five functions above), so they carry
-#     the "// UNUSED:" mark; DLcreate/DLdelete/DLsetdelay inline into their
-#     callers, as the binary shows (no standalone bodies exist).
+# The retail reverb engine at .text 0x80164520-0x801653BC is the runtime.a member
+# ext/musyx_sdk/runtime/StdReverb/reverb.c (see its entry in the runtime lib
+# block), not this axfx.a object.  The image's engine takes its delay lines from
+# the snd library's settable allocator hooks (installed at 0x801631AC into
+# lbl_8047B054/lbl_8047B058) through the trampolines salAlloc 0x801643D8 /
+# salFree 0x80164400 (runtime.a hw_memory.c), and its three exported entry
+# points are called from the sibling StdReverb/reverb_fx.c AUX callbacks at
+# 0x8016442C/0x80164488/0x801644E0; axfx/reverb_hi.c allocates with
+# OSAllocFromHeap(__OSCurrHeap, ...) and keeps every definition file-static, so
+# it cannot provide those symbols.  This object therefore keeps the pristine
+# dolsdk2001 text and contributes no bytes: splits.txt gives it the same
+# zero-length dropped-member slot as chorus.c/delay.c/reverb_std.c.
 [[lib.object]]
 name = "ext/dolsdk2001/axfx/reverb_hi.c"
 extra_cflags = ["-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/os", "-i src/ext/dolsdk2001/include/libc"]
@@ -3865,4 +3855,36 @@ completed = true
 name = "ext/musyx_sdk/runtime/stream.c"
 mw_version = "GC/1.3.2r"
 extra_cflags = ["-i src/ext/musyx_sdk/include", "-i src/ext/musyx_sdk/msl", "-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/include/libc", "-DMUSY_TARGET=MUSY_TARGET_DOLPHIN", "-DMUSY_VERSION_MAJOR=2", "-DMUSY_VERSION_MINOR=0", "-DMUSY_VERSION_PATCH=0"]
+completed = true
+
+# MusyX standard reverb DSP engine - the runtime.a member
+# src/musyx/runtime/StdReverb/reverb.c.  It is the contiguous .text run
+# 0x80164520-0x801653BC (ReverbHICreate 0x50C, ReverbHIModify 0x214, DoCrossTalk
+# 0x190, HandleReverb 0x50C, ReverbHICallback 0xE0) that follows the three AUX
+# callbacks of the sibling StdReverb/reverb_fx.c member, with its .data lens[8]
+# 0x8036BF00-0x8036BF20 and its .sdata2 constants 0x8047D4F0-0x8047D53C.
+# HandleReverb (0x80164DD0) is not an assignment of this unit but is a
+# file-static body of this translation unit (called through ReverbHICallback and
+# sharing value0_3/value0_6/i2fMagic), so it cannot be split out of the object.
+# Revision differences against the 2.0.x reference text: the allocator call is
+# this game's salAlloc, declared in musyx/sal.h; the DL* delay-line helpers are
+# `static inline` because the image has no standalone bodies for them (they are
+# inlined into ReverbHICreate/ReverbHIModify, and without `inline` CW emits
+# 0x100 bytes of out-of-line copies); ReverbHIFree is `static inline` and marked
+# "// UNUSED:" because neither it nor an sndAuxCallbackShutdownReverbHI that
+# would call it exists in this revision (an unreferenced plain-static body
+# would add 0xBC bytes).
+# Compiler: GC/2.6 (the runtime archive default) reproduces the member; the
+# archive preset keeps -fp_contract on, so it is turned off per object because
+# the retail ReverbHIModify/Percolate keeps separate fmuls/fadds instead of
+# fusing 1.f - (damping * 0.8f + 0.05f) into fnmsubs, and -common off is needed
+# for the file-scope const objects.  -use_lmw_stmw is not used: the retail
+# prologues are _savegpr_20/_restgpr_20 and _savegpr_27/_restgpr_27.  The
+# double-precision pow comes from <math.h>: the MSL tree's inline powf is what
+# turns `powf(10.f, ...)` into the retail `bl pow` with f64 operands, so
+# src/ext/musyx_sdk/msl precedes the dolsdk libc headers, whose powf is a real
+# (non-inlined) function.
+[[lib.object]]
+name = "ext/musyx_sdk/runtime/StdReverb/reverb.c"
+extra_cflags = ["-i src/ext/musyx_sdk/include", "-i src/ext/musyx_sdk/msl", "-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/include/libc", "-common off", "-inline auto", "-fp_contract off", "-lang=c", "-DMUSY_TARGET=MUSY_TARGET_DOLPHIN", "-DMUSY_VERSION_MAJOR=1", "-DMUSY_VERSION_MINOR=5", "-DMUSY_VERSION_PATCH=3"]
 completed = true

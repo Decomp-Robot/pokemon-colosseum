@@ -90,7 +90,8 @@ void salActivateVoice(DSPvoice* dsp_vptr, u8 studio);
 void salCalcVolume(u8 voltab_index, SAL_VOLINFO* vi, f32 vol, u32 pan, u32 span, f32 auxa, f32 auxb,
                    u32 itd, u32 dpl2);
 void salReconnectVoice(DSPvoice* dsp_vptr, u8 studio);
-void* salMalloc(size_t len);
+/* This game revision exports the allocator as salAlloc. */
+void* salAlloc(size_t len);
 #if MUSY_VERSION >= MUSY_VERSION_CHECK(2, 0, 1)
 void* salMallocPhysical(size_t len);
 #endif

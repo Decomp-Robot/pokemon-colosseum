@@ -7,38 +7,22 @@
 static void DLsetdelay(struct AXFX_REVHI_DELAYLINE * dl, long lag);
 static void DLcreate(struct AXFX_REVHI_DELAYLINE * dl, long max_length);
 static void DLdelete(struct AXFX_REVHI_DELAYLINE * dl);
-int ReverbHICreate(struct AXFX_REVHI_WORK * rv, float coloration, float time, float mix, float damping, float preDelay, float crosstalk);
-int ReverbHIModify(struct AXFX_REVHI_WORK * rv, float coloration, float time, float mix, float damping, float preDelay, float crosstalk);
+static int ReverbHICreate(struct AXFX_REVHI_WORK * rv, float coloration, float time, float mix, float damping, float preDelay, float crosstalk);
+static int ReverbHIModify(struct AXFX_REVHI_WORK * rv, float coloration, float time, float mix, float damping, float preDelay, float crosstalk);
 static void HandleReverb(long * sptr, struct AXFX_REVHI_WORK * rv, long k);
-void ReverbHICallback(long * left, long * right, long * surround, struct AXFX_REVHI_WORK * rv);
+static void ReverbHICallback(long * left, long * right, long * surround, struct AXFX_REVHI_WORK * rv);
 static void ReverbHIFree(struct AXFX_REVHI_WORK * rv);
 
-// The snd library owns the reverb's memory: its init installs a settable
-// allocator/free pair (0x801631AC stores the two function pointers into
-// lbl_8047B054/lbl_8047B058) and this revision allocates and frees through
-// the library's dispatch trampolines instead of OSAllocFromHeap/OSFreeToHeap
-// directly.
-extern void *salAlloc(long size);
-extern void salFree(void *ptr);
-extern double pow(double, double);
-
-// UNUSED: the game never calls these standalone; the retail link
-// dead-strips them after inlining them into ReverbHICreate. static
-// inline keeps CW from emitting standalone bodies, so the object's
-// live .text offsets start at 0 like the retail image.
-
-// UNUSED: the game never calls this; dead-stripped at link.
-static inline void DLsetdelay(struct AXFX_REVHI_DELAYLINE * dl, long lag) {
+static void DLsetdelay(struct AXFX_REVHI_DELAYLINE * dl, long lag) {
     dl->outPoint = dl->inPoint - (lag * 4);
     while (dl->outPoint < 0) {
         dl->outPoint += dl->length;
     }
 }
 
-// UNUSED: the game never calls this; dead-stripped at link.
-static inline void DLcreate(struct AXFX_REVHI_DELAYLINE * dl, long max_length) {
+static void DLcreate(struct AXFX_REVHI_DELAYLINE * dl, long max_length) {
     dl->length = (max_length * 4);
-    dl->inputs = salAlloc(max_length << 2);
+    dl->inputs = OSAllocFromHeap(__OSCurrHeap, max_length << 2);
     memset(dl->inputs, 0, max_length << 2);
     dl->lastOutput = 0.0f;
     DLsetdelay(dl, max_length >> 1);
@@ -46,12 +30,11 @@ static inline void DLcreate(struct AXFX_REVHI_DELAYLINE * dl, long max_length) {
     dl->outPoint = 0;
 }
 
-// UNUSED: the game never calls this; dead-stripped at link.
-static inline void DLdelete(struct AXFX_REVHI_DELAYLINE * dl) {
-    salFree(dl->inputs);
+static void DLdelete(struct AXFX_REVHI_DELAYLINE * dl) {
+    OSFreeToHeap(__OSCurrHeap, dl->inputs);
 }
 
-int ReverbHICreate(struct AXFX_REVHI_WORK * rv, float coloration, float time, float mix, float damping, float preDelay, float crosstalk) {
+static int ReverbHICreate(struct AXFX_REVHI_WORK * rv, float coloration, float time, float mix, float damping, float preDelay, float crosstalk) {
     u8 i;
     u8 k;
     static long lens[8] = {
@@ -78,7 +61,7 @@ int ReverbHICreate(struct AXFX_REVHI_WORK * rv, float coloration, float time, fl
         for(i = 0; i < 3; i++) {
             DLcreate(&rv->C[i + (k * 3)], lens[i] + 2);
             DLsetdelay(&rv->C[i + (k * 3)], lens[i]);
-            rv->combCoef[i + (k * 3)] = pow(10.0, (lens[i] * -3) / (32000.0f * time));
+            rv->combCoef[i + (k * 3)] = powf(10.0f, (lens[i] * -3) / (32000.0f * time));
         }
         for(i = 0; i < 2; i++) {
             DLcreate(&rv->AP[i + (k * 3)], lens[i + 3] + 2);
@@ -99,7 +82,7 @@ int ReverbHICreate(struct AXFX_REVHI_WORK * rv, float coloration, float time, fl
     if (0.0f != preDelay) {
         rv->preDelayTime = (32000.0f * preDelay);
         for(i = 0; i < 3; i++) {
-            rv->preDelayLine[i] = salAlloc(rv->preDelayTime * 4);
+            rv->preDelayLine[i] = OSAllocFromHeap(__OSCurrHeap, rv->preDelayTime * 4);
             memset(rv->preDelayLine[i], 0, rv->preDelayTime * 4);
             rv->preDelayPtr[i] = rv->preDelayLine[i];
         }
@@ -113,7 +96,7 @@ int ReverbHICreate(struct AXFX_REVHI_WORK * rv, float coloration, float time, fl
     return 1;
 }
 
-int ReverbHIModify(struct AXFX_REVHI_WORK * rv, float coloration, float time, float mix, float damping, float preDelay, float crosstalk) {
+static int ReverbHIModify(struct AXFX_REVHI_WORK * rv, float coloration, float time, float mix, float damping, float preDelay, float crosstalk) {
     u8 i;
 
     if ((coloration < 0.0f ) || (coloration > 1.0f  )
@@ -141,7 +124,7 @@ int ReverbHIModify(struct AXFX_REVHI_WORK * rv, float coloration, float time, fl
     }
     if (rv->preDelayTime) {
         for(i = 0; i < 3; i++) {
-            salFree(rv->preDelayLine[i]);
+            OSFreeToHeap(__OSCurrHeap, rv->preDelayLine[i]);
         }
     }
     return ReverbHICreate(rv, coloration, time, mix, damping, preDelay, crosstalk);
@@ -614,15 +597,14 @@ L_00000C7C:
 	blr
 }
 
-void ReverbHICallback(long * left, long * right, long * surround, struct AXFX_REVHI_WORK * rv) {
+static void ReverbHICallback(long * left, long * right, long * surround, struct AXFX_REVHI_WORK * rv) {
     u8 k;
 
     for(k = 0; k < 3; k++) {
         switch(k) {
             case 0:
                 if (0.0f != rv->crosstalk) {
-                    DoCrossTalk(left, right, 0.5f * rv->crosstalk,
-                                1.0f - (0.5f * rv->crosstalk));
+                    DoCrossTalk(left, right, 0.5f * rv->crosstalk, 1.0f - (0.5f * rv->crosstalk));
                 }
                 HandleReverb(left, rv, 0);
                 break;
@@ -636,7 +618,6 @@ void ReverbHICallback(long * left, long * right, long * surround, struct AXFX_RE
     }
 }
 
-// UNUSED: the game never calls this; dead-stripped at link.
 static void ReverbHIFree(struct AXFX_REVHI_WORK * rv) {
     u8 i;
 
@@ -653,10 +634,39 @@ static void ReverbHIFree(struct AXFX_REVHI_WORK * rv) {
     }
 }
 
-// UNUSED: the game never calls this; dead-stripped at link.
+int AXFXReverbHiInit(struct AXFX_REVERBHI * rev) {
+    int ret;
+    int old;
 
-// UNUSED: the game never calls this; dead-stripped at link.
+    old = OSDisableInterrupts();
+    rev->tempDisableFX = 0;
+    ret = ReverbHICreate(&rev->rv, rev->coloration, rev->time, rev->mix, rev->damping, rev->preDelay, rev->crosstalk);
+    OSRestoreInterrupts(old);
+    return ret;
+}
 
-// UNUSED: the game never calls this; dead-stripped at link.
+int AXFXReverbHiShutdown(struct AXFX_REVERBHI * rev) {
+    int old;
 
-// UNUSED: the game never calls this; dead-stripped at link.
+    old = OSDisableInterrupts();
+    ReverbHIFree(&rev->rv);
+    OSRestoreInterrupts(old);
+    return 1;
+}
+
+int AXFXReverbHiSettings(struct AXFX_REVERBHI * rev) {
+    int old;
+
+    old = OSDisableInterrupts();
+    rev->tempDisableFX = 1;
+    ReverbHIModify(&rev->rv, rev->coloration, rev->time, rev->mix, rev->damping, rev->preDelay, rev->crosstalk);
+    rev->tempDisableFX = 0;
+    OSRestoreInterrupts(old);
+    return 1;
+}
+
+void AXFXReverbHiCallback(struct AXFX_BUFFERUPDATE * bufferUpdate, struct AXFX_REVERBHI * reverb) {
+    if (reverb->tempDisableFX == 0) {
+        ReverbHICallback(bufferUpdate->left, bufferUpdate->right, bufferUpdate->surround, &reverb->rv);
+    }
+}
