@@ -733,3 +733,13 @@ struct OSThread * OSGetIdleFunction() {
 
 
 
+
+void OSClearStack(u8 val) {
+    u32 pattern = (val << 24) | (val << 16) | (val << 8) | val;
+    u32* sp = (u32*)OSGetStackPointer();
+    u32* p = __gCurrentThread->stackEnd + 1;
+
+    while (p < sp) {
+        *p++ = pattern;
+    }
+}
