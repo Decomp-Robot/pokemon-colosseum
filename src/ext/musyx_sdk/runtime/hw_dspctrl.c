@@ -333,6 +333,9 @@ extern u8 salAuxFrame;
 
 DSPstudioinfo dspStudio[8];
 
+// HRTF history is shared by all voices and flushed as a contiguous range.
+#define DSP_HRTF_HISTORY_BUFFER_SIZE 256
+
 #if MUSY_VERSION >= MUSY_VERSION_CHECK(2, 0, 4)
 // The Wii library defines its state in a different order.
 SND_MESSAGE_CALLBACK salMessageCallback = NULL;
@@ -343,7 +346,7 @@ s16 *dspITDBuffer = NULL;
 
 s32 *dspSurround = NULL;
 
-s16 *dspHrtfHistoryBuffer = NULL;
+s16 *dspHRTFHistoryBuffer = NULL;
 
 bool dspHRTFOn = FALSE;
 
@@ -392,7 +395,7 @@ bool dspCompressorOn = 0;
 
 bool dspHRTFOn = FALSE;
 
-s16 *dspHrtfHistoryBuffer = NULL;
+s16 *dspHRTFHistoryBuffer = NULL;
 
 s32 *dspSurround = NULL;
 
@@ -404,7 +407,7 @@ SND_MESSAGE_CALLBACK salMessageCallback = NULL;
 #endif
 
 #if MUSY_VERSION <= MUSY_VERSION_CHECK(2, 0, 1)
-#define SAL_MALLOC salMalloc
+#define SAL_MALLOC salAlloc
 #else
 #define SAL_MALLOC salMallocPhysical
 #endif
@@ -434,7 +437,7 @@ bool salInitDspCtrl(u8 numVoices, u32 defaultStudioDPL2) {
 #if MUSY_TARGET == MUSY_TARGET_DOLPHIN
       DCFlushRange(dspSurround, 160 * sizeof(long));
 #endif
-      if ((dspVoice = (DSPvoice *)salMalloc(salNumVoices * sizeof(DSPvoice)))) {
+      if ((dspVoice = (DSPvoice *)SAL_MALLOC(salNumVoices * sizeof(DSPvoice)))) {
         MUSY_DEBUG("Allocated HW voice array.\n\n");
         if ((dspITDBuffer = (s16 *)SAL_MALLOC(salNumVoices * 64))) {
           MUSY_DEBUG("Allocated ITD buffers for voice array.\n\n");
@@ -514,7 +517,7 @@ bool salInitDspCtrl(u8 numVoices, u32 defaultStudioDPL2) {
           salActivateStudio(
               0, 1, defaultStudioDPL2 != FALSE ? SND_STUDIO_TYPE_DPL2 : SND_STUDIO_TYPE_STD);
           MUSY_DEBUG("Default studio is active.\n\n");
-          if (!(dspHrtfHistoryBuffer = (s16 *)SAL_MALLOC(0x100))) {
+          if (!(dspHRTFHistoryBuffer = (s16 *)SAL_MALLOC(DSP_HRTF_HISTORY_BUFFER_SIZE))) {
             return FALSE;
           }
 
@@ -529,15 +532,15 @@ bool salInitDspCtrl(u8 numVoices, u32 defaultStudioDPL2) {
 }
 
 void salInitHRTFBuffer() {
-  memset(dspHrtfHistoryBuffer, 0, 0x100);
+  memset(dspHRTFHistoryBuffer, 0, DSP_HRTF_HISTORY_BUFFER_SIZE);
 #if MUSY_TARGET == MUSY_TARGET_DOLPHIN
-  DCFlushRangeNoSync(dspHrtfHistoryBuffer, 0x100);
+  DCFlushRangeNoSync(dspHRTFHistoryBuffer, DSP_HRTF_HISTORY_BUFFER_SIZE);
 #endif
 }
 
 bool salExitDspCtrl() {
   u8 i; // r31
-  salFree(dspHrtfHistoryBuffer);
+  salFree(dspHRTFHistoryBuffer);
 
   for (i = 0; i < salNumVoices; ++i) {
     salFree(dspVoice[i].pb);

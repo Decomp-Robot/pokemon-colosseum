@@ -3086,6 +3086,13 @@ name = "ext/musyx_sdk/runtime/dsp_import.c"
 extra_cflags = ["-i src/ext/musyx_sdk/include", "-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/include/libc"]
 completed = true
 
+# DSP command-list construction and voice/studio control. This translation
+# unit uses the SDK's 1.5 patch 4 version defines.
+[[lib.object]]
+name = "ext/musyx_sdk/runtime/hw_dspctrl.c"
+extra_cflags = ["-i src/ext/musyx_sdk/include", "-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/include/libc", "-DMUSY_TARGET=MUSY_TARGET_DOLPHIN", "-DMUSY_VERSION_MAJOR=1", "-DMUSY_VERSION_MINOR=5", "-DMUSY_VERSION_PATCH=4"]
+completed = true
+
 # Core MusyX runtime hardware translation unit. It has no target-version override;
 # use the runtime archive settings and its SDK/Dolphin include trees.
 [[lib.object]]
