@@ -3515,6 +3515,12 @@ mw_version = "GC/1.3.2r"
 extra_cflags = ["-i src/ext/musyx_sdk/include", "-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/include/libc", "-DMUSY_TARGET=MUSY_TARGET_DOLPHIN", "-DMUSY_VERSION_MAJOR=1", "-DMUSY_VERSION_MINOR=5", "-DMUSY_VERSION_PATCH=3", "-fp_contract off"]
 completed = true
 
+[[lib.object]]
+name = "ext/musyx_sdk/runtime/snd_init.c"
+mw_version = "GC/1.3.2r"
+extra_cflags = ["-i src/ext/musyx_sdk/include", "-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/include/libc", "-DMUSY_TARGET=MUSY_TARGET_DOLPHIN", "-DMUSY_VERSION_MAJOR=1", "-DMUSY_VERSION_MINOR=5", "-DMUSY_VERSION_PATCH=3", "-fp_contract off"]
+completed = true
+
 # SAL vector/matrix math (salApplyMatrix, salNormalizeVector, salCrossProduct,
 # salInvertMatrix) - the runtime.a member src/musyx/runtime/snd_math.c, kept byte-identical to
 # the reference text.  The member's whole image is one contiguous .text run at
