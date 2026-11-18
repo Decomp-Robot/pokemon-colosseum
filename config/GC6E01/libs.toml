@@ -1325,15 +1325,11 @@ completed = true
 # keeps `fmul` and `fsub` separate where -fp_contract on folds them into one
 # `fnmsub`; no function left in this object emits floating-point code, so the
 # flag no longer changes the output but records the verified setting.
-# GXTev.o (gx.a): text 0x800BC1A0-0x800BC8F8, data 0x803135E0-0x80313608.
-# GXSetTevOp (0x800BC114-0x800BC1A0) stays in the disassembly: the retail body
-# selects its TevColorIn/TevAlphaIn row with `add r5,r0,r4` / `add r9,r0,r4`
-# / `addi r5,r5,20` / `addi r9,r9,60` (base+index first, constants folded
-# afterwards), while this compiler always folds the +20 into the index
-# (`addi r5,r4,20; add r4,r0,r4; add r5,r0,r5; addi r9,r4,60`) for every
-# source spelling tried (2-D table + constant row, flat table + offset, pointer
-# incremented in two statements). The remaining 15 functions of the member are
-# byte-identical to the retail bodies and are linked from this object.
+# GXTev.o (gx.a): text 0x800BC114-0x800BC8F8, data 0x80313590-0x80313608.
+# GXSetTevOp and its color/alpha preset tables are part of this object; the
+# leading zero word at 0x8031358C is a separate residual data gap and is not
+# claimed here. The 16 functions of the member are byte-identical to the
+# retail bodies and are linked from this object.
 [[lib.object]]
 name = "ext/dolsdk2001/gx/GXTev.c"
 extra_cflags = ["-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/os", "-i src/ext/dolsdk2001/include/libc", "-i src/ext/dolsdk2001/gx"]
@@ -1473,13 +1469,12 @@ completed = true
 #     0x800B771C-0x800B888C, GXMisc.o 0x800B888C-0x800B91EC, GXGeometry.o
 #     0x800B91EC-0x800B959C, GXFrameBuf.o 0x800B959C-0x800BA198, GXLight.o
 #     0x800BA198-0x800BA7C0, GXTexture.o 0x800BA7C0-0x800BB540, GXBump.o
-#     0x800BB780-0x800BC114, GXTev.o 0x800BC1A0-0x800BC8F8, GXPixel.o
+#     0x800BB780-0x800BC114, GXTev.o 0x800BC114-0x800BC8F8, GXPixel.o
 #     0x800BCCDC-0x800BD0F8, GXStubs.o 0x800BD0F8-0x800BD0FC, GXDisplayList.o
 #     0x800BD0FC-0x800BD16C, GXTransform.o 0x800BD16C-0x800BD91C, GXPerf.o
-#     0x800BD91C-0x800BE348; the three gaps (0x800BB540-0x800BB780,
-#     0x800BC114-0x800BC1A0, 0x800BC8F8-0x800BCCDC) are exactly
-#     __GXSetTmemConfig (0x800BB540 size 0x240), GXSetTevOp (0x800BC114 size
-#     0x8C) and GXSetFog/GXInitFogAdjTable (0x800BC8F8 size 0x21C,
+#     0x800BD91C-0x800BE348; the two gaps (0x800BB540-0x800BB780,
+#     0x800BC8F8-0x800BCCDC) are exactly __GXSetTmemConfig (0x800BB540 size
+#     0x240) and GXSetFog/GXInitFogAdjTable (0x800BC8F8 size 0x21C,
 #     0x800BCB14 size 0x1C8), i.e. members owned by units still linked from
 #     disassembly -- there is no contiguous run of 12-16 byte FIFO writers
 #     anywhere in the DOL;

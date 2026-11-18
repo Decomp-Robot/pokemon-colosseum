@@ -4,6 +4,92 @@
 
 #include "__gx.h"
 
+/* The preset words are complete color/alpha environment BP register values:
+ * register address, operation fields, and the four TEV input selectors. */
+#define TEV_COLOR_ENV_REG 0xC0u
+#define TEV_ALPHA_ENV_REG 0xC1u
+#define TEV_PRESET_OP ((GX_TEVPREV << 22) | (GX_CS_SCALE_1 << 20) | \
+                       (GX_TRUE << 19) | (GX_TEV_ADD << 18) | \
+                       (GX_TB_ZERO << 16))
+#define TEV_COLOR_PRESET(a, b, c, d) \
+    ((TEV_COLOR_ENV_REG << 24) | TEV_PRESET_OP | ((a) << 12) | \
+     ((b) << 8) | ((c) << 4) | (d))
+#define TEV_ALPHA_PRESET(a, b, c, d) \
+    ((TEV_ALPHA_ENV_REG << 24) | TEV_PRESET_OP | ((a) << 13) | \
+     ((b) << 10) | ((c) << 7) | ((d) << 4) | \
+     (GX_TEV_SWAP0 << 2) | GX_TEV_SWAP0)
+
+/* Entries are indexed by GXTevMode; stage 0 reads RASC/RASA, other stages read
+ * the previous TEV color/alpha. */
+static u32 tevColorOpStage0[GX_PASSCLR + 1] = {
+    TEV_COLOR_PRESET(GX_CC_ZERO, GX_CC_TEXC, GX_CC_RASC, GX_CC_ZERO), /* GX_MODULATE */
+    TEV_COLOR_PRESET(GX_CC_RASC, GX_CC_TEXC, GX_CC_TEXA, GX_CC_ZERO), /* GX_DECAL */
+    TEV_COLOR_PRESET(GX_CC_RASC, GX_CC_ONE, GX_CC_TEXC, GX_CC_ZERO), /* GX_BLEND */
+    TEV_COLOR_PRESET(GX_CC_ZERO, GX_CC_ZERO, GX_CC_ZERO, GX_CC_TEXC), /* GX_REPLACE */
+    TEV_COLOR_PRESET(GX_CC_ZERO, GX_CC_ZERO, GX_CC_ZERO, GX_CC_RASC), /* GX_PASSCLR */
+};
+
+static u32 tevColorOpLater[GX_PASSCLR + 1] = {
+    TEV_COLOR_PRESET(GX_CC_ZERO, GX_CC_TEXC, GX_CC_CPREV, GX_CC_ZERO), /* GX_MODULATE */
+    TEV_COLOR_PRESET(GX_CC_CPREV, GX_CC_TEXC, GX_CC_TEXA, GX_CC_ZERO), /* GX_DECAL */
+    TEV_COLOR_PRESET(GX_CC_CPREV, GX_CC_ONE, GX_CC_TEXC, GX_CC_ZERO), /* GX_BLEND */
+    TEV_COLOR_PRESET(GX_CC_ZERO, GX_CC_ZERO, GX_CC_ZERO, GX_CC_TEXC), /* GX_REPLACE */
+    TEV_COLOR_PRESET(GX_CC_ZERO, GX_CC_ZERO, GX_CC_ZERO, GX_CC_CPREV), /* GX_PASSCLR */
+};
+
+static u32 tevAlphaOpStage0[GX_PASSCLR + 1] = {
+    TEV_ALPHA_PRESET(GX_CA_ZERO, GX_CA_TEXA, GX_CA_RASA, GX_CA_ZERO), /* GX_MODULATE */
+    TEV_ALPHA_PRESET(GX_CA_ZERO, GX_CA_ZERO, GX_CA_ZERO, GX_CA_RASA), /* GX_DECAL */
+    TEV_ALPHA_PRESET(GX_CA_ZERO, GX_CA_TEXA, GX_CA_RASA, GX_CA_ZERO), /* GX_BLEND */
+    TEV_ALPHA_PRESET(GX_CA_ZERO, GX_CA_ZERO, GX_CA_ZERO, GX_CA_TEXA), /* GX_REPLACE */
+    TEV_ALPHA_PRESET(GX_CA_ZERO, GX_CA_ZERO, GX_CA_ZERO, GX_CA_RASA), /* GX_PASSCLR */
+};
+
+static u32 tevAlphaOpLater[GX_PASSCLR + 1] = {
+    TEV_ALPHA_PRESET(GX_CA_ZERO, GX_CA_TEXA, GX_CA_APREV, GX_CA_ZERO), /* GX_MODULATE */
+    TEV_ALPHA_PRESET(GX_CA_ZERO, GX_CA_ZERO, GX_CA_ZERO, GX_CA_APREV), /* GX_DECAL */
+    TEV_ALPHA_PRESET(GX_CA_ZERO, GX_CA_TEXA, GX_CA_APREV, GX_CA_ZERO), /* GX_BLEND */
+    TEV_ALPHA_PRESET(GX_CA_ZERO, GX_CA_ZERO, GX_CA_ZERO, GX_CA_TEXA), /* GX_REPLACE */
+    TEV_ALPHA_PRESET(GX_CA_ZERO, GX_CA_ZERO, GX_CA_ZERO, GX_CA_APREV), /* GX_PASSCLR */
+};
+
+#define TEV_BP_REG_MASK (0xFFu << 24)
+#define TEV_RAS_SWAP_MASK ((1u << 2) - 1u)
+#define TEV_TEX_SWAP_MASK (TEV_RAS_SWAP_MASK << 2)
+#define TEV_ALPHA_KEEP_MASK (TEV_BP_REG_MASK | TEV_RAS_SWAP_MASK | TEV_TEX_SWAP_MASK)
+
+void GXSetTevOp(GXTevStageID stage, GXTevMode mode)
+{
+    u32 tevc;
+    u32 teva;
+    u32* pColor;
+    u32* pAlpha;
+
+    CHECK_GXBEGIN(0xC0, "GXSetTevOp");
+    ASSERTMSGLINE(0xC1, stage < GX_MAX_TEVSTAGE, "GXSetTevOp: Invalid Tev Stage Index");
+    ASSERTMSGLINE(0xC2, mode <= GX_PASSCLR, "GXSetTevOp: Invalid Tev Mode");
+
+    if (stage == GX_TEVSTAGE0) {
+        pColor = &tevColorOpStage0[mode];
+        pAlpha = &tevAlphaOpStage0[mode];
+    } else {
+        pColor = &tevColorOpLater[mode];
+        pAlpha = &tevAlphaOpLater[mode];
+    }
+
+    tevc = gx->tevc[stage];
+    tevc = (tevc & TEV_BP_REG_MASK) | (*pColor & ~TEV_BP_REG_MASK);
+    GX_WRITE_RAS_REG(tevc);
+    gx->tevc[stage] = tevc;
+
+    teva = gx->teva[stage];
+    teva = (teva & TEV_ALPHA_KEEP_MASK) | (*pAlpha & ~TEV_ALPHA_KEEP_MASK);
+    GX_WRITE_RAS_REG(teva);
+    gx->teva[stage] = teva;
+
+    gx->bpSent = 0;
+}
+
 void GXSetTevColorIn(GXTevStageID stage, GXTevColorArg a, GXTevColorArg b, GXTevColorArg c, GXTevColorArg d)
 {
     u32 tev;
