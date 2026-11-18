@@ -192,6 +192,9 @@ typedef struct CARDID {
 
 void CARDInit(void);
 s32 CARDGetResultCode(s32 chan);
+s32 CARDGetSerialNo(s32 chan, u64 *serialNo);
+s32 CARDGetAttributes(s32 chan, s32 fileNo, u8 *attr);
+s32 CARDSetAttributesAsync(s32 chan, s32 fileNo, u8 attr, CARDCallback callback);
 s32 CARDCheckAsync(s32 chan, CARDCallback callback);
 s32 CARDFreeBlocks(s32 chan, s32 *byteNotUsed, s32 *filesNotUsed);
 s32 CARDRenameAsync(s32 chan, const char *oldName, const char *newName, CARDCallback callback);

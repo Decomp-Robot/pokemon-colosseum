@@ -5,9 +5,9 @@
 #include <dolphin/exi.h>
 
 // CARDStatEx.c
-long __CARDGetStatusEx(long chan, long fileNo, struct CARDDir * dirent);
-long __CARDSetStatusExAsync(long chan, long fileNo, struct CARDDir * dirent, void (* callback)(long, long));
-long __CARDSetStatusEx(long chan, long fileNo, struct CARDDir * dirent);
+s32 __CARDGetStatusEx(s32 chan, s32 fileNo, struct CARDDir * dirent);
+s32 __CARDSetStatusExAsync(s32 chan, s32 fileNo, struct CARDDir * dirent, CARDCallback callback);
+s32 __CARDSetStatusEx(s32 chan, s32 fileNo, struct CARDDir * dirent);
 
 // CARDUnlock.c
 s32 __CARDUnlock(s32 chan, u8 flashID[12]);

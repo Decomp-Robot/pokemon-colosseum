@@ -3,7 +3,7 @@
 
 #include "__card.h"
 
-long __CARDGetStatusEx(long chan, long fileNo, struct CARDDir * dirent) {
+s32 __CARDGetStatusEx(s32 chan, s32 fileNo, struct CARDDir * dirent) {
     ASSERTLINE(0x45, 0 <= chan && chan < 2);
     ASSERTLINE(0x46, 0 <= fileNo && fileNo < CARD_MAX_FILE);
 
@@ -15,7 +15,7 @@ long __CARDGetStatusEx(long chan, long fileNo, struct CARDDir * dirent) {
         struct CARDControl * card;
         struct CARDDir * dir;
         struct CARDDir * ent;
-        long result = __CARDGetControlBlock(chan, &card);
+        s32 result = __CARDGetControlBlock(chan, &card);
 
         if (result < 0) {
             return result;
@@ -34,13 +34,13 @@ long __CARDGetStatusEx(long chan, long fileNo, struct CARDDir * dirent) {
     }
 }
 
-long __CARDSetStatusExAsync(long chan, long fileNo, struct CARDDir * dirent, void (* callback)(long, long)) {
+s32 __CARDSetStatusExAsync(s32 chan, s32 fileNo, struct CARDDir * dirent, CARDCallback callback) {
     struct CARDControl * card;
     struct CARDDir * dir;
     struct CARDDir * ent;
-    long result;
+    s32 result;
     unsigned char * p;
-    long i;
+    s32 i;
 
     ASSERTLINE(0x81, 0 <= fileNo && fileNo < CARD_MAX_FILE);
     ASSERTLINE(0x82, 0 <= chan && chan < 2);
@@ -100,8 +100,54 @@ long __CARDSetStatusExAsync(long chan, long fileNo, struct CARDDir * dirent, voi
     return result;
 }
 
+s32 CARDGetSerialNo(s32 chan, u64 * serialNo) {
+    struct CARDControl * card;
+    CARDID * id;
+    u64 serial;
+    s32 result;
+    int i;
+
+    if (chan < 0 || 2 <= chan) {
+        return CARD_RESULT_FATAL_ERROR;
+    }
+    result = __CARDGetControlBlock(chan, &card);
+    if (result < 0) {
+        return result;
+    }
+    id = card->workArea;
+    serial = 0;
+    for (i = 0; i < sizeof(id->serial); i += sizeof(u64)) {
+        serial ^= *(u64 *) &id->serial[i];
+    }
+    *serialNo = serial;
+    return __CARDPutControlBlock(card, CARD_RESULT_READY);
+}
+
+s32 CARDGetAttributes(s32 chan, s32 fileNo, u8 * attr) {
+    struct CARDDir dirent;
+    s32 result;
+
+    result = __CARDGetStatusEx(chan, fileNo, &dirent);
+    if (result == CARD_RESULT_READY) {
+        *attr = dirent.permission;
+    }
+    return result;
+}
+
+s32 CARDSetAttributesAsync(s32 chan, s32 fileNo, u8 attr, CARDCallback callback) {
+    struct CARDDir dirent;
+    s32 result;
+
+    result = __CARDGetStatusEx(chan, fileNo, &dirent);
+    if (result < 0) {
+        return result;
+    }
+    dirent.permission = attr;
+    return __CARDSetStatusExAsync(chan, fileNo, &dirent, callback);
+}
+
 // UNUSED: the game never calls this; dead-stripped at link.
-long __CARDSetStatusEx(long chan, long fileNo, struct CARDDir * dirent) {
+s32 __CARDSetStatusEx(s32 chan, s32 fileNo, struct CARDDir * dirent) {
     long result = __CARDSetStatusExAsync(chan, fileNo, dirent, &__CARDSyncCallback);
 
     if (result < 0) {
