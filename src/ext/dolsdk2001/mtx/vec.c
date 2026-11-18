@@ -50,7 +50,7 @@ asm void PSVECScale(register Vec *src, register Vec *dst, register f32 mult) {
 // The retail body takes the scalar single-precision reciprocal square root
 // (frsqrte) and folds the Newton-Raphson refinement into one fnmsubs, where
 // the reference revision uses ps_rsqrte followed by fmuls/fmuls/fmuls/fsubs.
-void PSVECNormalize(register Vec *vec1, register Vec *dst) {
+void PSVECNormalize(register const Vec *vec1, register Vec *dst) {
     register f32 c_half = 0.5f;
     register f32 c_three = 3.0f;
     register f32 v1_xy;

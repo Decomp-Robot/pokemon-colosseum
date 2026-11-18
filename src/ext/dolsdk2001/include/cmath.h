@@ -1,6 +1,9 @@
 #ifndef _DOLPHIN_CMATH_H_
 #define _DOLPHIN_CMATH_H_
 
+f32 sinf(f32 x);
+f32 cosf(f32 x);
+f32 acosf(f32 x);
 f32 powf(f32 x, f32 y);
 f32 tanf(f32);
 

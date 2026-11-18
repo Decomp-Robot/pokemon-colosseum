@@ -151,7 +151,7 @@ f32 VECDistance(Vec *a, Vec *b);
 void C_VECAdd(Vec *a, Vec *b, Vec *c);
 void C_VECSubtract(Vec *a, Vec *b, Vec *c);
 void C_VECScale(Vec *src, Vec *dst, f32 scale);
-void C_VECNormalize(Vec *src, Vec *unit);
+void C_VECNormalize(const Vec *src, Vec *unit);
 f32 C_VECSquareMag(Vec *v);
 f32 C_VECDotProduct(Vec *a, Vec *b);
 void C_VECCrossProduct(Vec *a, Vec *b, Vec *axb);
@@ -161,11 +161,19 @@ f32 C_VECSquareDistance(Vec *a, Vec *b);
 void PSVECAdd(Vec *a, Vec *b, Vec *c); 
 void PSVECSubtract(Vec *a, Vec *b, Vec *c);
 void PSVECScale(Vec *src, Vec *dst, f32 scale);
-void PSVECNormalize(Vec *vec1, Vec *dst);
+void PSVECNormalize(const Vec *vec1, Vec *dst);
 f32 PSVECSquareMag(Vec *vec1);
 f32 PSVECDotProduct(Vec *vec1, Vec *vec2);
 void PSVECCrossProduct(Vec *vec1, Vec *vec2, Vec *dst);
 f32 PSVECSquareDistance(Vec *vec1, Vec *vec2);
+
+// quat.c
+#define QUATRotAxisRad C_QUATRotAxisRad
+#define QUATSlerp C_QUATSlerp
+void PSQUATMultiply(const Quaternion *p, const Quaternion *q, Quaternion *pq);
+void C_QUATInverse(const Quaternion *src, Quaternion *inv);
+void C_QUATRotAxisRad(Quaternion *r, const Vec *axis, f32 rad);
+void C_QUATSlerp(const Quaternion *p, const Quaternion *q, Quaternion *r, f32 t);
 
 #ifdef __cplusplus
 }

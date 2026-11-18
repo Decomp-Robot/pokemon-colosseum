@@ -56,6 +56,12 @@ name = "ext/dolsdk2001/mtx/vec.c"
 extra_cflags = ["-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/os", "-i src/ext/dolsdk2001/include/libc"]
 completed = true
 
+# Quaternion multiplication, axis-angle rotation and spherical interpolation.
+[[lib.object]]
+name = "ext/dolsdk2001/mtx/quat.c"
+extra_cflags = ["-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/os", "-i src/ext/dolsdk2001/include/libc"]
+completed = true
+
 # mtxstack.o was dropped by the original link: nothing in the retail DOL calls
 # MTXInitStack/Push/PushFwd/PushInv/PushInvXpose/Pop/GetStackPtr, so all 7
 # definitions are marked UNUSED and the object contributes no bytes (the game

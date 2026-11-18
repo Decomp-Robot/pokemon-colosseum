@@ -149,6 +149,10 @@ ext/dolsdk2001/mtx/vec.c:
 	.text       start:0x800A3A78 end:0x800A3C54
 	.sdata2     start:0x8047C2C0 end:0x8047C2C8
 
+ext/dolsdk2001/mtx/quat.c:
+	.text       start:0x800A3C54 end:0x800A3EB0
+	.sdata2     start:0x8047C2C8 end:0x8047C2D8
+
 ext/dolsdk2001/dvd/dvdlow.c:
 	.text       start:0x800A3EB0 end:0x800A4CF0
 	.bss        start:0x803FC290 end:0x803FC360
