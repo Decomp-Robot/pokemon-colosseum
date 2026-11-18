@@ -41,14 +41,8 @@ extern s32 zz_800CF708_(void);
 extern s32 zz_800CF728_(int arg);
 extern s32 zz_800D05A4_(s32 chan, void * response); // SIGetResponse in target SI revision
 extern s32 zz_800D034C_(void);                     // SITransferCommands
-/* The target SI revision exposes these calls under address-only identities in
- * the map. PADInit's call at 0x800AB05C resolves to the 24-byte wrapper at
- * 0x800D104C (which refreshes the SI sampling rate); the SI command setter is
- * the 0x800D0338 helper. */
 extern void zz_800D0338_(s32 chan, u32 command);
-extern void zz_800D104C_(void);
 #define SISetCommand zz_800D0338_
-#define SIRefreshSamplingRate zz_800D104C_
 extern u32 lbl_8047AA58;
 
 static BOOL PADOnReset(BOOL final);

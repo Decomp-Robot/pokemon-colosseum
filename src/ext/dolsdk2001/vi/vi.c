@@ -2,14 +2,12 @@
 #include <dolphin/os.h>
 #include <dolphin/vi.h>
 #include <dolphin/hw_regs.h>
+#include <dolphin/si.h>
 #include <macros.h>
 
 #include "__gx.h"
 #include "__os.h"
 #include "__vi.h"
-
-extern void zz_800D104C_(void);
-#define SIRefreshSamplingRate zz_800D104C_
 
 #define BUILD_DATE "Sep  5 2002"
 #define BUILD_TIME "05:33:13"

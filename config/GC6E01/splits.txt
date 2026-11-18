@@ -491,6 +491,11 @@ ext/dolsdk2001/demo/DEMOStats.c:
 ext/dolsdk2001/demo/DEMOWin.c:
 	.text       start:0x800CF708 end:0x800CF708
 
+ext/dolsdk2001/si/SISamplingRate.c:
+	.text       start:0x800D0F68 end:0x800D1070
+	.data       start:0x80314060 end:0x803140F8
+	.sbss       start:0x8047AA60 end:0x8047AA64
+
 ext/musyx_sdk/runtime/seq.c:
 	.text       start:0x8014635C end:0x8014A23C
 	.data       start:0x80368A30 end:0x80368A80

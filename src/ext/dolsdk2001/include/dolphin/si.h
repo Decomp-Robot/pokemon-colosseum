@@ -57,6 +57,8 @@ u32 SIGetCommand(long chan);
 u32 SIEnablePolling(u32 poll);
 u32 SIDisablePolling(u32 poll);
 u32 SISetXY(u32 x, u32 y);
+void SISetSamplingRate(u32 msec);
+void SIRefreshSamplingRate(void);
 void SITransferCommands(void);
 BOOL SIBusy(void);
 
