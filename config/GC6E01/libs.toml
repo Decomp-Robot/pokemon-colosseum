@@ -524,6 +524,11 @@ completed = true
 name = "ext/dolsdk2001/dvd/dvderror.c"
 extra_cflags = ["-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/os", "-i src/ext/dolsdk2001/include/libc", "-i src/ext/dolsdk2001/dvd"]
 completed = true
+# Automatic fatal-error message member of dvd.a.
+[[lib.object]]
+name = "ext/dolsdk2001/dvd/dvdFatal.c"
+extra_cflags = ["-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/os", "-i src/ext/dolsdk2001/include/libc", "-i src/ext/dolsdk2001/dvd"]
+completed = true
 # fstload.o is the FST-bootstrap member of dvd.a from the same Sep  5 2002
 # Dolphin SDK drop as dvdlow.o/dvdfs.o/dvdqueue.o (os-library settings:
 # GC/1.2.5n, base preset). Binary evidence for the split: cb (0x800A839C,

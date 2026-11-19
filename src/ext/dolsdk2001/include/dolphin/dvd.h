@@ -120,6 +120,13 @@ int DVDResetRequired();
 long DVDGetCommandBlockStatus(struct DVDCommandBlock * block);
 long DVDGetDriveStatus();
 int DVDSetAutoInvalidation(int autoInval);
+#ifdef __cplusplus
+extern "C" {
+#endif
+BOOL DVDSetAutoFatalMessaging(BOOL enable);
+#ifdef __cplusplus
+}
+#endif
 void DVDPause();
 void DVDResume();
 int DVDCancelAsync(struct DVDCommandBlock * block, void (* callback)(long, struct DVDCommandBlock *));

@@ -6,6 +6,15 @@
 // dvderror.c
 void __DVDStoreErrorCode(u32 error);
 
+// dvdFatal.c
+#ifdef __cplusplus
+extern "C" {
+#endif
+void __DVDPrintFatalMessage(void);
+#ifdef __cplusplus
+}
+#endif
+
 // dvd.c
 void __DVDAudioBufferConfig(struct DVDCommandBlock * block, unsigned long enable, unsigned long size, void (* callback)(long, struct DVDCommandBlock *));
 
