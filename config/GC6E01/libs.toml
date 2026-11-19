@@ -334,6 +334,16 @@ name = "ext/dolsdk2001/amcstubs/AmcExi2Stubs.c"
 extra_cflags = ["-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/include/libc"]
 completed = true
 
+[[lib]]
+name = "msl_c"
+mw_version = "GC/2.6"
+cflags_preset = "runtime"
+progress_category = "sdk"
+[[lib.object]]
+name = "ext/msl_c/string.c"
+extra_cflags = ["-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/include/libc"]
+completed = true
+
 # Nothing from support.a survives in the retail DOL: all 6 HTable.o functions,
 # plus every member of the sibling List.o (DSInitList, DSInsertListObject,
 # DSRemoveListObject, DSAttachList, DSNextListObj), Tree.o and string.o, are

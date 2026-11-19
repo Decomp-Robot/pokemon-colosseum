@@ -364,6 +364,9 @@ ext/dolsdk2001/gx/GXPerf.c:
 	.text       start:0x800BD91C end:0x800BE348
 	.data       start:0x80313628 end:0x80313770
 
+ext/msl_c/string.c:
+	.text       start:0x800CA78C end:0x800CAA3C
+
 ext/dolsdk2001/amcstubs/AmcExi2Stubs.c:
 	.text       start:0x800CE79C end:0x800CE7CC
 
