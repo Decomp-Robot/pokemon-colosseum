@@ -26,7 +26,74 @@ static void __GXFifoReadDisable(void);
 static void __GXFifoLink(u8 arg0);
 void __GXWriteFifoIntEnable(u8 arg0, u8 arg1);
 void __GXWriteFifoIntReset(u8 arg0, u8 arg1);
-void GXCPInterruptHandler(s16 interrupt, OSContext *context);
+static void GXOverflowHandler(__OSInterrupt interrupt, OSContext *context)
+{
+#if DEBUG
+    if (__gxVerif->verifyLevel > GX_WARN_SEVERE) {
+        OSReport("[GXOverflowHandler]");
+    }
+#endif
+    ASSERTLINE(0x15A, !GXOverflowSuspendInProgress);
+
+    __GXOverflowCount++;
+    __GXWriteFifoIntEnable(GX_FALSE, GX_TRUE);
+    __GXWriteFifoIntReset(GX_TRUE, GX_FALSE);
+    GXOverflowSuspendInProgress = TRUE;
+
+#if DEBUG
+    if (__gxVerif->verifyLevel > GX_WARN_SEVERE) {
+        OSReport("[GXOverflowHandler Sleeping]");
+    }
+#endif
+    OSSuspendThread(__GXCurrentThread);
+}
+
+static void GXUnderflowHandler(__OSInterrupt interrupt, OSContext *context)
+{
+#if DEBUG
+    if (__gxVerif->verifyLevel > GX_WARN_SEVERE) {
+        OSReport("[GXUnderflowHandler]");
+    }
+#endif
+    ASSERTLINE(0x184, GXOverflowSuspendInProgress);
+
+    OSResumeThread(__GXCurrentThread);
+    GXOverflowSuspendInProgress = FALSE;
+    __GXWriteFifoIntReset(GX_TRUE, GX_TRUE);
+    __GXWriteFifoIntEnable(GX_TRUE, GX_FALSE);
+}
+
+static void GXBreakPointHandler(__OSInterrupt interrupt, OSContext *context)
+{
+    OSContext exceptionContext;
+
+    SET_REG_FIELD(0, gx->cpEnable, 1, 5, 0);
+    __cpReg[1] = gx->cpEnable;
+    if (BreakPointCB != NULL) {
+        OSClearContext(&exceptionContext);
+        OSSetCurrentContext(&exceptionContext);
+        BreakPointCB();
+        OSClearContext(&exceptionContext);
+        OSSetCurrentContext(context);
+    }
+}
+
+static void GXCPInterruptHandler(__OSInterrupt interrupt, OSContext *context)
+{
+    gx->cpStatus = __cpReg[0];
+    if (GET_REG_FIELD(gx->cpEnable, 1, 3) &&
+        GET_REG_FIELD(gx->cpStatus, 1, 1)) {
+        GXUnderflowHandler(interrupt, context);
+    }
+    if (GET_REG_FIELD(gx->cpEnable, 1, 2) &&
+        GET_REG_FIELD(gx->cpStatus, 1, 0)) {
+        GXOverflowHandler(interrupt, context);
+    }
+    if (GET_REG_FIELD(gx->cpEnable, 1, 5) &&
+        GET_REG_FIELD(gx->cpStatus, 1, 4)) {
+        GXBreakPointHandler(interrupt, context);
+    }
+}
 
 void GXInitFifoBase(GXFifoObj *fifo, void *base, u32 size)
 {
@@ -175,14 +242,14 @@ void GXSaveCPUFifo(GXFifoObj *fifo)
     __GXSaveCPUFifoAux(realFifo);
 }
 
-#define SOME_MACRO1(fifo) \
+#define GX_READ_FIFO_READ_PTR(fifo) \
 do { \
     u32 temp = __cpReg[29] << 16; \
     temp |= __cpReg[28]; \
     fifo->rdPtr = OSPhysicalToCached(temp); \
 } while (0)
 
-#define SOME_MACRO2(fifo) \
+#define GX_READ_FIFO_COUNT(fifo) \
 do { \
     u32 temp = __cpReg[25] << 16; \
     temp |= __cpReg[24]; \
@@ -199,8 +266,8 @@ void __GXSaveCPUFifoAux(struct __GXFifoObj *realFifo)
     realFifo->top = OSPhysicalToCached(__piReg[4]);
     realFifo->wrPtr = OSPhysicalToCached(__piReg[5] & 0xFBFFFFFF);
     if (CPGPLinked) {
-        SOME_MACRO1(realFifo);
-        SOME_MACRO2(realFifo);
+        GX_READ_FIFO_READ_PTR(realFifo);
+        GX_READ_FIFO_COUNT(realFifo);
     } else {
         realFifo->count = (u8 *)realFifo->wrPtr - (u8 *)realFifo->rdPtr;
         if (realFifo->count < 0)
@@ -222,8 +289,8 @@ void GXSaveGPFifo(GXFifoObj *fifo)
     readIdle = GET_REG_FIELD(cpStatus, 1, 2);
     ASSERTMSGLINE(0x371, readIdle, "GXSaveGPFifo: GP is not idle");
 
-    SOME_MACRO1(realFifo);
-    SOME_MACRO2(realFifo);
+    GX_READ_FIFO_READ_PTR(realFifo);
+    GX_READ_FIFO_COUNT(realFifo);
 }
 
 // UNUSED: the game never calls this; dead-stripped at link.
@@ -240,8 +307,8 @@ void GXGetFifoPtrs(GXFifoObj *fifo, void **readPtr, void **writePtr)
         realFifo->wrPtr = OSPhysicalToCached(__piReg[5] & 0xFBFFFFFF);
     }
     if (realFifo == GPFifo) {
-        SOME_MACRO1(realFifo);
-        SOME_MACRO2(realFifo);
+        GX_READ_FIFO_READ_PTR(realFifo);
+        GX_READ_FIFO_COUNT(realFifo);
     } else {
         realFifo->count = (u8 *)realFifo->wrPtr - (u8 *)realFifo->rdPtr;
         if (realFifo->count < 0) {
@@ -290,9 +357,9 @@ void GXEnableBreakPt(void *break_pt)
     __GXFifoReadDisable();
     ASSERTMSGLINE(0x44A, (u8 *)break_pt >= GPFifo->base && (u8 *)break_pt <= GPFifo->top, "GXEnableBreakPt: Break point value not in fifo range");
     __cpReg[30] = (u32)break_pt;
-    __cpReg[31] = ((u32)break_pt >> 16) & 0x3FFF;
-    gx->cpEnable = (gx->cpEnable & 0xFFFFFFFD) | 2;
-    gx->cpEnable = (gx->cpEnable & 0xFFFFFFDF) | 0x20;
+    __cpReg[31] = PHYSICAL(break_pt) >> 16;
+    SET_REG_FIELD(0, gx->cpEnable, 1, 1, 1);
+    SET_REG_FIELD(0, gx->cpEnable, 1, 5, 1);
     __cpReg[1] = gx->cpEnable;
     __GXCurrentBP = break_pt;
     __GXFifoReadEnable();

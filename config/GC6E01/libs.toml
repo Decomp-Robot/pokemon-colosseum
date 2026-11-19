@@ -1470,7 +1470,7 @@ completed = true
 # Binary evidence that the retail link pulled in none of it:
 #   * the gx.a text range is fully attributable to other members and the only
 #     unclaimed spans inside it belong to still-unintegrated SDK functions, not
-#     to a block of ~45 tiny writers: GXFifo.o 0x800B7114-0x800B771C, GXAttr.o
+#     to a block of ~45 tiny writers: GXFifo.o 0x800B6FE0-0x800B771C, GXAttr.o
 #     0x800B771C-0x800B888C, GXMisc.o 0x800B888C-0x800B91EC, GXGeometry.o
 #     0x800B91EC-0x800B959C, GXFrameBuf.o 0x800B959C-0x800BA198, GXLight.o
 #     0x800BA198-0x800BA7C0, GXTexture.o 0x800BA7C0-0x800BB540, GXBump.o
