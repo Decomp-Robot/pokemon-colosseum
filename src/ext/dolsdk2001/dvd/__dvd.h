@@ -3,6 +3,9 @@
 
 #include <dolphin/dvd.h>
 
+// dvderror.c
+void __DVDStoreErrorCode(u32 error);
+
 // dvd.c
 void __DVDAudioBufferConfig(struct DVDCommandBlock * block, unsigned long enable, unsigned long size, void (* callback)(long, struct DVDCommandBlock *));
 

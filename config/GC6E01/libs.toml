@@ -489,8 +489,8 @@ completed = true
 # dvdqueue.o is the DVD wait-queue member of dvd.a from the same Sep  5 2002
 # Dolphin SDK drop as dvdlow.o/dvdfs.o (os-library settings: GC/1.2.5n, base
 # preset). Binary evidence for the split: its text is the contiguous 0x1F8-byte
-# block 0x800A7DE8-0x800A7FE0 that ends exactly where ErrorCode2Num (dvd.o)
-# starts, and holds precisely __DVDClearWaitingQueue (0x38),
+# block 0x800A7DE8-0x800A7FE0 that ends exactly where ErrorCode2Num starts,
+# and holds precisely __DVDClearWaitingQueue (0x38),
 # __DVDPushWaitingQueue (0x68), __DVDPopWaitingQueue (0xA0),
 # __DVDCheckWaitingQueue (0x58) and __DVDDequeueWaitingQueue (0x60) in source
 # order, with PopWaitingQueuePrio inlined into __DVDPopWaitingQueue (the
@@ -517,6 +517,11 @@ extra_cflags = ["-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/os", "-i
 completed = true
 [[lib.object]]
 name = "ext/dolsdk2001/dvd/dvdqueue.c"
+extra_cflags = ["-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/os", "-i src/ext/dolsdk2001/include/libc", "-i src/ext/dolsdk2001/dvd"]
+completed = true
+# Build the DVD error logger with the dvd library settings.
+[[lib.object]]
+name = "ext/dolsdk2001/dvd/dvderror.c"
 extra_cflags = ["-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/os", "-i src/ext/dolsdk2001/include/libc", "-i src/ext/dolsdk2001/dvd"]
 completed = true
 # fstload.o is the FST-bootstrap member of dvd.a from the same Sep  5 2002
