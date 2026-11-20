@@ -10,6 +10,7 @@ typedef enum RemPio2Precision {
     REM_PIO2_PREC_TRIPLE = 3       /* three doubles, in y[0..2] */
 } RemPio2Precision;
 
+double __ieee754_exp(double);
 double __ieee754_fmod(double,double);
 double __ieee754_pow(double,double);
 
