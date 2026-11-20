@@ -4483,6 +4483,10 @@ mw_version = "GC/2.6"
 cflags_preset = "game"
 progress_category = "game"
 [[lib.object]]
+name = "ext/sysdolphin/baselib/hash.c"
+extra_cflags = ["-O4,p", "-opt level=1", "-rostr", "-i src/ext/sysdolphin/include", "-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/include/libc"]
+completed = true
+[[lib.object]]
 name = "ext/sysdolphin/baselib/id.c"
 extra_cflags = ["-rostr", "-opt level=1", "-use_lmw_stmw on", "-i src/ext/sysdolphin/include", "-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/include/libc"]
 completed = true

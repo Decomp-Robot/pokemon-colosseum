@@ -706,6 +706,11 @@ ext/sysdolphin/baselib/archive.c:
 	.text       start:0x80191ECC end:0x801920E4
 	.rodata     start:0x802744A8 end:0x802744F0
 
+ext/sysdolphin/baselib/hash.c:
+	.text       start:0x8019BFE8 end:0x8019C0F8
+	.rodata     start:0x80274800 end:0x80274818
+	.sdata2     start:0x8047DA98 end:0x8047DAA0
+
 ext/sysdolphin/baselib/id.c:
 	.text       start:0x8019C0F8 end:0x8019C3C4
 	.bss        start:0x804653A8 end:0x80465568 align:4
