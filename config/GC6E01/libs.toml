@@ -351,6 +351,11 @@ extra_cflags = ["-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/include/
 completed = true
 
 [[lib.object]]
+name = "ext/msl_c/e_atan2.c"
+extra_cflags = ["-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/include/libc"]
+completed = true
+
+[[lib.object]]
 name = "ext/msl_c/e_exp.c"
 extra_cflags = ["-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/include/libc"]
 completed = true
@@ -367,6 +372,11 @@ completed = true
 
 [[lib.object]]
 name = "ext/msl_c/e_pow.c"
+extra_cflags = ["-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/include/libc"]
+completed = true
+
+[[lib.object]]
+name = "ext/msl_c/w_atan2.c"
 extra_cflags = ["-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/include/libc"]
 completed = true
 
@@ -410,6 +420,11 @@ completed = true
 
 [[lib.object]]
 name = "ext/msl_c/k_rem_pio2.c"
+extra_cflags = ["-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/include/libc"]
+completed = true
+
+[[lib.object]]
+name = "ext/msl_c/s_atan.c"
 extra_cflags = ["-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/include/libc"]
 completed = true
 

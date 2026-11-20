@@ -382,6 +382,10 @@ ext/msl_c/qsort.c:
 ext/msl_c/string.c:
 	.text       start:0x800CA78C end:0x800CAA3C
 
+ext/msl_c/e_atan2.c:
+	.text       start:0x800CB024 end:0x800CB2B4
+	.sdata2     start:0x8047C528 end:0x8047C580
+
 ext/msl_c/e_exp.c:
 	.text       start:0x800CB2B4 end:0x800CB4D8
 	.rodata     start:0x80270008 end:0x80270038
@@ -411,6 +415,11 @@ ext/msl_c/k_rem_pio2.c:
 	.rodata     start:0x80270200 end:0x80270250
 	.sdata2     start:0x8047C828 end:0x8047C868
 
+ext/msl_c/s_atan.c:
+	.text       start:0x800CD85C end:0x800CDA74
+	.rodata     start:0x802702B8 end:0x80270350
+	.sdata2     start:0x8047C8D8 end:0x8047C900
+
 ext/msl_c/s_ceil.c:
 	.text       start:0x800CDA74 end:0x800CDBB8
 	.sdata2     start:0x8047C900 end:0x8047C910
@@ -418,6 +427,9 @@ ext/msl_c/s_ceil.c:
 ext/msl_c/s_floor.c:
 	.text       start:0x800CDCB4 end:0x800CDDFC
 	.sdata2     start:0x8047C918 end:0x8047C928
+
+ext/msl_c/w_atan2.c:
+	.text       start:0x800CE2D8 end:0x800CE2F8
 
 ext/msl_c/w_exp.c:
 	.text       start:0x800CE2F8 end:0x800CE318
