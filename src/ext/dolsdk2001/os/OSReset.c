@@ -65,12 +65,6 @@ void OSCancelThread(struct OSThread * thread);
 
 static struct OSResetFunctionQueue ResetFunctionQueue;
 
-// The game's boot code at 0x8009CD38 (zz_8009CD38_) walks the reset function
-// list through this entry point, calling it at 0x8009CDEC (final = 0) and at
-// 0x8009CE28 (final = 1), so it is an exported entry point of the library and
-// not a file-local helper.
-int CallResetFunctions(int final);
-
 void OSRegisterResetFunction(struct OSResetFunctionInfo * info) {
     ASSERTLINE(0x76, info->func);
 

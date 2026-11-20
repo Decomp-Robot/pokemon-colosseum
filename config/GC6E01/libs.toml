@@ -201,6 +201,12 @@ completed = true
 name = "ext/dolsdk2001/os/OSError.c"
 extra_cflags = ["-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/os", "-i src/ext/dolsdk2001/include/libc"]
 completed = true
+# The fatal-screen color conversion needs each multiply and add kept
+# separate; floating-point contraction would fold them into one instruction.
+[[lib.object]]
+name = "ext/dolsdk2001/os/OSFatal.c"
+extra_cflags = ["-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/os", "-i src/ext/dolsdk2001/include/libc", "-fp_contract off"]
+completed = true
 [[lib.object]]
 name = "ext/dolsdk2001/os/OSFont.c"
 extra_cflags = ["-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/os", "-i src/ext/dolsdk2001/include/libc"]

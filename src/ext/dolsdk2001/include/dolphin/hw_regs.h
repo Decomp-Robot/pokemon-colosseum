@@ -82,10 +82,15 @@ volatile u32 __AIRegs[8]      : 0xCC006C00;
 #define VI_FCT_6  (50) // filter coefficient table 6L
 #define VI_FCT_6U (51) // filter coefficient table 6U
 
-#define VI_CLOCK_SEL (54) // clock select
-#define VI_DTV_STAT  (55) // DTV status
+#define VI_CLOCK_SEL   (54) // clock select
+#define VI_CLOCK_54MHZ (1 << 0)
+#define VI_DTV_STAT    (55) // DTV status
 
 #define VI_WIDTH (56)
+
+// offsets for __EXIRegs[i]
+#define EXI_CR(channel) ((channel) * 5 + 3) // control register
+#define EXI_CR_TSTART   (1 << 0)            // transfer start / busy
 
 // offsets for __DSPRegs[i]
 #define DSP_MAILBOX_IN_HI  (0)

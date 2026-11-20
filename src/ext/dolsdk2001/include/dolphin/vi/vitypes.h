@@ -4,6 +4,7 @@
 #include <dolphin/types.h>
 
 #define VI_TVMODE(format, interlace)  (((format) << 2) + (interlace))
+#define VI_DISPLAY_PIX_SZ 2
 
 #define VI_INTERLACE     0
 #define VI_NON_INTERLACE 1
@@ -37,6 +38,10 @@ typedef enum
     VI_XFBMODE_SF = 0,
     VI_XFBMODE_DF
 } VIXFBMode;
+
+// Maximum screen space
+#define VI_MAX_WIDTH_NTSC  720
+#define VI_MAX_HEIGHT_PAL  574
 
 typedef void (*VIRetraceCallback)(u32 retraceCount);
 

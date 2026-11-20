@@ -54,6 +54,9 @@ void __OSUnlockAllMutex(struct OSThread *thread);
 int __OSCheckDeadLock(struct OSThread *thread);
 int __OSCheckMutexes(struct OSThread *thread);
 
+// OSReset.c
+int CallResetFunctions(int final);
+
 // OSResetSW.c
 void __OSResetSWInterruptHandler(short exception, struct OSContext *context);
 

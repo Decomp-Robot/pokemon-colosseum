@@ -31,6 +31,7 @@ typedef u8 __OSException;
 typedef void (*__OSExceptionHandler)(__OSException exception, OSContext* context);
 
 __OSExceptionHandler __OSSetExceptionHandler(__OSException exception, __OSExceptionHandler handler);
+void OSDefaultExceptionHandler(__OSException exception, OSContext* context);
 __OSExceptionHandler __OSGetExceptionHandler(__OSException exception);
 
 #define OS_EXCEPTION_SAVE_GPRS(context)                                                            \

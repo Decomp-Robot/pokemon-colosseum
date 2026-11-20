@@ -89,7 +89,6 @@ static void OSExceptionInit(void);
 static asm void __OSDBIntegrator(void);
 static asm void __OSDBJump(void);
 static asm void OSExceptionVector(void);
-void OSDefaultExceptionHandler(u8 exception, OSContext* context);
 
 // UNUSED: the game never calls this; dead-stripped at link.
 

@@ -21,7 +21,6 @@ static XY XYPAL[SI_SAMPLING_RATE_MAX + 1] = {
 };
 
 #define SI_SAMPLING_RATE_DEFAULT 0
-#define VI_CLOCK_54MHZ 0x0001
 
 static u32 SamplingRate;
 
