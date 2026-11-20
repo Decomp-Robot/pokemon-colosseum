@@ -10,6 +10,8 @@ typedef enum RemPio2Precision {
     REM_PIO2_PREC_TRIPLE = 3       /* three doubles, in y[0..2] */
 } RemPio2Precision;
 
+double __ieee754_pow(double,double);
+
 int __kernel_rem_pio2(double *x,double *y,int e0,int nx,RemPio2Precision prec,const int *ipio2);
 
 #endif /* _MSL_C_FDLIBM_INTERNAL_H_ */
