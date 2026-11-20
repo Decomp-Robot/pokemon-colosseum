@@ -373,6 +373,16 @@ ext/dolsdk2001/gx/GXPerf.c:
 ext/msl_c/string.c:
 	.text       start:0x800CA78C end:0x800CAA3C
 
+ext/msl_c/e_rem_pio2.c:
+	.text       start:0x800CC2C0 end:0x800CC660
+	.rodata     start:0x80270078 end:0x80270200
+	.sdata2     start:0x8047C788 end:0x8047C7E0
+
+ext/msl_c/k_rem_pio2.c:
+	.text       start:0x800CC754 end:0x800CD5A8
+	.rodata     start:0x80270200 end:0x80270250
+	.sdata2     start:0x8047C828 end:0x8047C868
+
 ext/dolsdk2001/amcstubs/AmcExi2Stubs.c:
 	.text       start:0x800CE79C end:0x800CE7CC
 
