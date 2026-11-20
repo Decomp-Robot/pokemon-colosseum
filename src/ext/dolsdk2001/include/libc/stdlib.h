@@ -11,6 +11,8 @@ int rand(void);
 void abort(void);
 void exit(int status);
 size_t wcstombs(char *dest, const wchar_t *src, size_t max);
+void qsort(void *base, size_t count, size_t elementSize,
+           int (*compare)(const void *, const void *));
 
 #ifdef __MWERKS__
 #define abs(x) __abs(x)

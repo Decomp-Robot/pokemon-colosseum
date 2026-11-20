@@ -376,6 +376,9 @@ MSL_C/mem.c:
 MSL_C/mem_funcs.c:
 	.text       start:0x800C8240 end:0x800C8510
 
+ext/msl_c/qsort.c:
+	.text       start:0x800CA620 end:0x800CA78C
+
 ext/msl_c/string.c:
 	.text       start:0x800CA78C end:0x800CAA3C
 
