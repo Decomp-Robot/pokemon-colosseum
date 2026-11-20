@@ -406,6 +406,14 @@ ext/msl_c/k_rem_pio2.c:
 	.rodata     start:0x80270200 end:0x80270250
 	.sdata2     start:0x8047C828 end:0x8047C868
 
+ext/msl_c/s_ceil.c:
+	.text       start:0x800CDA74 end:0x800CDBB8
+	.sdata2     start:0x8047C900 end:0x8047C910
+
+ext/msl_c/s_floor.c:
+	.text       start:0x800CDCB4 end:0x800CDDFC
+	.sdata2     start:0x8047C918 end:0x8047C928
+
 ext/msl_c/w_exp.c:
 	.text       start:0x800CE2F8 end:0x800CE318
 
