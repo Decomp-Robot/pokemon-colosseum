@@ -4464,12 +4464,17 @@ name = "ext/dolsdk2001/thp/THPAudio.c"
 extra_cflags = ["-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/include/libc"]
 completed = true
 
+# SysDolphin base-library object ID table and entry pool.
 # SysDolphin base-library singly linked list nodes and their allocation pools.
 [[lib]]
 name = "hsdbase_gs"
 mw_version = "GC/2.6"
 cflags_preset = "game"
 progress_category = "game"
+[[lib.object]]
+name = "ext/sysdolphin/baselib/id.c"
+extra_cflags = ["-rostr", "-opt level=1", "-use_lmw_stmw on", "-i src/ext/sysdolphin/include", "-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/include/libc"]
+completed = true
 [[lib.object]]
 name = "ext/sysdolphin/baselib/list.c"
 extra_cflags = ["-rostr", "-i src/ext/sysdolphin/include", "-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/include/libc"]
