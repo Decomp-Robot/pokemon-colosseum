@@ -587,6 +587,11 @@ ext/dolsdk2001/si/SISamplingRate.c:
 	.data       start:0x80314060 end:0x803140F8
 	.sbss       start:0x8047AA60 end:0x8047AA64
 
+pokemon/type_data.c:
+	.text       start:0x8010C46C end:0x8010C77C
+	.data       start:0x8035B500 end:0x8035B818
+	.sdata      start:0x80478B38 end:0x80478B40
+
 ext/musyx_sdk/runtime/seq.c:
 	.text       start:0x8014635C end:0x8014A23C
 	.data       start:0x80368A30 end:0x80368A80
