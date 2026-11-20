@@ -391,6 +391,11 @@ ext/msl_c/e_fmod.c:
 	.text       start:0x800CB4D8 end:0x800CB814
 	.rodata     start:0x80270038 end:0x80270048
 
+ext/msl_c/e_log.c:
+	.text       start:0x800CB814 end:0x800CBA90
+	.sbss       start:0x8047AA20 end:0x8047AA28
+	.sdata2     start:0x8047C5F8 end:0x8047C678
+
 ext/msl_c/e_pow.c:
 	.text       start:0x800CBA90 end:0x800CC2C0
 	.rodata     start:0x80270048 end:0x80270078
@@ -419,6 +424,9 @@ ext/msl_c/w_exp.c:
 
 ext/msl_c/w_fmod.c:
 	.text       start:0x800CE318 end:0x800CE338
+
+ext/msl_c/w_log.c:
+	.text       start:0x800CE338 end:0x800CE358
 
 ext/msl_c/w_pow.c:
 	.text       start:0x800CE358 end:0x800CE378
