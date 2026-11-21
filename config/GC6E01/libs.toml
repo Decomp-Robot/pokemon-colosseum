@@ -425,7 +425,22 @@ extra_cflags = ["-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/include/
 completed = true
 
 [[lib.object]]
+name = "ext/msl_c/k_cos.c"
+extra_cflags = ["-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/include/libc"]
+completed = true
+
+[[lib.object]]
 name = "ext/msl_c/k_rem_pio2.c"
+extra_cflags = ["-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/include/libc"]
+completed = true
+
+[[lib.object]]
+name = "ext/msl_c/k_sin.c"
+extra_cflags = ["-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/include/libc"]
+completed = true
+
+[[lib.object]]
+name = "ext/msl_c/k_tan.c"
 extra_cflags = ["-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/include/libc"]
 completed = true
 

@@ -410,10 +410,23 @@ ext/msl_c/e_rem_pio2.c:
 	.rodata     start:0x80270078 end:0x80270200
 	.sdata2     start:0x8047C788 end:0x8047C7E0
 
+ext/msl_c/k_cos.c:
+	.text       start:0x800CC660 end:0x800CC754
+	.sdata2     start:0x8047C7E0 end:0x8047C828
+
 ext/msl_c/k_rem_pio2.c:
 	.text       start:0x800CC754 end:0x800CD5A8
 	.rodata     start:0x80270200 end:0x80270250
 	.sdata2     start:0x8047C828 end:0x8047C868
+
+ext/msl_c/k_sin.c:
+	.text       start:0x800CD5A8 end:0x800CD648
+	.sdata2     start:0x8047C868 end:0x8047C8A0
+
+ext/msl_c/k_tan.c:
+	.text       start:0x800CD648 end:0x800CD85C
+	.rodata     start:0x80270250 end:0x802702B8
+	.sdata2     start:0x8047C8A0 end:0x8047C8D8
 
 ext/msl_c/s_atan.c:
 	.text       start:0x800CD85C end:0x800CDA74
