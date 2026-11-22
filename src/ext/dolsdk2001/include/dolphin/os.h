@@ -155,6 +155,7 @@ void OSSetSoundMode(u32 mode);
 
 void OSReport(char *, ...);
 void OSPanic(char *file, int line, char *msg, ...);
+void OSRegisterVersion(const char *version);
 void OSFatal(GXColor fg, GXColor bg, const char* msg);
 
 #define OSRoundUp32B(x)   (((u32)(x) + 32 - 1) & ~(32 - 1))

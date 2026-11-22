@@ -4615,6 +4615,11 @@ mw_version = "GC/1.2.5n"
 cflags_preset = "base"
 cflags_extra = ["-use_lmw_stmw on", "-common off", "-inline auto"]
 progress_category = "sdk"
+# THP movie video decoder and the cache/GQR setup used by its kernels.
+[[lib.object]]
+name = "ext/dolsdk2001/thp/THPDec.c"
+extra_cflags = ["-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/include/libc"]
+completed = true
 [[lib.object]]
 name = "ext/dolsdk2001/thp/THPAudio.c"
 extra_cflags = ["-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/include/libc"]
