@@ -944,3 +944,6 @@ app/item/itemDB.c:
 
 app/item/itemFightItem.c:
 	.text       start:0x801FD768 end:0x801FD7C8
+
+app/battle/battleInfo.c:
+	.text       start:0x8020E0B0 end:0x8020E0F8
