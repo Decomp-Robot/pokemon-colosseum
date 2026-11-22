@@ -6,6 +6,7 @@
 // OS.c
 extern char * __OSExceptionNames[15]; // D ONLY
 extern OSTime __OSStartTime;
+extern BOOL __OSIsGcam;
 
 unsigned long __OSIsDebuggerPresent(void);
 void __OSPSInit(void);
@@ -56,6 +57,10 @@ int __OSCheckMutexes(struct OSThread *thread);
 
 // OSReset.c
 int CallResetFunctions(int final);
+void __OSDoHotReset(unsigned long resetCode);
+
+// OSReboot.c
+void __OSReboot(unsigned long resetCode, int forceMenu);
 
 // OSResetSW.c
 void __OSResetSWInterruptHandler(short exception, struct OSContext *context);

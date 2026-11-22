@@ -60,7 +60,6 @@
 // The functions below are used by this file but are not prototyped by the
 // headers shipped with this revision of the library.
 BOOL __PADDisableRecalibration(BOOL disable);
-void __OSReboot(unsigned long resetCode, int forceMenu);
 void OSCancelThread(struct OSThread * thread);
 
 static struct OSResetFunctionQueue ResetFunctionQueue;

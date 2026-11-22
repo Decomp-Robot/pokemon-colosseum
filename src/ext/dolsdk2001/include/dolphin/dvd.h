@@ -120,6 +120,8 @@ int DVDResetRequired();
 long DVDGetCommandBlockStatus(struct DVDCommandBlock * block);
 long DVDGetDriveStatus();
 int DVDSetAutoInvalidation(int autoInval);
+int DVDCheckDisk(void);
+void __DVDPrepareResetAsync(DVDCBCallback callback);
 #ifdef __cplusplus
 extern "C" {
 #endif
