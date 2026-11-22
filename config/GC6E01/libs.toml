@@ -67,6 +67,11 @@ mw_version = "GC/2.6"
 completed = true
 extra_cflags = ["-use_lmw_stmw on"]
 
+[[lib.object]]
+name = "menuWorldMapMX.c"
+mw_version = "GC/2.6"
+completed = true
+
 [[lib]]
 name = "base"
 mw_version = "GC/2.6"
