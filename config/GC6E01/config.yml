@@ -14,6 +14,8 @@ force_active:
   - dbgMenuMemcardDelete
   - dbgMenuMemcardLoad
   - dbgMenuMemcardSave
+  - dbgMenuMsgTest
+  - dbgMenuMsgCheck
 symbols: config/GC6E01/symbols.txt
 splits: config/GC6E01/splits.txt
 ldscript_template: config/GC6E01/ldscript.tpl

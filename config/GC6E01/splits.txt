@@ -19,6 +19,10 @@ dbgMenuHero.c:
 dbgMenuMemcard.c:
 	.text       start:0x8000C328 end:0x8000C3D4
 
+dbgMenuMsg.c:
+	.text       start:0x8000C3D4 end:0x8000C518
+	.sdata2     start:0x8047B6E0 end:0x8047B6E8 align:4
+
 ext/dolsdk2001/base/PPCArch.c:
 	.text       start:0x80097FFC end:0x800980E0
 
