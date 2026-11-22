@@ -711,6 +711,9 @@ pokemon/type_data.c:
 	.data       start:0x8035B500 end:0x8035B818
 	.sdata      start:0x80478B38 end:0x80478B40
 
+app/pokemon/pokemonStats.c:
+	.text       start:0x8011E36C end:0x8011E444
+
 ext/musyx_sdk/runtime/seq.c:
 	.text       start:0x8014635C end:0x8014A23C
 	.data       start:0x80368A30 end:0x80368A80
