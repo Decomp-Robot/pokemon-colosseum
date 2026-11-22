@@ -327,6 +327,14 @@ ext/dolsdk2001/card/CARDStatEx.c:
 ext/dolsdk2001/card/CARDRename.c:
 	.text       start:0x800B5C5C end:0x800B5C5C
 
+ext/dolsdk2001/gx/GXInit.c:
+	.text       start:0x800B5C5C end:0x800B6FE0
+	.data       start:0x803129A0 end:0x80312AE0
+	.bss        start:0x803FC860 end:0x803FCDD8
+	.sdata      start:0x80478A60 end:0x80478A64
+	.sbss       start:0x8047A978 end:0x8047A9A0
+	.sdata2     start:0x8047C2E0 end:0x8047C308
+
 ext/dolsdk2001/gx/GXFifo.c:
 	.text       start:0x800B6FE0 end:0x800B771C
 	.sbss       start:0x8047A9A0 end:0x8047A9C0

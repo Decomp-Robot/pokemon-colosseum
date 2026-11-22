@@ -140,6 +140,8 @@ do { \
 
 #define CHECK_GXBEGIN(line, name) ASSERTMSGLINE(line, !__GXinBegin, "'" name "' is not allowed between GXBegin/GXEnd")
 
+#define GX_SET_CP_REG(offset, val) (*(volatile u16 *)((volatile u16 *)(__cpReg) + (offset)) = (val))
+
 /* GXAttr.c */
 
 void __GXSetVCD(void);
@@ -251,31 +253,21 @@ struct __GXData_struct {
     unsigned long tMode0[8]; // offset 0x47C, size 0x20
     unsigned long texmapId[16]; // offset 0x49C, size 0x40
     unsigned long tcsManEnab; // offset 0x4DC, size 0x4
-    // This game's gx.a revision carries one extra word here, so the perf
-    // triplet sits one word higher than in the dolsdk2001 reference copy:
-    // GXSetGPMetric 0x800BD920 and GXReadGPMetric 0x800BE20C read perf0 at
-    // gx+0x4E4 (the GX_PERF0_CLIP_RATIO case divides by cpCtr0), 0x800BDA30
-    // stores the new perf0 there, the perf1 switch reads gx+0x4E8
-    // (range-checked against GX_PERF1_NONE == 0x16) and the SET_REG_FIELD
-    // updates of perfSel are at gx+0x4EC. GXInit 0x800B5ED4/0x800B5ED8 also
-    // clears this word alongside tcsManEnab.
-    unsigned long unk_4E0; // offset 0x4E0, size 0x4
+    // Per-stage texture-coordinate enable mask used by GXSetTevOrder.
+    unsigned long tevTcEnab; // offset 0x4E0, size 0x4
     GXPerf0 perf0; // offset 0x4E4, size 0x4
     GXPerf1 perf1; // offset 0x4E8, size 0x4
     unsigned long perfSel; // offset 0x4EC, size 0x4
-    // This game's revision keeps three adjacent flag bytes at 0x4F0-0x4F2, one
-    // more than the dolsdk2001 reference copy:
-    //   GXInit 0x800B5EC0/0x800B5ECC store FALSE then TRUE (the reference source's
-    //   `gx->inDispList = FALSE; gx->dlSaveContext = TRUE;` pair, in that order),
-    //   GXInit 0x800B5ED0 and __GXShutdown 0x800B5E6C store TRUE into the extra byte,
-    //   GXSetMisc 0x800B8900/0x800B8918 store its token 2 and token 3 values there,
-    //   and __GXAbort 0x800B8990 (plus the GXAbortFrame copy 0x800B8AFC) tests 0x4F2.
     unsigned char inDispList; // offset 0x4F0, size 0x1
     unsigned char dlSaveContext; // offset 0x4F1, size 0x1
-    unsigned char unk_4F2; // offset 0x4F2, size 0x1 (extra revision flag; see above)
+    // GXSetMisc's token 3 and __GXAbort use this to govern waiting for the PE
+    // copy to finish.
+    unsigned char abtWaitPECopy; // offset 0x4F2, size 0x1
     unsigned char dirtyVAT; // offset 0x4F3, size 0x1
     unsigned long dirtyState; // offset 0x4F4, size 0x4
 }; // size = 0x4F8
+
+void __GXInitGX(void);
 
 extern struct __GXData_struct *const gx;
 extern u16 *__memReg;
@@ -291,6 +283,7 @@ extern GXBool __GXinBegin;
 void __GXBypass(u32 reg);
 u16 __GXReadPEReg(u32 reg);
 void __GXPEInit(void);
+void __GXAbort(void);
 
 /* GXSave.c */
 
@@ -307,6 +300,7 @@ void __GXSetRange(float nearz, float fgSideX);
 void __GetImageTileCount(GXTexFmt fmt, u16 wd, u16 ht, u32 *rowTiles, u32 *colTiles, u32 *cmpTiles);
 void __GXSetSUTexRegs(void);
 void __GXGetSUTexSize(GXTexCoordID coord, u16 *width, u16 *height);
+void __GXSetTmemConfig(u32 tmemConfig);
 
 /* GXTransform.c */
 

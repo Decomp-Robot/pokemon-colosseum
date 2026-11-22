@@ -1307,6 +1307,30 @@ name = "ext/dolsdk2001/gx/GXFifo.c"
 extra_cflags = ["-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/os", "-i src/ext/dolsdk2001/include/libc", "-i src/ext/dolsdk2001/gx"]
 completed = true
 
+# GXInit.o (gx.a): text 0x800B5C5C-0x800B6FE0, five linked definitions in
+# source order (__GXDefaultTexRegionCallback 0x800B5C5C,
+# __GXDefaultTlutRegionCallback 0x800B5CD8, __GXShutdown 0x800B5CFC,
+# GXInit 0x800B5E8C, __GXInitGX 0x800B671C); GXCPInterruptHandler (GXMisc.o)
+# follows at 0x800B6FE0. IsWriteGatherBufferEmpty is never called, so the
+# original link dead-stripped it and it carries the "// UNUSED:" mark.
+# __GXInitGX installs the default region callbacks and GXInit registers
+# __GXShutdown with OSRegisterResetFunction (priority 127), so all five bind
+# by address. Owned data: .data 0x803129A0-0x80312AE0 (the __GXVersion
+# release string, vtxFmtList, defaultProjMtx and the GXResetFuncInfo record
+# at 0x80312AD0), .bss 0x803FC860-0x803FCDD8 (the static gxData plus the
+# static FifoObj GXInit returns; both stay local, keeping the retail map gap
+# at 0x803FCD58), .sdata 0x80478A60-0x80478A64 (__GXVersion), .sbss
+# 0x8047A978-0x8047A9A0 (the register exports and shutdown statics) and
+# .sdata2 0x8047C2E0-0x8047C308 (the gx pointer plus GXInit float and double
+# constants). The inline MI counter sampler that __GXShutdown and GXMisc's
+# __GXAbort path share lives in the private header gx_mem_counter.h, which
+# both translation units include; GXMisc.o compiles byte-identically with the
+# header version.
+[[lib.object]]
+name = "ext/dolsdk2001/gx/GXInit.c"
+extra_cflags = ["-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/os", "-i src/ext/dolsdk2001/include/libc", "-i src/ext/dolsdk2001/gx"]
+completed = true
+
 # GXTransform.o (gx.a): text 0x800BD16C-0x800BD91C, 15 linked definitions in
 # source order (GXProject 0x800BD16C, GXSetProjection 0x800BD2E0,
 # GXSetProjectionv 0x800BD394, GXGetProjectionv 0x800BD454, GXLoadPosMtxImm
@@ -1420,7 +1444,7 @@ completed = true
 #    (0x800B5ED0; __GXShutdown 0x800B5E6C too), GXSetMisc stores its token 2
 #    and token 3 booleans at 0x4F1/0x4F2 (0x800B8900/0x800B8918) and __GXAbort
 #    tests 0x4F2 (0x800B8990), so ext/dolsdk2001/gx/__gx.h declares the extra
-#    byte (unk_4F2) and places inDispList/dlSaveContext at 0x4F0/0x4F1.
+#    byte (abtWaitPECopy) and places inDispList/dlSaveContext at 0x4F0/0x4F1.
 [[lib.object]]
 name = "ext/dolsdk2001/gx/GXMisc.c"
 extra_cflags = ["-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/os", "-i src/ext/dolsdk2001/include/libc", "-i src/ext/dolsdk2001/gx"]
@@ -1495,9 +1519,9 @@ completed = true
 #    __SetSURegs: after the tcsManEnab test it loads gx+0x4E0 and tests bit i
 #    (slw r0,r4,r31 / and.) and only calls when that bit is set. gx+0x4E0 is
 #    the extra revision word already documented in ext/dolsdk2001/gx/__gx.h
-#    (unk_4E0), so the reference condition becomes
+#    (tevTcEnab), so the reference condition becomes
 #    `(tmap != 0xFF) && !(gx->tcsManEnab & (1 << coord)) &&
-#    (gx->unk_4E0 & (1 << i))`.
+#    (gx->tevTcEnab & (1 << i))`.
 #  * Both GXLoadTexObjPreLoaded and __SetSURegs end with `gx->bpSent = 0;`
 #    (li r0,0 before the sth to gx+0x2 at 0x800BAFB8 / 0x800BB3A0); the
 #    reference stores 1.
@@ -1539,7 +1563,7 @@ completed = true
 #    (lit_GXReadGPMetric at 0x80313714), transcribed from the DOL.
 #  * shared definition dependency: the perf triplet sits one word higher in
 #    this revision's __GXData_struct, so ext/dolsdk2001/gx/__gx.h gains the
-#    extra word unk_4E0 at 0x4E0 and moves perf0/perf1/perfSel to
+#    extra word tevTcEnab at 0x4E0 and moves perf0/perf1/perfSel to
 #    0x4E4/0x4E8/0x4EC (total struct size unchanged at 0x4F8, all later
 #    offsets untouched). Evidence: GXSetGPMetric 0x800BD920 reads perf0 at
 #    0x4E4, 0x800BDA2C writes the new perf0 there, 0x800BD9A4 reads perf1 at

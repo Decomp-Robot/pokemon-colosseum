@@ -1039,7 +1039,7 @@ void __GXSetSUTexRegs(void)
             } else {
                 coord = GET_REG_FIELD(*ptref, 3, 3);
             }
-            if ((tmap != 0xFF) && !(gx->tcsManEnab & (1 << coord)) && (gx->unk_4E0 & (1 << i))) {
+            if ((tmap != 0xFF) && !(gx->tcsManEnab & (1 << coord)) && (gx->tevTcEnab & (1 << i))) {
                 __SetSURegs(tmap, coord);
             }
         }

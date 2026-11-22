@@ -5,6 +5,7 @@
 #include <macros.h>
 
 #include "__gx.h"
+#include "gx_mem_counter.h"
 
 static GXDrawSyncCallback TokenCB;
 static GXDrawDoneCallback DrawDoneCB;
@@ -28,7 +29,7 @@ void GXSetMisc(GXMiscToken token, u32 val)
         break;
     case 3:
         // this revision's extra token; sets the flag tested by __GXAbort
-        gx->unk_4F2 = (val > 0);
+        gx->abtWaitPECopy = (val > 0);
         break;
     case GX_MT_NULL:
         break;
@@ -57,8 +58,6 @@ void GXFlush(void)
     PPCSync();
 }
 
-// UNUSED: the game never calls this; dead-stripped at link.
-
 static inline void __GXAbortWait(u32 clocks)
 {
     OSTime time0;
@@ -68,25 +67,6 @@ static inline void __GXAbortWait(u32 clocks)
     do {
         time1 = OSGetTime();
     } while (time1 - time0 <= (clocks / 4));
-}
-
-#define GX_GET_MEM_REG(offset) (*(volatile u16 *)((volatile u16 *)(__memReg) + (offset)))
-
-static inline u32 __GXReadMEMCounterU32(u32 regAddrL, u32 regAddrH)
-{
-    u32 ctrH0;
-    u32 ctrH1;
-    u32 ctrL;
-
-    ctrH0 = GX_GET_MEM_REG(regAddrH);
-
-    do {
-        ctrH1 = ctrH0;
-        ctrL = GX_GET_MEM_REG(regAddrL);
-        ctrH0 = GX_GET_MEM_REG(regAddrH);
-    } while (ctrH0 != ctrH1);
-
-    return (ctrH0 << 0x10) | ctrL;
 }
 
 static void __GXAbortWaitPECopyDone(void)
@@ -105,7 +85,7 @@ static void __GXAbortWaitPECopyDone(void)
 
 void __GXAbort(void)
 {
-    if (gx->unk_4F2 != 0 && GXGetGPFifo() != 0) {
+    if (gx->abtWaitPECopy != 0 && GXGetGPFifo() != 0) {
         __GXAbortWaitPECopyDone();
     }
 
