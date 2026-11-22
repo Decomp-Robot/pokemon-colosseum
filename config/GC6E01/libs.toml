@@ -82,6 +82,11 @@ mw_version = "GC/2.6"
 completed = true
 
 [[lib.object]]
+name = "app/item/itemBios.c"
+mw_version = "GC/2.6"
+completed = true
+
+[[lib.object]]
 name = "app/item/itemDB.c"
 mw_version = "GC/2.6"
 completed = true

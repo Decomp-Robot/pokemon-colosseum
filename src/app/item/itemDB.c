@@ -1,7 +1,7 @@
 /*
  * Item database accessors; a missing item reports zero.
  */
-#include "app/item/item.h"
+#include "pokemon/item.h"
 
 u16 item_GetNum(Item *item)
 {

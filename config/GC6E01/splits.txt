@@ -927,6 +927,9 @@ app/msgctrl/msgctrl.c:
 app/gamedata/gamedataBios.c:
 	.text       start:0x801FD01C end:0x801FD09C
 
+app/item/itemBios.c:
+	.text       start:0x801FD340 end:0x801FD5C8
+
 app/item/itemDB.c:
 	.text       start:0x801FD738 end:0x801FD768
 
