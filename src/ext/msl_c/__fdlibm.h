@@ -14,6 +14,8 @@ double atan(double);
 
 double copysign(double,double);
 
+double __ieee754_acos(double);
+double __ieee754_asin(double);
 double __ieee754_atan2(double,double);
 double __ieee754_exp(double);
 double __ieee754_fmod(double,double);

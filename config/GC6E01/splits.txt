@@ -382,6 +382,14 @@ ext/msl_c/qsort.c:
 ext/msl_c/string.c:
 	.text       start:0x800CA78C end:0x800CAA3C
 
+ext/msl_c/e_acos.c:
+	.text       start:0x800CABB0 end:0x800CADEC
+	.sdata2     start:0x8047C418 end:0x8047C4A0
+
+ext/msl_c/e_asin.c:
+	.text       start:0x800CADEC end:0x800CB024
+	.sdata2     start:0x8047C4A0 end:0x8047C528
+
 ext/msl_c/e_atan2.c:
 	.text       start:0x800CB024 end:0x800CB2B4
 	.sdata2     start:0x8047C528 end:0x8047C580
@@ -466,6 +474,12 @@ ext/msl_c/s_sin.c:
 ext/msl_c/s_tan.c:
 	.text       start:0x800CE220 end:0x800CE298
 	.sdata2     start:0x8047C960 end:0x8047C968
+
+ext/msl_c/w_acos.c:
+	.text       start:0x800CE298 end:0x800CE2B8
+
+ext/msl_c/w_asin.c:
+	.text       start:0x800CE2B8 end:0x800CE2D8
 
 ext/msl_c/w_atan2.c:
 	.text       start:0x800CE2D8 end:0x800CE2F8
