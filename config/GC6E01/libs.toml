@@ -26,6 +26,12 @@ extra_cflags = ["-opt nopeephole"]
 completed = true
 
 [[lib.object]]
+name = "dbgMenuGSvtr.c"
+mw_version = "GC/2.6"
+extra_cflags = ["-opt nopeephole"]
+completed = true
+
+[[lib.object]]
 name = "dbgMenuMemcard.c"
 mw_version = "GC/2.6"
 completed = true

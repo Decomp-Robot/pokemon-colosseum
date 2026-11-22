@@ -30,8 +30,8 @@ extern u8 zz_80175FFC_(void);
 extern void zz_80176004_(void);
 extern void zz_80176030_(int step);
 
-extern int zz_801E11CC_(void);
-extern void zz_801E11D4_(int displayState, u8 playState);
+extern u8 zz_801E11CC_(void);
+extern void zz_801E11D4_(u8 displayState, u8 playState);
 
 int dbgMenuGSgfxChangeDisp(void)
 {

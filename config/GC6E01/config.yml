@@ -24,6 +24,12 @@ force_active:
   - zz_8000C0DC_
   - zz_8000C144_
   - zz_8000C1A8_
+  - dbgMenuGSvtrSlow
+  - dbgMenuGSvtrStep
+  - dbgMenuGSvtrPause
+  - dbgMenuGSvtrPlay
+  - dbgMenuGSvtrChangeDisp
+  - dbgMenuGSvtrChangeActive
   - dbgMenuMemcardDelete
   - dbgMenuMemcardLoad
   - dbgMenuMemcardSave
