@@ -45,6 +45,9 @@ menuWorldMapMX.c:
 menuPokemon.c:
 	.text       start:0x8001BCEC end:0x8001BE38
 
+agbCommunication.c:
+	.text       start:0x80053A60 end:0x80053C00
+
 menuPdaMailList.c:
 	.text       start:0x80077B60 end:0x80077BD0
 

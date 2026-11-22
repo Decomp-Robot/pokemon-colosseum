@@ -83,6 +83,12 @@ name = "menuWorldMapMX.c"
 mw_version = "GC/2.6"
 completed = true
 
+[[lib.object]]
+name = "agbCommunication.c"
+mw_version = "GC/2.6"
+extra_cflags = ["-opt nopeephole"]
+completed = true
+
 [[lib]]
 name = "base"
 mw_version = "GC/2.6"
