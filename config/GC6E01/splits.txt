@@ -507,6 +507,10 @@ ext/msl_c/w_log.c:
 ext/msl_c/w_pow.c:
 	.text       start:0x800CE358 end:0x800CE378
 
+ext/msl_c/math_ppc.c:
+	.text       start:0x800CE378 end:0x800CE79C
+	.sdata2     start:0x8047C968 end:0x8047C990
+
 ext/dolsdk2001/amcstubs/AmcExi2Stubs.c:
 	.text       start:0x800CE79C end:0x800CE7CC
 

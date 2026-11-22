@@ -21,6 +21,7 @@ double __ieee754_exp(double);
 double __ieee754_fmod(double,double);
 double __ieee754_log(double);
 double __ieee754_pow(double,double);
+double __ieee754_sqrt(double);
 int __ieee754_rem_pio2(double,double *);
 
 double __kernel_cos(double,double);
