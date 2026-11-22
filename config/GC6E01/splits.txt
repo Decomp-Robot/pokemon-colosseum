@@ -915,6 +915,9 @@ ext/dolsdk2001/thp/THPDec.c:
 ext/dolsdk2001/thp/THPAudio.c:
 	.text       start:0x801ECAB0 end:0x801ECFE0
 
+app/msgctrl/msgctrl.c:
+	.text       start:0x801FCB0C end:0x801FCB30
+
 app/gamedata/gamedataBios.c:
 	.text       start:0x801FD01C end:0x801FD09C
 
