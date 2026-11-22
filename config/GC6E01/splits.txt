@@ -796,6 +796,13 @@ ext/musyx_sdk/debugger/debugger.c:
 ext/musyx_sdk/txwin/txwin.c:
 	.text       start:0x801653BC end:0x801653BC
 
+ext/sysdolphin/baselib/wobj.c:
+	.text       start:0x801914F4 end:0x80191ECC
+	.rodata     start:0x80274468 end:0x802744A8
+	.data       start:0x8036C5F0 end:0x8036C638 align:16
+	.sbss       start:0x8047B218 end:0x8047B220
+	.sdata2     start:0x8047D8C8 end:0x8047D908
+
 ext/sysdolphin/baselib/archive.c:
 	.text       start:0x80191ECC end:0x801920E4
 	.rodata     start:0x802744A8 end:0x802744F0
