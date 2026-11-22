@@ -32,6 +32,9 @@ dbgMenuMsg.c:
 	.text       start:0x8000C3D4 end:0x8000C518
 	.sdata2     start:0x8047B6E0 end:0x8047B6E8 align:4
 
+dbgMenuPeople.c:
+	.text       start:0x8000C518 end:0x8000C624
+
 dbgMenuSoundTest.c:
 	.text       start:0x8000C624 end:0x8000CA34
 	.sbss       start:0x80478E10 end:0x80478E30

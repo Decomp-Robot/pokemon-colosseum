@@ -44,6 +44,12 @@ extra_cflags = ["-opt nopeephole"]
 completed = true
 
 [[lib.object]]
+name = "dbgMenuPeople.c"
+mw_version = "GC/2.6"
+extra_cflags = ["-opt nopeephole"]
+completed = true
+
+[[lib.object]]
 name = "dbgMenuSoundTest.c"
 mw_version = "GC/2.6"
 completed = true

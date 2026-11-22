@@ -35,6 +35,8 @@ force_active:
   - dbgMenuMemcardSave
   - dbgMenuMsgTest
   - dbgMenuMsgCheck
+  - dbgMenuDispChangePartyInfo
+  - zz_8000C588_
   - dbgMenuSoundTestChangeSE
   - dbgMenuSoundTestChangeBGM
   - zz_8000C6EC_
