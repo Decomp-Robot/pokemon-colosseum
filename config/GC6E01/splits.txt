@@ -440,6 +440,10 @@ ext/msl_c/s_ceil.c:
 ext/msl_c/s_copysign.c:
 	.text       start:0x800CDBB8 end:0x800CDBE0
 
+ext/msl_c/s_cos.c:
+	.text       start:0x800CDBE0 end:0x800CDCB4
+	.sdata2     start:0x8047C910 end:0x8047C918
+
 ext/msl_c/s_floor.c:
 	.text       start:0x800CDCB4 end:0x800CDDFC
 	.sdata2     start:0x8047C918 end:0x8047C928
@@ -454,6 +458,14 @@ ext/msl_c/s_ldexp.c:
 
 ext/msl_c/s_modf.c:
 	.text       start:0x800CE04C end:0x800CE148
+
+ext/msl_c/s_sin.c:
+	.text       start:0x800CE148 end:0x800CE220
+	.sdata2     start:0x8047C958 end:0x8047C960
+
+ext/msl_c/s_tan.c:
+	.text       start:0x800CE220 end:0x800CE298
+	.sdata2     start:0x8047C960 end:0x8047C968
 
 ext/msl_c/w_atan2.c:
 	.text       start:0x800CE2D8 end:0x800CE2F8

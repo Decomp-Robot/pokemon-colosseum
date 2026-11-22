@@ -382,6 +382,16 @@ extra_cflags = ["-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/include/
 completed = true
 
 [[lib.object]]
+name = "ext/msl_c/s_sin.c"
+extra_cflags = ["-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/include/libc"]
+completed = true
+
+[[lib.object]]
+name = "ext/msl_c/s_tan.c"
+extra_cflags = ["-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/include/libc"]
+completed = true
+
+[[lib.object]]
 name = "ext/msl_c/w_atan2.c"
 extra_cflags = ["-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/include/libc"]
 completed = true
@@ -451,6 +461,11 @@ completed = true
 
 [[lib.object]]
 name = "ext/msl_c/s_ceil.c"
+extra_cflags = ["-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/include/libc"]
+completed = true
+
+[[lib.object]]
+name = "ext/msl_c/s_cos.c"
 extra_cflags = ["-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/include/libc"]
 completed = true
 

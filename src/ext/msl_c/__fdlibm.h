@@ -19,7 +19,11 @@ double __ieee754_exp(double);
 double __ieee754_fmod(double,double);
 double __ieee754_log(double);
 double __ieee754_pow(double,double);
+int __ieee754_rem_pio2(double,double *);
 
+double __kernel_cos(double,double);
 int __kernel_rem_pio2(double *x,double *y,int e0,int nx,RemPio2Precision prec,const int *ipio2);
+double __kernel_sin(double,double,int);
+double __kernel_tan(double,double,int);
 
 #endif /* _MSL_C_FDLIBM_INTERNAL_H_ */
