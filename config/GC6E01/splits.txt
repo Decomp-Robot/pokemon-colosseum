@@ -929,3 +929,6 @@ app/gamedata/gamedataBios.c:
 
 app/item/itemDB.c:
 	.text       start:0x801FD738 end:0x801FD768
+
+app/item/itemFightItem.c:
+	.text       start:0x801FD768 end:0x801FD7C8
