@@ -62,6 +62,11 @@ completed = true
 extra_cflags = ["-opt nopeephole"]
 
 [[lib.object]]
+name = "menuOrreColosseum.c"
+mw_version = "GC/2.6"
+completed = true
+
+[[lib.object]]
 name = "pokemon/type_data.c"
 mw_version = "GC/2.6"
 completed = true

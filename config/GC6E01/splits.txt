@@ -697,6 +697,9 @@ ext/dolsdk2001/si/SISamplingRate.c:
 	.data       start:0x80314060 end:0x803140F8
 	.sbss       start:0x8047AA60 end:0x8047AA64
 
+menuOrreColosseum.c:
+	.text       start:0x800E0BE4 end:0x800E0D24
+
 pokemon/type_data.c:
 	.text       start:0x8010C46C end:0x8010C77C
 	.data       start:0x8035B500 end:0x8035B818
