@@ -20,6 +20,12 @@ force_active:
   - dbgMenuMemcardSave
   - dbgMenuMsgTest
   - dbgMenuMsgCheck
+  - dbgMenuSoundTestChangeSE
+  - dbgMenuSoundTestChangeBGM
+  - zz_8000C6EC_
+  - zz_8000C788_
+  - dbgMenuSoundTestENV
+  - zz_8000C92C_
 symbols: config/GC6E01/symbols.txt
 splits: config/GC6E01/splits.txt
 ldscript_template: config/GC6E01/ldscript.tpl

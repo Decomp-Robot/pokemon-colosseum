@@ -32,6 +32,12 @@ extra_cflags = ["-opt nopeephole"]
 completed = true
 
 [[lib.object]]
+name = "dbgMenuSoundTest.c"
+mw_version = "GC/2.6"
+completed = true
+extra_cflags = ["-opt nopeephole"]
+
+[[lib.object]]
 name = "pokemon/type_data.c"
 mw_version = "GC/2.6"
 completed = true
