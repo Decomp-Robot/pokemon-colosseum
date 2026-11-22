@@ -1046,4 +1046,62 @@ void __GXSetSUTexRegs(void)
     }
 }
 
-// UNUSED: the game never calls this; dead-stripped at link.
+// Program the texture cache region registers.
+// Config 1 uses twice the per-stage stride of the default layout.
+//
+// A cache-image command packs the BP register id (bits 24-31), the cache
+// height/width codes (bits 18-20 / 15-17) and the TMEM byte offset (bits
+// 0-14). Every cache image here is 3x3. The ids are the even-LOD (image 1)
+// and odd-LOD (image 2) registers listed in GXTexImage1Ids/GXTexImage2Ids.
+#define GX_TMEM_IMG1_LO 0x8C
+#define GX_TMEM_IMG2_LO 0x90
+#define GX_TMEM_IMG1_HI 0xAC
+#define GX_TMEM_IMG2_HI 0xB0
+#define GX_TMEM_CACHE_W 3
+#define GX_TMEM_CACHE_H 3
+#define GX_TMEM_CACHE_REG(reg, offset) \
+    (((u32)(reg) << 24) | ((u32)(GX_TMEM_CACHE_H) << 18) | ((u32)(GX_TMEM_CACHE_W) << 15) | (u32)(offset))
+
+void __GXSetTmemConfig(u32 tmemConfig)
+{
+    switch (tmemConfig) {
+    case 1:
+        GX_WRITE_RAS_REG(GX_TMEM_CACHE_REG(GX_TMEM_IMG1_LO, 0x0000));
+        GX_WRITE_RAS_REG(GX_TMEM_CACHE_REG(GX_TMEM_IMG2_LO, 0x4000));
+        GX_WRITE_RAS_REG(GX_TMEM_CACHE_REG(GX_TMEM_IMG1_LO + 1, 0x0800));
+        GX_WRITE_RAS_REG(GX_TMEM_CACHE_REG(GX_TMEM_IMG2_LO + 1, 0x4800));
+        GX_WRITE_RAS_REG(GX_TMEM_CACHE_REG(GX_TMEM_IMG1_LO + 2, 0x1000));
+        GX_WRITE_RAS_REG(GX_TMEM_CACHE_REG(GX_TMEM_IMG2_LO + 2, 0x5000));
+        GX_WRITE_RAS_REG(GX_TMEM_CACHE_REG(GX_TMEM_IMG1_LO + 3, 0x1800));
+        GX_WRITE_RAS_REG(GX_TMEM_CACHE_REG(GX_TMEM_IMG2_LO + 3, 0x5800));
+        GX_WRITE_RAS_REG(GX_TMEM_CACHE_REG(GX_TMEM_IMG1_HI, 0x2000));
+        GX_WRITE_RAS_REG(GX_TMEM_CACHE_REG(GX_TMEM_IMG2_HI, 0x6000));
+        GX_WRITE_RAS_REG(GX_TMEM_CACHE_REG(GX_TMEM_IMG1_HI + 1, 0x2800));
+        GX_WRITE_RAS_REG(GX_TMEM_CACHE_REG(GX_TMEM_IMG2_HI + 1, 0x6800));
+        GX_WRITE_RAS_REG(GX_TMEM_CACHE_REG(GX_TMEM_IMG1_HI + 2, 0x3000));
+        GX_WRITE_RAS_REG(GX_TMEM_CACHE_REG(GX_TMEM_IMG2_HI + 2, 0x7000));
+        GX_WRITE_RAS_REG(GX_TMEM_CACHE_REG(GX_TMEM_IMG1_HI + 3, 0x3800));
+        GX_WRITE_RAS_REG(GX_TMEM_CACHE_REG(GX_TMEM_IMG2_HI + 3, 0x7800));
+        break;
+    case 0:
+    default:
+        GX_WRITE_RAS_REG(GX_TMEM_CACHE_REG(GX_TMEM_IMG1_LO, 0x0000));
+        GX_WRITE_RAS_REG(GX_TMEM_CACHE_REG(GX_TMEM_IMG2_LO, 0x4000));
+        GX_WRITE_RAS_REG(GX_TMEM_CACHE_REG(GX_TMEM_IMG1_LO + 1, 0x0400));
+        GX_WRITE_RAS_REG(GX_TMEM_CACHE_REG(GX_TMEM_IMG2_LO + 1, 0x4400));
+        GX_WRITE_RAS_REG(GX_TMEM_CACHE_REG(GX_TMEM_IMG1_LO + 2, 0x0800));
+        GX_WRITE_RAS_REG(GX_TMEM_CACHE_REG(GX_TMEM_IMG2_LO + 2, 0x4800));
+        GX_WRITE_RAS_REG(GX_TMEM_CACHE_REG(GX_TMEM_IMG1_LO + 3, 0x0C00));
+        GX_WRITE_RAS_REG(GX_TMEM_CACHE_REG(GX_TMEM_IMG2_LO + 3, 0x4C00));
+        GX_WRITE_RAS_REG(GX_TMEM_CACHE_REG(GX_TMEM_IMG1_HI, 0x1000));
+        GX_WRITE_RAS_REG(GX_TMEM_CACHE_REG(GX_TMEM_IMG2_HI, 0x5000));
+        GX_WRITE_RAS_REG(GX_TMEM_CACHE_REG(GX_TMEM_IMG1_HI + 1, 0x1400));
+        GX_WRITE_RAS_REG(GX_TMEM_CACHE_REG(GX_TMEM_IMG2_HI + 1, 0x5400));
+        GX_WRITE_RAS_REG(GX_TMEM_CACHE_REG(GX_TMEM_IMG1_HI + 2, 0x1800));
+        GX_WRITE_RAS_REG(GX_TMEM_CACHE_REG(GX_TMEM_IMG2_HI + 2, 0x5800));
+        GX_WRITE_RAS_REG(GX_TMEM_CACHE_REG(GX_TMEM_IMG1_HI + 3, 0x1C00));
+        GX_WRITE_RAS_REG(GX_TMEM_CACHE_REG(GX_TMEM_IMG2_HI + 3, 0x5C00));
+        break;
+    }
+}
+
