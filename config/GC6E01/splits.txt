@@ -782,5 +782,10 @@ ext/sysdolphin/baselib/list.c:
 	.bss        start:0x80465588 end:0x804655E0
 	.sdata2     start:0x8047DBA0 end:0x8047DBB8
 
+ext/sysdolphin/baselib/memory.c:
+	.text       start:0x801A6928 end:0x801A6A34
+	.rodata     start:0x80274E10 end:0x80274E38
+	.bss        start:0x80465608 end:0x80465620
+
 ext/dolsdk2001/thp/THPAudio.c:
 	.text       start:0x801ECAB0 end:0x801ECFE0

@@ -4565,6 +4565,10 @@ name = "ext/sysdolphin/baselib/list.c"
 extra_cflags = ["-rostr", "-i src/ext/sysdolphin/include", "-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/include/libc"]
 completed = true
 [[lib.object]]
+name = "ext/sysdolphin/baselib/memory.c"
+extra_cflags = ["-rostr", "-opt level=1", "-i src/ext/sysdolphin/include", "-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/include/libc"]
+completed = true
+[[lib.object]]
 name = "ext/sysdolphin/baselib/archive.c"
 extra_cflags = ["-rostr", "-i src/ext/sysdolphin/include", "-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/include/libc", "-O1,p"]
 completed = true
