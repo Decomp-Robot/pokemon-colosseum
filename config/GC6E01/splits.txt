@@ -36,6 +36,9 @@ dbgMenuSoundTest.c:
 	.text       start:0x8000C624 end:0x8000CA34
 	.sbss       start:0x80478E10 end:0x80478E30
 
+menuPokemon.c:
+	.text       start:0x8001BCEC end:0x8001BE38
+
 ext/dolsdk2001/base/PPCArch.c:
 	.text       start:0x80097FFC end:0x800980E0
 
