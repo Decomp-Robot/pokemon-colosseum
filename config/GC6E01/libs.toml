@@ -67,6 +67,12 @@ mw_version = "GC/2.6"
 completed = true
 
 [[lib.object]]
+name = "menuPdaMailList.c"
+mw_version = "GC/2.6"
+completed = true
+extra_cflags = ["-lang=c++", "-opt nopeephole"]
+
+[[lib.object]]
 name = "pokemon/type_data.c"
 mw_version = "GC/2.6"
 completed = true
