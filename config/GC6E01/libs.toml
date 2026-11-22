@@ -92,6 +92,11 @@ mw_version = "GC/2.6"
 completed = true
 
 [[lib.object]]
+name = "app/waza/wazaBios.c"
+mw_version = "GC/2.6"
+completed = true
+
+[[lib.object]]
 name = "menuPdaMailList.c"
 mw_version = "GC/2.6"
 completed = true

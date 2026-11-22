@@ -903,6 +903,9 @@ ext/sysdolphin/baselib/memory.c:
 	.rodata     start:0x80274E10 end:0x80274E38
 	.bss        start:0x80465608 end:0x80465620
 
+app/waza/wazaBios.c:
+	.text       start:0x801A8428 end:0x801A8470
+
 ext/dolsdk2001/thp/THPDec.c:
 	.text       start:0x801E5548 end:0x801ECAB0
 	.rodata     start:0x80279AE8 end:0x80279B78
