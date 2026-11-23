@@ -119,6 +119,11 @@ completed = true
 extra_cflags = ["-use_lmw_stmw on"]
 
 [[lib.object]]
+name = "app/memcard/memcard.c"
+mw_version = "GC/2.6"
+completed = true
+
+[[lib.object]]
 name = "app/recovery/recoveryEvent.c"
 mw_version = "GC/2.6"
 completed = true

@@ -971,6 +971,9 @@ app/battle/battleInfo.c:
 app/battle/moveEffects.c:
 	.text       start:0x80244514 end:0x8024482C
 
+app/memcard/memcard.c:
+	.text       start:0x802546B8 end:0x802546E8
+
 app/recovery/recoveryEvent.c:
 	.text       start:0x80255AAC end:0x80255AE4
 
