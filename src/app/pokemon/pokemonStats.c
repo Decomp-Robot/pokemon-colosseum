@@ -6,6 +6,7 @@
  * the species evolved into. Missing stats or an out-of-range record reads
  * as zero.
  */
+#include "app/pokemon/pokemonStats.h"
 #include "pokemon/types.h"
 
 #define EVOLUTION_COUNT 5
@@ -17,10 +18,10 @@ typedef struct EvolutionRecord {
     u16 species;
 } EvolutionRecord;
 
-typedef struct PokemonStats {
+struct PokemonStats {
     u8 unk_000[156];
     EvolutionRecord evolution[EVOLUTION_COUNT];
-} PokemonStats;
+};
 
 static inline const EvolutionRecord *getEvolution(const PokemonStats *stats, u16 index)
 {

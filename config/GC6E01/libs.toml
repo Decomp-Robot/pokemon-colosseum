@@ -186,6 +186,12 @@ extra_cflags = ["-opt nopeephole"]
 completed = true
 
 [[lib.object]]
+name = "floorRead.c"
+mw_version = "GC/2.6"
+extra_cflags = ["-opt nopeephole"]
+completed = true
+
+[[lib.object]]
 name = "app/gamedata/gamedatasaveBios.c"
 mw_version = "GC/2.6"
 completed = true

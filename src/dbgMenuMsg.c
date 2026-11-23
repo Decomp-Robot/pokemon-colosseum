@@ -5,6 +5,7 @@
  * the message variable slots. The check handler prompts for a message ID
  * while the R trigger is held and previews the entered message.
  */
+#include "app/message/message.h"
 #include "pokemon/types.h"
 
 #define TEST_MESSAGE_ID 17605
@@ -19,7 +20,6 @@ extern void zz_801069FC_(int wait);
 extern void zz_80106080_(int wait);
 extern void zz_80105FB0_(int dummy);
 extern void zz_800F0308_(void);
-extern void fn_80132A38(int index, int value);
 extern u32 zz_800F7BC4_(int pad);
 extern u8 zz_8001E3E0_(int initial, u32 *value);
 extern void zz_801067E8_(int msgId, int wait, int flag);
@@ -53,7 +53,7 @@ int dbgMenuMsgTest(int menuItem, int command)
         zz_800F0308_();
         break;
     case 3:
-        fn_80132A38(MESSAGE_VARIABLE_INDEX, MESSAGE_VARIABLE_VALUE);
+        zz_set_msg_var(MESSAGE_VARIABLE_INDEX, MESSAGE_VARIABLE_VALUE);
         break;
     }
 

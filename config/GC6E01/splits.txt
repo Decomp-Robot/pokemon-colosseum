@@ -56,6 +56,9 @@ menuPokemon.c:
 agbCommunication.c:
 	.text       start:0x80053A60 end:0x80053C00
 
+floorRead.c:
+	.text       start:0x80053C84 end:0x80053E7C
+
 menuPdaMailList.c:
 	.text       start:0x80077B60 end:0x80077BD0
 

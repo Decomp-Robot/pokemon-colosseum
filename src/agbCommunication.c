@@ -7,6 +7,8 @@
  * selects the offered activities, and the resulting yes/no answer is written
  * back to the menu entry.
  */
+#include "app/floor/floorCommand.h"
+#include "app/pokemon/pokemon.h"
 #include "pokemon/types.h"
 
 /* Bits of the communication state byte tested by the individual entries. */
@@ -17,17 +19,17 @@ enum AgbCommunicationStateFlag {
     AGB_STATE_FLAG_3 = 0x08,
 };
 
-extern void *zz_80057270_(void);
-extern u8 zz_8011E820_(void *state);
-extern void zz_80109220_(void *entry, int available);
+extern Pokemon *zz_80057270_(void);
+extern void zz_80109220_(FloorCommandEntry *entry, int available);
+extern u8 zz_8011E820_(Pokemon *pokemon);
 
-int zz_80053A60_(void *menu, void *entry)
+int zz_80053A60_(void *menu, FloorCommandEntry *entry)
 {
     u8 available = 0;
-    void *state = zz_80057270_();
+    Pokemon *pokemon = zz_80057270_();
 
-    if (state != 0) {
-        if ((zz_8011E820_(state) & AGB_STATE_FLAG_3) != 0) {
+    if (pokemon != 0) {
+        if ((zz_8011E820_(pokemon) & AGB_STATE_FLAG_3) != 0) {
             available = 1;
         }
     }
@@ -35,13 +37,13 @@ int zz_80053A60_(void *menu, void *entry)
     return 0;
 }
 
-int zz_80053AC8_(void *menu, void *entry)
+int zz_80053AC8_(void *menu, FloorCommandEntry *entry)
 {
     u8 available = 0;
-    void *state = zz_80057270_();
+    Pokemon *pokemon = zz_80057270_();
 
-    if (state != 0) {
-        if ((zz_8011E820_(state) & AGB_STATE_FLAG_2) != 0) {
+    if (pokemon != 0) {
+        if ((zz_8011E820_(pokemon) & AGB_STATE_FLAG_2) != 0) {
             available = 1;
         }
     }
@@ -49,13 +51,13 @@ int zz_80053AC8_(void *menu, void *entry)
     return 0;
 }
 
-int zz_80053B30_(void *menu, void *entry)
+int zz_80053B30_(void *menu, FloorCommandEntry *entry)
 {
     u8 available = 0;
-    void *state = zz_80057270_();
+    Pokemon *pokemon = zz_80057270_();
 
-    if (state != 0) {
-        if ((zz_8011E820_(state) & AGB_STATE_FLAG_1) != 0) {
+    if (pokemon != 0) {
+        if ((zz_8011E820_(pokemon) & AGB_STATE_FLAG_1) != 0) {
             available = 1;
         }
     }
@@ -63,13 +65,13 @@ int zz_80053B30_(void *menu, void *entry)
     return 0;
 }
 
-int zz_80053B98_(void *menu, void *entry)
+int zz_80053B98_(void *menu, FloorCommandEntry *entry)
 {
     u8 available = 0;
-    void *state = zz_80057270_();
+    Pokemon *pokemon = zz_80057270_();
 
-    if (state != 0) {
-        if ((zz_8011E820_(state) & AGB_STATE_FLAG_0) != 0) {
+    if (pokemon != 0) {
+        if ((zz_8011E820_(pokemon) & AGB_STATE_FLAG_0) != 0) {
             available = 1;
         }
     }

@@ -6,16 +6,8 @@
  * party slot from the hero's trainer data and passes the chosen Pokemon to
  * the shared battle setup routine.
  */
+#include "app/pokemon/pokemon.h"
 #include "pokemon/types.h"
-
-/*
- * A battle-ready Pokemon record is 312 bytes. The debug menu only creates a
- * record and hands it between battle setup, the trainer and the party, so
- * the individual fields remain private to those routines.
- */
-typedef struct Pokemon {
-    u8 data[312];
-} Pokemon;
 
 enum DbgMenuResult {
     DBG_MENU_STAY_OPEN = 0,
