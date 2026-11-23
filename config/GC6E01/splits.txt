@@ -982,3 +982,6 @@ app/mail/mail.c:
 
 ext/dolsdk2001/os/__ppc_eabi_init.c:
 	.init       start:0x80003400 end:0x80003458
+
+ext/metrotrk/mem_TRK.c:
+	.init       start:0x80003458 end:0x800034AC
