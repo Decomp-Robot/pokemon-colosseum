@@ -125,6 +125,12 @@ completed = true
 extra_cflags = ["-lang=c++", "-O4,s"]
 
 [[lib.object]]
+name = "app/mail/mail.c"
+mw_version = "GC/2.6"
+completed = true
+extra_cflags = ["-O4,s", "-use_lmw_stmw on"]
+
+[[lib.object]]
 name = "app/pokemon/pokemonDB.c"
 mw_version = "GC/2.6"
 completed = true

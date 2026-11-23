@@ -1,3 +1,4 @@
+#include "app/battle/battleMove.h"
 #include "pokemon/types.h"
 
 #define DAMAGE_MESSAGE 60516
@@ -17,7 +18,6 @@ extern u16 zz_80236FFC_(void *, u32);
 extern s32 zz_80239984_(s32, void *, u32);
 extern void *zz_battle_pokemon_get_stats_start_pointer_c(void *);
 extern void zz_80239EE8_(u32, void *, void *, u32, u32, u32, u32, u32);
-extern u16 zz_move_get_adjusted_type(void *, u16, void *);
 
 s32 zz_move_effect_mirror_coat(void *battle, void *defender, u32 messageParam, void *attacker)
 {

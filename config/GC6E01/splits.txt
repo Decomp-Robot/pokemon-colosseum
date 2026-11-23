@@ -970,3 +970,6 @@ app/battle/moveEffects.c:
 
 app/recovery/recoveryEvent.c:
 	.text       start:0x80255AAC end:0x80255AE4
+
+app/mail/mail.c:
+	.text       start:0x802569B4 end:0x80256BCC
