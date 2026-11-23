@@ -717,6 +717,9 @@ ext/dolsdk2001/si/SISamplingRate.c:
 menuOrreColosseum.c:
 	.text       start:0x800E0BE4 end:0x800E0D24
 
+GSAPI/GSmodel/animation.c:
+	.text       start:0x800EC1D4 end:0x800EC208
+
 pokemon/type_data.c:
 	.text       start:0x8010C46C end:0x8010C77C
 	.data       start:0x8035B500 end:0x8035B818
