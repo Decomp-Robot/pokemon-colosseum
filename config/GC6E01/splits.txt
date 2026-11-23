@@ -51,6 +51,9 @@ agbCommunication.c:
 menuPdaMailList.c:
 	.text       start:0x80077B60 end:0x80077BD0
 
+menuCB_Rule.c:
+	.text       start:0x80089CA8 end:0x80089D98
+
 ext/dolsdk2001/base/PPCArch.c:
 	.text       start:0x80097FFC end:0x800980E0
 

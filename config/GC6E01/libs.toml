@@ -145,6 +145,11 @@ mw_version = "GC/2.6"
 completed = true
 
 [[lib.object]]
+name = "menuCB_Rule.c"
+mw_version = "GC/2.6"
+completed = true
+
+[[lib.object]]
 name = "agbCommunication.c"
 mw_version = "GC/2.6"
 extra_cflags = ["-opt nopeephole"]
