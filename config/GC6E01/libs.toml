@@ -8,6 +8,12 @@ name = "orig/GC6E01/sys/main.dol"
 completed = false
 
 [[lib.object]]
+name = "main.c"
+mw_version = "GC/2.6"
+extra_cflags = ["-opt nopeephole", "-use_lmw_stmw on", "-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/os", "-i src/ext/dolsdk2001/include/libc"]
+completed = true
+
+[[lib.object]]
 name = "dbgMenuFight.c"
 mw_version = "GC/2.6"
 extra_cflags = ["-opt nopeephole"]
