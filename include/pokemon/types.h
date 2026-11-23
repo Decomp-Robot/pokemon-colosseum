@@ -45,4 +45,7 @@ typedef enum TypeEffectiveness {
     EFF_IMMUNE = 67,
 } TypeEffectiveness;
 
+/* Type metadata accessors (type_data.c). */
+u8 typeGetCategory(u16 type);
+
 #endif

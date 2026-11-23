@@ -950,3 +950,6 @@ app/item/itemFightItem.c:
 
 app/battle/battleInfo.c:
 	.text       start:0x8020E0B0 end:0x8020E0F8
+
+app/battle/moveEffects.c:
+	.text       start:0x80244514 end:0x8024482C

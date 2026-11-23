@@ -107,6 +107,12 @@ mw_version = "GC/2.6"
 completed = true
 
 [[lib.object]]
+name = "app/battle/moveEffects.c"
+mw_version = "GC/2.6"
+completed = true
+extra_cflags = ["-use_lmw_stmw on"]
+
+[[lib.object]]
 name = "app/pokemon/pokemonDB.c"
 mw_version = "GC/2.6"
 completed = true
