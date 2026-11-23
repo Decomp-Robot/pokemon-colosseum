@@ -10,6 +10,7 @@ extern BOOL __OSIsGcam;
 
 unsigned long __OSIsDebuggerPresent(void);
 void __OSPSInit(void);
+asm void __OSFPRInit(void);
 
 // OSAlloc.c
 extern volatile int __OSCurrHeap;

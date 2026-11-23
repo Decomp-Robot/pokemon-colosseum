@@ -976,3 +976,6 @@ app/recovery/recoveryEvent.c:
 
 app/mail/mail.c:
 	.text       start:0x802569B4 end:0x80256BCC
+
+ext/dolsdk2001/os/__ppc_eabi_init.c:
+	.init       start:0x80003400 end:0x80003458
