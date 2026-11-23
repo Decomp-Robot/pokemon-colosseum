@@ -20,6 +20,12 @@ extra_cflags = ["-opt nopeephole"]
 completed = true
 
 [[lib.object]]
+name = "dbgMenuItemCreate.c"
+mw_version = "GC/2.6"
+extra_cflags = ["-opt nopeephole", "-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/include/libc"]
+completed = true
+
+[[lib.object]]
 name = "dbgMenuHero.c"
 mw_version = "GC/2.6"
 extra_cflags = ["-opt nopeephole"]
