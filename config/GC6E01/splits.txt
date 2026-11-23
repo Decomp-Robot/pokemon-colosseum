@@ -426,6 +426,9 @@ ext/dolsdk2001/gx/GXPerf.c:
 	.text       start:0x800BD91C end:0x800BE348
 	.data       start:0x80313628 end:0x80313770
 
+menuDataBios.c:
+	.text       start:0x800C456C end:0x800C459C
+
 ext/msl_c/ansi_fp.c:
 	.text       start:0x800C5500 end:0x800C7454
 	.rodata     start:0x8026FF00 end:0x8026FFE0

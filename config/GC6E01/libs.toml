@@ -134,6 +134,12 @@ completed = true
 extra_cflags = ["-lang=c++", "-opt nopeephole"]
 
 [[lib.object]]
+name = "menuDataBios.c"
+mw_version = "GC/2.6"
+extra_cflags = ["-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/include/libc"]
+completed = true
+
+[[lib.object]]
 name = "pokemon/type_data.c"
 mw_version = "GC/2.6"
 completed = true
