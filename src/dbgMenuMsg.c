@@ -5,7 +5,10 @@
  * the message variable slots. The check handler prompts for a message ID
  * while the R trigger is held and previews the entered message.
  */
+#include "app/menu/menuPokemon.h"
 #include "app/message/message.h"
+#include "app/pad/padInput.h"
+#include "app/task/task.h"
 #include "pokemon/types.h"
 
 #define TEST_MESSAGE_ID 17605
@@ -19,9 +22,6 @@ extern void zz_80105FF8_(int msgId, int unused, int wait);
 extern void zz_801069FC_(int wait);
 extern void zz_80106080_(int wait);
 extern void zz_80105FB0_(int dummy);
-extern void zz_800F0308_(void);
-extern u32 zz_800F7BC4_(int pad);
-extern u8 zz_8001E3E0_(int initial, u32 *value);
 extern void zz_801067E8_(int msgId, int wait, int flag);
 extern void zz_8001D7E4_(void);
 extern void zz_801065B8_(int wait);
@@ -45,12 +45,12 @@ int dbgMenuMsgTest(int menuItem, int command)
         zz_80105FB0_(1);
         break;
     case 2:
-        zz_800F0308_();
-        zz_800F0308_();
-        zz_800F0308_();
+        waitFrame();
+        waitFrame();
+        waitFrame();
         zz_80106080_(0);
-        zz_800F0308_();
-        zz_800F0308_();
+        waitFrame();
+        waitFrame();
         break;
     case 3:
         zz_set_msg_var(MESSAGE_VARIABLE_INDEX, MESSAGE_VARIABLE_VALUE);
@@ -64,8 +64,8 @@ int dbgMenuMsgCheck(void)
 {
     u32 msgId;
 
-    if ((zz_800F7BC4_(1) & PAD_TRIGGER_R) != 0) {
-        if (zz_8001E3E0_(0, &msgId) == 0) {
+    if ((padGetButtons(1) & PAD_TRIGGER_R) != 0) {
+        if (menuInputNumber(0, &msgId) == 0) {
             return -1;
         }
         zz_801067E8_(msgId, 1, 0);

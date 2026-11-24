@@ -17,6 +17,7 @@
 #include <dolphin/vi.h>
 #include <dolphin/mtx.h>
 #include <libc/string.h>
+#include "app/pad/padInput.h"
 
 /* Opaque game thread object used by the play clock. */
 typedef struct GSthread GSthread;
@@ -115,7 +116,6 @@ extern void zz_80101D5C_(void);
 extern void zz_80175F6C_(void);
 extern void zz_801E0FB4_(s32 arg0, u32 arg1, u32 arg2);
 extern u32 zz_800F7AF0_(u32 port);
-extern u32 zz_800F7BC4_(u32 port);
 extern void zz_8000C0DC_(void);
 extern u8 zz_801E11E8_(void);
 extern s32 zz_801E11E0_(void);
@@ -449,18 +449,18 @@ void updateFrame(void)
     f32 clock;
 
     zz_80101B90_(0xFF);
-    if ((zz_800F7BC4_(1) & zz_800F7AF0_(1)) & PAD_TRIGGER_Z) {
+    if ((padGetButtons(1) & zz_800F7AF0_(1)) & PAD_TRIGGER_Z) {
         zz_8000C0DC_();
     }
     if (zz_801E11E8_() != 0) {
-        if ((zz_800F7BC4_(1) & zz_800F7AF0_(1)) & PAD_TRIGGER_L) {
+        if ((padGetButtons(1) & zz_800F7AF0_(1)) & PAD_TRIGGER_L) {
             if (zz_801E11E0_() == 2) {
                 zz_801E11B0_();
             } else {
                 zz_801E119C_();
             }
         }
-        if ((zz_800F7BC4_(1) & zz_800F7AF0_(1)) & PAD_TRIGGER_R) {
+        if ((padGetButtons(1) & zz_800F7AF0_(1)) & PAD_TRIGGER_R) {
             zz_801E118C_();
         }
     }

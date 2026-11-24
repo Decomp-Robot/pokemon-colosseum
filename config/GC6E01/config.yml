@@ -20,6 +20,8 @@ force_active:
   - dbgMenuHeroPokemonSelect2
   - dbgMenuHeroPokemonSelect1
   - dbgMenuHeroPokemonSelect0
+  - dbgMenuFloorChange
+  - dbgMenuFloorWarp
   - dbgMenuGSgfxChangeDisp
   - zz_8000C0DC_
   - zz_8000C144_
