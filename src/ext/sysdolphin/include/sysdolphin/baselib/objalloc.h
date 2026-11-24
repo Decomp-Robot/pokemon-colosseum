@@ -13,15 +13,17 @@ typedef struct _HSD_ObjAllocData {
     u32 unk_0C;
     u32 num_alloc_max;  /* high-water mark */
     u32 num_alloc_limit;
-    u32 unk_18;
-    u32 unk_1C;
+    u32 size_reserved;
+    u32 size_limit;
     u32 obj_size;       /* object size rounded up to obj_align */
     u32 obj_align;
     struct _HSD_ObjAllocData* next;
 } HSD_ObjAllocData;
 
-void HSD_ObjAllocInit(HSD_ObjAllocData* alloc_data, u32 obj_size, u32 obj_align);
-void HSD_ObjFree(HSD_ObjAllocData* alloc_data, void* obj);
-void* HSD_ObjAlloc(HSD_ObjAllocData* alloc_data);
+void HSD_ObjAllocResetRegistry(void);
+void HSD_ObjAllocInit(HSD_ObjAllocData* data, u32 size, u32 align);
+void HSD_ObjFree(HSD_ObjAllocData* data, void* obj);
+void* HSD_ObjAlloc(HSD_ObjAllocData* data);
+void HSD_ObjAllocSetArenaConfig(u32 arena_size, u32 reserved);
 
 #endif

@@ -4877,6 +4877,10 @@ completed = true
 name = "ext/sysdolphin/baselib/archive.c"
 extra_cflags = ["-rostr", "-i src/ext/sysdolphin/include", "-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/include/libc", "-O1,p"]
 completed = true
+[[lib.object]]
+name = "ext/sysdolphin/baselib/objalloc.c"
+extra_cflags = ["-opt level=1", "-rostr", "-i src/ext/sysdolphin/include", "-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/include/libc"]
+completed = true
 
 # MetroTRK, the target-resident debugger library. The retail DOL keeps its
 # Portable/mem_TRK.o member in the always-linked .init region.
