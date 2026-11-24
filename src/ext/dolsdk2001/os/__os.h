@@ -11,6 +11,8 @@ extern BOOL __OSIsGcam;
 unsigned long __OSIsDebuggerPresent(void);
 void __OSPSInit(void);
 asm void __OSFPRInit(void);
+u32 __OSGetDIConfig(void);
+#define __OS_DI_CONFIG_NONE 0xFF
 
 // OSAlloc.c
 extern volatile int __OSCurrHeap;

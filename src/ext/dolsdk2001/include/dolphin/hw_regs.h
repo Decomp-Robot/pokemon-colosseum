@@ -98,8 +98,45 @@ volatile u32 __AIRegs[8]      : 0xCC006C00;
 #define MI_MEM_CONFIG      (20) // configured memory size
 
 // offsets for __EXIRegs[i]
-#define EXI_CR(channel) ((channel) * 5 + 3) // control register
-#define EXI_CR_TSTART   (1 << 0)            // transfer start / busy
+typedef enum {
+    EXI_REG_CSR,
+    EXI_REG_MAR,
+    EXI_REG_LENGTH,
+    EXI_REG_CR,
+    EXI_REG_DATA,
+    EXI_REG_COUNT
+} EXIRegister;
+
+#define EXI_REG(chan, reg) __EXIRegs[(chan) * EXI_REG_COUNT + (reg)]
+
+#define EXI_CR(channel) ((channel) * EXI_REG_COUNT + EXI_REG_CR) // control register
+
+#define EXI_CSR_CLK_SHIFT 4
+#define EXI_CSR_CS_SHIFT  7
+#define EXI_CR_RW_SHIFT   2
+#define EXI_CR_TLEN_SHIFT 4
+
+typedef enum {
+    EXI_CSR_EXIINTMASK = 1 << 0,
+    EXI_CSR_EXIINT = 1 << 1,
+    EXI_CSR_TCINTMASK = 1 << 2,
+    EXI_CSR_TCINT = 1 << 3,
+    EXI_CSR_CLK_MASK = 7 << EXI_CSR_CLK_SHIFT,
+    EXI_CSR_CS_MASK = 7 << EXI_CSR_CS_SHIFT,
+    EXI_CSR_CS0 = 1 << EXI_CSR_CS_SHIFT,
+    EXI_CSR_EXTINTMASK = 1 << 10,
+    EXI_CSR_EXTINT = 1 << 11,
+    EXI_CSR_EXTDET = 1 << 12,
+    EXI_CSR_ROMDIS = 1 << 13,
+    EXI_CSR_SELECT_MASK = EXI_CSR_EXIINTMASK | EXI_CSR_TCINTMASK | EXI_CSR_EXTINTMASK,
+    EXI_CSR_CONTROL_MASK = EXI_CSR_SELECT_MASK | EXI_CSR_CLK_MASK | EXI_CSR_CS_MASK
+} EXIStatus;
+
+typedef enum {
+    EXI_CR_TSTART = 1 << 0,
+    EXI_CR_DMA = 1 << 1,
+    EXI_CR_DMA_START = EXI_CR_DMA | EXI_CR_TSTART
+} EXICommand;
 
 // offsets for __DSPRegs[i]
 #define DSP_MAILBOX_IN_HI  (0)
