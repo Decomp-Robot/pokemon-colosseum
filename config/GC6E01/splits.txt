@@ -713,6 +713,13 @@ ext/dolsdk2001/demo/DEMOStats.c:
 ext/dolsdk2001/demo/DEMOWin.c:
 	.text       start:0x800CF708 end:0x800CF708
 
+ext/dolsdk2001/si/SIBios.c:
+	.text       start:0x800CF708 end:0x800D0F68
+	.data       start:0x80313F48 end:0x80313FB0
+	.bss        start:0x803FFFB0 end:0x804001B0
+	.sdata      start:0x80478AD8 end:0x80478ADC
+	.sbss       start:0x8047AA50 end:0x8047AA60
+
 ext/dolsdk2001/si/SISamplingRate.c:
 	.text       start:0x800D0F68 end:0x800D1070
 	.data       start:0x80314060 end:0x803140F8

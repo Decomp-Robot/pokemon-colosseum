@@ -55,6 +55,7 @@ BOOL SITransfer(s32 chan, void *output, u32 outputBytes, void *input, u32 inputB
                 SICallback callback, OSTime delay);
 u32 SIGetCommand(long chan);
 u32 SIGetType(s32 chan);
+u32 SIGetTypeAsync(s32 chan, SITypeAndStatusCallback callback);
 u32 SIEnablePolling(u32 poll);
 u32 SIDisablePolling(u32 poll);
 u32 SISetXY(u32 x, u32 y);
@@ -62,6 +63,12 @@ void SISetSamplingRate(u32 msec);
 void SIRefreshSamplingRate(void);
 void SITransferCommands(void);
 BOOL SIBusy(void);
+BOOL SIIsChanBusy(s32 chan);
+BOOL SIRegisterPollingHandler(__OSInterruptHandler handler);
+BOOL SIUnregisterPollingHandler(__OSInterruptHandler handler);
+u32 SIDecodeType(u32 type);
+u32 SIProbe(s32 chan);
 
+extern u32 __PADFixBits;
 
 #endif // _DOLPHIN_SI_H_

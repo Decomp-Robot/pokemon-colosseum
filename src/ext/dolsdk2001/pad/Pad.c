@@ -33,21 +33,9 @@ typedef struct PADStatus
 #define PAD_BUTTON_MENU  (1 << 12)
 #define PAD_BUTTON_START (1 << 12)
 
-// SI functions used by this revision but absent from si.h.
-extern void SIGetTypeAsync(s32 chan, SITypeAndStatusCallback callback);
-extern s32 SIRegisterPollingHandler(void (*handler)(s32, OSContext *));
-extern s32 SIUnregisterPollingHandler(void (*handler)(s32, OSContext *));
-extern s32 zz_800CF708_(void);
-extern s32 zz_800CF728_(int arg);
-extern s32 zz_800D05A4_(s32 chan, void * response); // SIGetResponse in target SI revision
-extern s32 zz_800D034C_(void);                     // SITransferCommands
-extern void zz_800D0338_(s32 chan, u32 command);
-#define SISetCommand zz_800D0338_
-extern u32 lbl_8047AA58;
-
 static BOOL PADOnReset(BOOL final);
 
-void SamplingHandler(s32 chan, OSContext * context);
+void SamplingHandler(__OSInterrupt interrupt, OSContext * context);
 s32 PADSetSamplingCallback(void (*callback)(void));
 BOOL __PADDisableRecalibration(BOOL disable);
 
@@ -104,7 +92,7 @@ static void SPEC0_MakeStatus(s32 chan, struct PADStatus * status, u32 data[2]);
 static void SPEC1_MakeStatus(s32 chan, struct PADStatus * status, u32 data[2]);
 static void SPEC2_MakeStatus(s32 chan, struct PADStatus * status, u32 data[2]);
 void PADSetAnalogMode(u32 mode);
-void SamplingHandler(s32 chan, OSContext * context);
+void SamplingHandler(__OSInterrupt interrupt, OSContext * context);
 s32 PADSetSamplingCallback(void (*callback)(void));
 BOOL __PADDisableRecalibration(BOOL disable);
 BOOL PADRecalibrate(u32 mask);
@@ -141,7 +129,7 @@ static inline void PADEnable(s32 chan)
 
     chanBit = 0x80000000 >> chan;
     EnabledBits |= chanBit;
-    zz_800D05A4_(chan, probe);
+    SIGetResponse(chan, probe);
     SISetCommand(chan, AnalogMode | 0x400000);
     SIEnablePolling(EnabledBits);
 }
@@ -386,7 +374,7 @@ BOOL PADInit(void)
         PADSetSpec(__PADSpec);
     }
     Initialized = 1;
-    if (lbl_8047AA58 != 0) {
+    if (__PADFixBits != 0) {
         time = OSGetTime();
         __OSWirelessPadFixMode = (u16)((((time) & 0xffff) + ((time >> 16) & 0xffff)
             + ((time >> 32) & 0xffff) + ((time >> 48) & 0xffff)) & 0x3fffu);
@@ -424,11 +412,11 @@ s32 PADRead(struct PADStatus * status)
         } else if ((EnabledBits & mask) == 0) {
             status->err = -1;
             memset(status, 0, 10);
-        } else if (zz_800CF728_(i) != 0) {
+        } else if (SIIsChanBusy(i) != 0) {
             status->err = -3;
             memset(status, 0, 10);
         } else if ((SIGetStatus(i) & 0x8) != 0) {
-            zz_800D05A4_(i, probe);
+            SIGetResponse(i, probe);
             if ((WaitingBits & mask) != 0) {
                 status->err = 0;
                 memset(status, 0, 10);
@@ -445,7 +433,7 @@ s32 PADRead(struct PADStatus * status)
             if (!(SIGetType(i) & 0x20000000)) {
                 result |= mask;
             }
-            if (zz_800D05A4_(i, probe) == 0) {
+            if (SIGetResponse(i, probe) == 0) {
                 status->err = -3;
                 memset(status, 0, 10);
             } else if ((probe[0] & 0x80000000) != 0) {
@@ -492,7 +480,7 @@ void PADControlAllMotors(const u32 * commandArray)
         commit = TRUE;
     }
     if (commit) {
-        zz_800D034C_();
+        SITransferCommands();
     }
     OSRestoreInterrupts(enabled);
 }
@@ -682,7 +670,7 @@ void PADSetAnalogMode(u32 mode)
 
 static inline BOOL PADSync(void)
 {
-    return ResettingBits == 0 && ResettingChan == 32 && !zz_800CF708_();
+    return ResettingBits == 0 && ResettingChan == 32 && !SIBusy();
 }
 
 static BOOL PADOnReset(BOOL final)
@@ -705,7 +693,7 @@ static BOOL PADOnReset(BOOL final)
     return TRUE;
 }
 
-void SamplingHandler(s32 chan, OSContext * context)
+void SamplingHandler(__OSInterrupt interrupt, OSContext * context)
 {
     OSContext exceptionContext;
 
@@ -788,7 +776,7 @@ static inline void ProbeWireless(s32 chan)
     chanBit = 0x80000000 >> chan;
     EnabledBits |= chanBit;
     ProbingBits |= chanBit;
-    zz_800D05A4_(chan, data);
+    SIGetResponse(chan, data);
     type = Type[chan];
     if (!(type & 0x02000000)) {
         cmd = (chan << 0xE) | 0x4D0000 | (__OSWirelessPadFixMode & 0x3FFF);
@@ -814,7 +802,7 @@ static inline void PADControlMotor(s32 chan, u32 command)
             command = 0;
         }
         SISetCommand(chan, (0x40 << 16) | AnalogMode | (command & (0x00000001 | 0x00000002)));
-        zz_800D034C_();
+        SITransferCommands();
     }
     OSRestoreInterrupts(enabled);
 }
