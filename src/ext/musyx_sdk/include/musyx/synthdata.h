@@ -222,6 +222,17 @@ typedef struct FX_GROUP {
   FX_TAB* fxTab; // offset 0x4, size 0x4
 } FX_GROUP;
 
+enum DataIdTag {
+  DATA_ID_TAG_KEYMAP = 0x4000,
+  DATA_ID_TAG_LAYER = 0x8000,
+};
+
+enum DataRefList {
+  DATA_REF_RANGE = 0x8000,
+  DATA_REF_RANGE_MASK = 0x3FFF,
+  DATA_REF_LIST_END = 0xFFFF,
+};
+
 #if MUSY_VERSION >= MUSY_VERSION_CHECK(2, 0, 4)
 void dataInit();
 #else
@@ -243,8 +254,21 @@ ARAMInfo* dataARAMDefaultGetInfo();
 #else
 void dataInitStack();
 #endif
+
 bool dataInsertSDir(SDIR_DATA* sdir, void* smp_data);
 bool dataRemoveSDir(SDIR_DATA* sdir);
+#if MUSY_TARGET == MUSY_TARGET_DOLPHIN && MUSY_VERSION < MUSY_VERSION_CHECK(2, 0, 0)
+bool dataInsertMacro(int mid, void* macroaddr);
+bool dataRemoveMacro(int mid);
+bool dataInsertCurve(int cid, void* curvedata);
+bool dataRemoveCurve(int sid);
+bool dataAddSampleReference(int sid);
+bool dataRemoveSampleReference(int sid);
+bool dataInsertKeymap(int cid, void* keymapdata);
+bool dataRemoveKeymap(int sid);
+bool dataInsertLayer(int cid, void* layerdata, int size);
+bool dataRemoveLayer(int sid);
+#else
 bool dataInsertMacro(u16 mid, void* macroaddr);
 bool dataRemoveMacro(u16 mid);
 bool dataInsertCurve(u16 cid, void* curvedata
@@ -257,8 +281,6 @@ bool dataInsertCurve(u16 cid, void* curvedata
 u32 dataGetCurveSize(u16 cid);
 #endif
 bool dataRemoveCurve(u16 sid);
-s32 dataGetSample(u16 sid, SAMPLE_INFO* newsmp);
-void* dataGetCurve(u16 cid);
 bool dataAddSampleReference(u16 sid
 #if MUSY_VERSION >= MUSY_VERSION_CHECK(2, 0, 1)
                             ,
@@ -275,6 +297,9 @@ bool dataInsertKeymap(u16 cid, void* keymapdata);
 bool dataRemoveKeymap(u16 sid);
 bool dataInsertLayer(u16 cid, void* layerdata, u16 size);
 bool dataRemoveLayer(u16 sid);
+#endif
+s32 dataGetSample(u16 sid, SAMPLE_INFO* newsmp);
+void* dataGetCurve(u16 cid);
 bool dataInsertFX(u16 gid, FX_TAB* fx, u16 fxNum);
 bool dataRemoveFX(u16 gid);
 FX_TAB* dataGetFX(u16 fid);

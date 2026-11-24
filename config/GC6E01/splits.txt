@@ -790,6 +790,11 @@ ext/musyx_sdk/runtime/synth_vsamples.c:
 	.text       start:0x80159494 end:0x80159C48
 	.bss        start:0x80446F10 end:0x80447860
 
+ext/musyx_sdk/runtime/s_data.c:
+	.text       start:0x80159C48 end:0x8015A484
+	.bss        start:0x80447860 end:0x80447E60
+	.sbss       start:0x8047AFE8 end:0x8047AFF0
+
 ext/musyx_sdk/runtime/hw_dspctrl.c:
 	.text       start:0x8015A484 end:0x8015D7D0
 	.rodata     start:0x802732E0 end:0x80273338

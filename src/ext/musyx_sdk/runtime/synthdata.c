@@ -28,7 +28,14 @@ static u16 dataMacTotal;
 static FX_GROUP dataFXGroups[128];
 static u16 dataFXGroupNum;
 
-bool dataInsertKeymap(u16 cid, void *keymapdata) {
+#if MUSY_TARGET == MUSY_TARGET_DOLPHIN && MUSY_VERSION < MUSY_VERSION_CHECK(2, 0, 0)
+bool dataInsertKeymap(cid, keymapdata)
+    u16 cid;
+    void *keymapdata;
+#else
+bool dataInsertKeymap(u16 cid, void *keymapdata)
+#endif
+{
   long i; // r31
   long j; // r29
   hwDisableIrq();
@@ -72,7 +79,13 @@ bool dataInsertKeymap(u16 cid, void *keymapdata) {
   return 1;
 }
 
-bool dataRemoveKeymap(u16 sid) {
+#if MUSY_TARGET == MUSY_TARGET_DOLPHIN && MUSY_VERSION < MUSY_VERSION_CHECK(2, 0, 0)
+bool dataRemoveKeymap(sid)
+    u16 sid;
+#else
+bool dataRemoveKeymap(u16 sid)
+#endif
+{
   long i; // r31
   long j; // r30
 
@@ -94,7 +107,15 @@ bool dataRemoveKeymap(u16 sid) {
   return 0;
 }
 
-bool dataInsertLayer(u16 cid, void *layerdata, u16 size) {
+#if MUSY_TARGET == MUSY_TARGET_DOLPHIN && MUSY_VERSION < MUSY_VERSION_CHECK(2, 0, 0)
+bool dataInsertLayer(cid, layerdata, size)
+    u16 cid;
+    void *layerdata;
+    u16 size;
+#else
+bool dataInsertLayer(u16 cid, void *layerdata, u16 size)
+#endif
+{
   long i; // r31
   long j; // r29
 
@@ -144,7 +165,13 @@ bool dataInsertLayer(u16 cid, void *layerdata, u16 size) {
   return 1;
 }
 
-bool dataRemoveLayer(u16 sid) {
+#if MUSY_TARGET == MUSY_TARGET_DOLPHIN && MUSY_VERSION < MUSY_VERSION_CHECK(2, 0, 0)
+bool dataRemoveLayer(sid)
+    u16 sid;
+#else
+bool dataRemoveLayer(u16 sid)
+#endif
+{
   long i; // r31
   long j; // r30
 
@@ -166,12 +193,19 @@ bool dataRemoveLayer(u16 sid) {
   return 0;
 }
 
+#if MUSY_TARGET == MUSY_TARGET_DOLPHIN && MUSY_VERSION < MUSY_VERSION_CHECK(2, 0, 0)
+bool dataInsertCurve(cid, curvedata)
+    u16 cid;
+    void *curvedata;
+#else
 bool dataInsertCurve(u16 cid, void *curvedata
 #if MUSY_TARGET == MUSY_TARGET_PC
                      ,
                      u32 size
 #endif
-) {
+)
+#endif
+{
   long i; // r31
   long j; // r29
 
@@ -221,7 +255,13 @@ bool dataInsertCurve(u16 cid, void *curvedata
   return 1;
 }
 
-bool dataRemoveCurve(u16 sid) {
+#if MUSY_TARGET == MUSY_TARGET_DOLPHIN && MUSY_VERSION < MUSY_VERSION_CHECK(2, 0, 0)
+bool dataRemoveCurve(sid)
+    u16 sid;
+#else
+bool dataRemoveCurve(u16 sid)
+#endif
+{
   long i; // r31
   long j; // r30
 
@@ -368,12 +408,18 @@ bool dataRemoveSDir(struct SDIR_DATA *sdir) {
   return FALSE;
 }
 
+#if MUSY_TARGET == MUSY_TARGET_DOLPHIN && MUSY_VERSION < MUSY_VERSION_CHECK(2, 0, 0)
+bool dataAddSampleReference(sid)
+    u16 sid;
+#else
 bool dataAddSampleReference(u16 sid
 #if MUSY_VERSION >= MUSY_VERSION_CHECK(2, 0, 1)
                             ,
                             ARAMInfo *aramInfo
 #endif
-) {
+)
+#endif
+{
   u32 i;                 // r29
   SAMPLE_HEADER *header; // r1+0xC
   SDIR_DATA *data;       // r30
@@ -440,12 +486,18 @@ done:
   return TRUE;
 }
 
+#if MUSY_TARGET == MUSY_TARGET_DOLPHIN && MUSY_VERSION < MUSY_VERSION_CHECK(2, 0, 0)
+bool dataRemoveSampleReference(sid)
+    u16 sid;
+#else
 bool dataRemoveSampleReference(u16 sid
 #if MUSY_VERSION >= MUSY_VERSION_CHECK(2, 0, 1)
                                ,
                                ARAMInfo *aramInfo
 #endif
-) {
+)
+#endif
+{
 #if MUSY_VERSION < MUSY_VERSION_CHECK(1, 5, 1)
   // 1.5 Patch 1 (note 36): the sample directory was removed once none of its samples was referenced
   u32 i;           // r30
@@ -565,7 +617,14 @@ bool dataRemoveFX(u16 gid) {
   return FALSE;
 }
 
-bool dataInsertMacro(u16 mid, void *macroaddr) {
+#if MUSY_TARGET == MUSY_TARGET_DOLPHIN && MUSY_VERSION < MUSY_VERSION_CHECK(2, 0, 0)
+bool dataInsertMacro(mid, macroaddr)
+    u16 mid;
+    void *macroaddr;
+#else
+bool dataInsertMacro(u16 mid, void *macroaddr)
+#endif
+{
 #if MUSY_TARGET == MUSY_TARGET_PC
   if (mid >= 0x8000)
     return false;
@@ -631,7 +690,13 @@ bool dataInsertMacro(u16 mid, void *macroaddr) {
   return FALSE;
 }
 
-bool dataRemoveMacro(u16 mid) {
+#if MUSY_TARGET == MUSY_TARGET_DOLPHIN && MUSY_VERSION < MUSY_VERSION_CHECK(2, 0, 0)
+bool dataRemoveMacro(mid)
+    u16 mid;
+#else
+bool dataRemoveMacro(u16 mid)
+#endif
+{
 #if MUSY_TARGET == MUSY_TARGET_PC
   if (mid >= 0x8000)
     return false;
