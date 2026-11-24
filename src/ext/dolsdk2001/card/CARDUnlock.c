@@ -29,9 +29,8 @@ static u8 CardData[352] ATTRIBUTE_ALIGN(32) = {
 // The retail build inlines the MSL srand/rand pair at every use: the DOL has
 // no standalone bodies for either, and both DummyLen and GetInitVal round
 // every access through the MSL _Randseed, which lives in .sdata at
-// 0x80478A50 outside every claimed split (CARDMount.c's lbl_80478A58 is the
-// same pattern). volatile keeps the compiler from caching the seed in a
-// register, matching the retail store/load pattern.
+// 0x80478A50 outside every claimed split. volatile keeps the compiler from
+// caching the seed in a register, matching the retail store/load pattern.
 extern volatile u32 lbl_80478A50;
 
 static u32 exnor_1st(u32 data, u32 rshift);

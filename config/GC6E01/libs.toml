@@ -1140,9 +1140,9 @@ completed = true
 # 0x800B08DC). The MSL srand/rand pair is likewise inlined at every use in
 # this game - the DOL has no standalone bodies for either (see the stub.c
 # note) - and each use rounds through the MSL _Randseed in .sdata at
-# 0x80478A50, outside every claimed split like CARDMount.c's lbl_80478A58;
-# the source references it through its dtk label so the original bytes stay,
-# volatile so the compiler keeps the retail store/load pattern.
+# 0x80478A50, outside every claimed split; the source references it through
+# its dtk label so the original bytes stay, volatile so the compiler keeps
+# the retail store/load pattern.
 [[lib.object]]
 name = "ext/dolsdk2001/card/CARDUnlock.c"
 extra_cflags = ["-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/os", "-i src/ext/dolsdk2001/include/libc", "-i src/ext/dolsdk2001/card", "-i src/ext/dolsdk2001"]
@@ -1222,20 +1222,19 @@ name = "ext/dolsdk2001/card/CARDDir.c"
 extra_cflags = ["-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/os", "-i src/ext/dolsdk2001/include/libc", "-i src/ext/dolsdk2001/card", "-i src/ext/dolsdk2001"]
 completed = true
 
-# CARDMount.o is one contiguous member: CARDProbeEx (0x800B3078, 0x17C) +
-# DoMount (0x800B31F4, 0x410) + __CARDMountCallback (0x800B3604, 0x138) +
-# CARDMountAsync (0x800B373C, 0x1A0) + DoUnmount (0x800B38DC, 0x9C) +
-# CARDUnmount (0x800B3978, 0xAC) fill 0x800B3078-0x800B3A24 exactly. This is
-# a newer SDK revision than the reference drop: DoMount stores card->cid,
-# indexes SectorSizeTable[(id >> 4) & 7] / LatencyTable[(id >> 1) & 7], and
-# gates devkit cards (cid - 0x80000000 < 4) against the OS devcode at
-# lbl_80478A58; DoUnmount takes a result argument; __CARDMountCallback
+# CARDMount.o is one contiguous member: IsCard (0x800B2FAC, 0xCC) +
+# CARDProbeEx (0x800B3078, 0x17C) + DoMount (0x800B31F4, 0x410) +
+# __CARDMountCallback (0x800B3604, 0x138) + CARDMountAsync (0x800B373C,
+# 0x1A0) + DoUnmount (0x800B38DC, 0x9C) + CARDUnmount (0x800B3978, 0xAC)
+# fill 0x800B2FAC-0x800B3A24 exactly. This is a newer SDK revision than the
+# reference drop: DoMount stores card->cid, indexes SectorSizeTable /
+# LatencyTable by the ID's sector and latency fields, and gates Net Card
+# 4-Mbit cards (cid == 0x80000004) against the shared vendor ID
+# __CARDVendorID (0xFFFF means unset); IsCard performs the same check for
+# CARDProbeEx. DoUnmount takes a result argument; __CARDMountCallback
 # re-locks through EXILock on CARD_RESULT_UNLOCKED; CARDMountAsync adds the
-# same devkit check and OSCancelAlarm. IsCard (0x800B2FAC, 0xCC) heads the
-# gap and stays in the auto disassembly: compiled CARDMount.c links to it by
-# name. Its sibling data SectorSizeTable/LatencyTable
-# (.data 0x80312960-0x803129A0) compile with external linkage so IsCard's
-# original bytes keep resolving them.
+# same Net Card check and OSCancelAlarm. SectorSizeTable/LatencyTable
+# (.data 0x80312960-0x803129A0) are file-local in this object.
 # CARDMount/CARDProbe are dead-stripped in the retail link, kept with
 # // UNUSED marks.
 [[lib.object]]

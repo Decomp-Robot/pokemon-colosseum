@@ -5,19 +5,46 @@
 #include "os/__os.h"
 #include "__card.h"
 
-extern BOOL IsCard(u32 id);
-extern u16 lbl_80478A58;
-
-u32 SectorSizeTable[8] = {
+static u32 SectorSizeTable[8] = {
     8 * 1024, 16 * 1024, 32 * 1024, 64 * 1024, 128 * 1024, 256 * 1024, 0, 0,
 };
 
-u32 LatencyTable[8] = {
+static u32 LatencyTable[8] = {
     4, 8, 16, 32, 64, 128, 256, 512,
 };
 
 static s32 DoMount(s32 chan);
 static void DoUnmount(s32 chan, s32 result);
+
+static BOOL IsCard(u32 id) {
+    u32 sizeMbit;
+    s32 sectorSize;
+
+    if ((id & 0xFFFF0000) != 0 && (id != 0x80000004 || __CARDVendorID == 0xFFFF))
+        return FALSE;
+    if ((id & 3) != 0)
+        return FALSE;
+
+    sizeMbit = id & 0xFC;
+    switch (sizeMbit) {
+    case 4:
+    case 8:
+    case 16:
+    case 32:
+    case 64:
+    case 128:
+        break;
+    default:
+        return FALSE;
+    }
+
+    sectorSize = SectorSizeTable[(id >> 11) & 7];
+    if (sectorSize == 0)
+        return FALSE;
+    if ((sizeMbit * 1024 * 1024 / 8) / sectorSize < 8)
+        return FALSE;
+    return TRUE;
+}
 
 // UNUSED: the game never calls this; dead-stripped at link.
 int CARDProbe(long chan) {
@@ -83,7 +110,7 @@ static s32 DoMount(s32 chan) {
     struct OSSramEx *sram;
     int i;
     u8 checkSum;
-    u16 devID;
+    u16 vendorID;
     int step;
 
     ASSERTLINE(0xFE, 0 <= chan && chan < 2);
@@ -148,11 +175,11 @@ static s32 DoMount(s32 chan) {
     }
 
     if (card->mountStep == 1) {
-        if ((u32)(card->cid - 0x80000000) == 4) {
+        if (card->cid == 0x80000004) {
             sram = __OSLockSramEx();
-            devID = *(u16 *)&sram->flashID[chan][0];
+            vendorID = *(u16 *)sram->flashID[chan];
             __OSUnlockSramEx(FALSE);
-            if (lbl_80478A58 == 0xFFFF || devID != lbl_80478A58) {
+            if (__CARDVendorID == 0xFFFF || vendorID != __CARDVendorID) {
                 result = CARD_RESULT_WRONGDEVICE;
                 goto error;
             }

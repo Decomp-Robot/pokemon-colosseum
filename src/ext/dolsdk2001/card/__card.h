@@ -33,6 +33,8 @@ BOOL __CARDIsOpened(CARDControl *card, s32 fileNo);
 // CARDMount.c
 void __CARDMountCallback(s32 chan, s32 result);
 
+extern u16 __CARDVendorID;
+
 // CARDFormat.c
 s32 CARDFormatAsync(s32 chan, CARDCallback callback);
 
