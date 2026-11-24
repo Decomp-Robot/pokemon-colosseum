@@ -51,3 +51,13 @@ detect_objects: false
 detect_strings: false
 export_all: true
 fill_gaps: true
+# The excluded sites are four-byte aligned, but the packed script data at
+# each one is not: an unaligned pointer field (0x80478D80, at 0x803784DD and
+# 0x80378FF1) contributes its last byte, followed by opcode 0x45 and its two
+# byte operands, to the aligned word at the excluded site. That aligned word
+# (0x80451217) is not a pointer. The exclusions are source-site extraction
+# metadata only; they do not claim the script records, change their bytes, or
+# suppress the genuine fixups elsewhere in the same records.
+block_relocations:
+  - source: 0x803784E0
+  - source: 0x80378FF4

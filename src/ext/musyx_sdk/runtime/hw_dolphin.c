@@ -22,12 +22,15 @@
 ATTRIBUTE_ALIGN_DECL(8, static DSPTaskInfo dsp_task);
 ATTRIBUTE_ALIGN_DECL(32, static u16 dram_image[4096]);
 
-#if MUSY_VERSION < MUSY_VERSION_CHECK(2, 0, 0) || MUSY_VERSION >= MUSY_VERSION_CHECK(2, 0, 2)
+#if MUSY_VERSION >= MUSY_VERSION_CHECK(2, 0, 2)
 u8 *aramBase;
 u32 aramSize;
+#endif
+
+#if MUSY_VERSION < MUSY_VERSION_CHECK(2, 0, 0) || MUSY_VERSION >= MUSY_VERSION_CHECK(2, 0, 2)
 static SND_SOME_CALLBACK userCallback;
-u8 salAIBufferIndex;
-static void *salAIBufferBase;
+static u8 salAIBufferIndex;
+static u8 *salAIBufferBase;
 static volatile u32 salDspIsDone;
 static volatile u32 salLogicIsWaiting;
 static volatile u32 salLogicActive;
@@ -46,12 +49,12 @@ static volatile OSTick salLastTick = 0;
 static volatile u32 salLogicActive = 0;
 static volatile u32 salLogicIsWaiting = 0;
 static volatile u32 salDspIsDone = 0;
-static void *salAIBufferBase = NULL;
-u8 salAIBufferIndex = 0;
+static u8 *salAIBufferBase = NULL;
+static u8 salAIBufferIndex = 0;
 static SND_SOME_CALLBACK userCallback = NULL;
 #endif
 
-#define DMA_BUFFER_LEN 0x280
+#define DMA_BUFFER_LEN 640
 
 u32 salGetStartDelay();
 
@@ -99,24 +102,23 @@ static void dspDoneCallback(void *task) { OSWakeupThread(&salWaitForDSPThreadQue
 #endif
 
 #if MUSY_VERSION <= MUSY_VERSION_CHECK(2, 0, 1) //
-void *salAlloc(size_t len);
 #define SAL_MALLOC salAlloc
 #else
 #define SAL_MALLOC salAllocPhysical
 #endif
 
-bool salInitAi(SND_SOME_CALLBACK callback, u32 unk, u32 *outFreq) {
+bool salInitAi(SND_SOME_CALLBACK callback, u32 flags, u32 *outFreq) {
   if ((salAIBufferBase = SAL_MALLOC(DMA_BUFFER_LEN * 4)) != NULL) {
     memset(salAIBufferBase, 0, DMA_BUFFER_LEN * 4);
     DCFlushRange(salAIBufferBase, DMA_BUFFER_LEN * 4);
-    salAIBufferIndex = TRUE;
+    salAIBufferIndex = 1;
     salLogicIsWaiting = FALSE;
     salDspIsDone = TRUE;
     salLogicActive = FALSE;
     userCallback = callback;
     AIRegisterDMACallback(salCallback);
-    AIInitDMA(OSCachedToPhysical(salAIBufferBase) + (salAIBufferIndex * 0x280), 0x280);
-    synthInfo.numSamples = 0x20;
+    AIInitDMA(OSCachedToPhysical(salAIBufferBase) + (salAIBufferIndex * DMA_BUFFER_LEN), DMA_BUFFER_LEN);
+    synthInfo.numSamples = 32;
     *outFreq = 32000;
     MUSY_DEBUG("MusyX AI interface initialized.\n");
     return TRUE;
@@ -135,18 +137,16 @@ bool salExitAi() {
 }
 
 void *salAiGetDest() {
-  u8 index; // r31
-  index = (salAIBufferIndex + 2) % 4;
-  return (void *)((u8 *)salAIBufferBase + index * DMA_BUFFER_LEN);
+  u8 index = (salAIBufferIndex + 2) % 4;
+  return salAIBufferBase + index * DMA_BUFFER_LEN;
 }
 
 bool salInitDsp(u32 flags) {
-  u8 _[8];
   dsp_task.iram_mmem_addr = (u16 *)dspSlave;
   dsp_task.iram_length = dspSlaveLength;
   dsp_task.iram_addr = 0;
-  dsp_task.dram_mmem_addr = (u16 *)dram_image;
-  dsp_task.dram_length = 0x2000;
+  dsp_task.dram_mmem_addr = dram_image;
+  dsp_task.dram_length = sizeof(dram_image);
   dsp_task.dram_addr = 0;
   dsp_task.dsp_init_vector = 0x10;
   dsp_task.dsp_resume_vector = 0x30;
@@ -179,7 +179,7 @@ bool salExitDsp() {
     ;
   DSPReset();
 #else
-  int old = OSDisableInterrupts(); // r31
+  int old = OSDisableInterrupts();
   DSPCancelTask(&dsp_task);
   OSSleepThread(&salWaitForDSPThreadQueue);
   OSRestoreInterrupts(old);

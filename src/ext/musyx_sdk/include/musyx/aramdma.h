@@ -8,8 +8,10 @@
 extern "C" {
 #endif
 
+#if MUSY_VERSION >= MUSY_VERSION_CHECK(2, 0, 0)
 extern u32 aramSize;
 extern u8* aramBase;
+#endif
 #if MUSY_TARGET == MUSY_TARGET_DOLPHIN
 void aramInit(u32 length);
 void aramExit();

@@ -3531,7 +3531,34 @@ name = "ext/musyx_sdk/runtime/hw_aramdma.c"
 extra_cflags = ["-i src/ext/musyx_sdk/include", "-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/include/libc", "-DMUSY_VERSION_MAJOR=1", "-DMUSY_VERSION_MINOR=5", "-DMUSY_VERSION_PATCH=3"]
 completed = true
 
-# SAL allocation implementation retained as an uncompleted neighboring runtime object.
+# The shared vendored aramdma.h declares aramBase/aramSize only with the SDK
+# versions that define them; that is a declaration-coherence fix, not a claim
+# about the retail image.  At 1.5.3 no compiled translation unit reads either
+# name (hw_aramdma.c keeps its ARAM base in a local), and hw_dolphin.c defines
+# them only in the versions that own them - initialized for 2.0.0-2.0.1,
+# uninitialized for 2.0.2 and later - so neither definition can occupy the
+# game's two live sound-ID words at 0x8047B0A8/0x8047B0AC.
+# MusyX v1.5.3 Dolphin audio backend: AI DMA callbacks, DSP task setup and the
+# interrupt hooks that share its DMA/tick state.  Its .bss contribution is all
+# 0x2060 bytes of 0x804504A0-0x80452500: a 0x50-byte DSPTaskInfo, 0x10 bytes of
+# alignment padding and dram_image[4096] (0x2000 bytes).  Its .sbss contribution
+# is [0x8047B080, 0x8047B0A8): the 0x28 bytes from oldState through
+# userCallback, including the private DMA ring index.  0x8047B0A8/0x8047B0AC are
+# the game's live sound-ID words (getters 0x801653BC/0x801653C4,
+# compare/clear 0x801657F8 at 0x80165834-0x80165868, stores 0x80165AD8 and
+# 0x80165C38/0x80165C44, clears 0x80165FC4/0x80165FC8), not this unit's storage.  The shared
+# vendored aramdma.h version-guards its aramBase/aramSize externs to match the
+# version set in which the definitions exist; that is a declaration-coherence
+# fix, not a claim about the retail image.  At 1.5.3 no compiled translation
+# unit reads either name (hw_aramdma.c keeps its ARAM base in a local), and this
+# TU defines them only in the versions that own them - initialized for
+# 2.0.0-2.0.1, uninitialized for 2.0.2 and later - so neither definition can
+# occupy the game's two sound-ID words.  No linker discard is needed to keep
+# the retail layout.  At the aligned candidates 0x803784E0 and
+# 0x80378FF4, the word is the trailing byte of a packed opcode-0xFC pointer
+# (0x80478D80) followed by opcode 0x45 and its two operands, not a pointer into
+# dram_image; config.yml blocks only those two dtk false detections, leaving
+# the script records' bytes and genuine fixups untouched.
 [[lib.object]]
 name = "ext/musyx_sdk/runtime/hw_dolphin.c"
 extra_cflags = ["-i src/ext/musyx_sdk/include", "-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/include/libc", "-DMUSY_VERSION_MAJOR=1", "-DMUSY_VERSION_MINOR=5", "-DMUSY_VERSION_PATCH=3"]
@@ -3605,9 +3632,9 @@ completed = true
 #     .bss table (built at run time by initResampleTables), so this member emits
 #     no data that could be found in the image either.  The archive's Dolphin
 #     text range around it is fully claimed as well: hw_aramdma.c ends at
-#     0x80163EE0, hw_dspctrl (zz_80163EE0_ 0xA8, zz_80163F88_ 0x10,
-#     zz_80163F98_ 0x64) and hw_dolphin (salInitAi 0x80163FFC ...
-#     hwIRQLeaveCritical 0x801643B8+0x20) fill 0x80163EE0-0x801643D8, and
+#     0x80163EE0, hw_dolphin.c (salCallback 0x80163EE0, dspInitCallback
+#     0x80163F88, dspResumeCallback 0x80163F98, salInitAi 0x80163FFC ...
+#     hwIRQLeaveCritical 0x801643B8+0x20) fills 0x80163EE0-0x801643D8, and
 #     hw_memory.c starts at 0x801643D8.
 # So, as for hw_pc_null.c and hw_pc_output.c, the translation unit keeps the
 # reference include and one "// UNUSED:" marker per removed definition, compiles
