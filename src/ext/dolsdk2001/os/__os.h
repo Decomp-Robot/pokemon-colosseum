@@ -51,6 +51,9 @@ OSInterruptMask __OSUnmaskInterrupts(OSInterruptMask global);
 void __OSDispatchInterrupt(__OSException exception, OSContext* context);
 void __OSModuleInit(void);
 
+// OSMemory.c
+void __OSInitMemoryProtection(void);
+
 // OSMutex.c
 void __OSUnlockAllMutex(struct OSThread *thread);
 int __OSCheckDeadLock(struct OSThread *thread);

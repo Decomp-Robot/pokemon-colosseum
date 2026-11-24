@@ -88,6 +88,15 @@ volatile u32 __AIRegs[8]      : 0xCC006C00;
 
 #define VI_WIDTH (56)
 
+// offsets for __MEMRegs[i]
+#define MI_MARR(chan)      ((chan) * 2) // memory address range register
+#define MI_PROTECT         (8)          // read/write permissions, two bits per range
+#define MI_CAUSE           (15)         // interrupt cause
+#define MI_INT_CLEAR       (16)
+#define MI_FAULT_ADDR_LOW  (17) // protection fault address, low 16 bits
+#define MI_FAULT_ADDR_HIGH (18) // protection fault address, high 10 bits
+#define MI_MEM_CONFIG      (20) // configured memory size
+
 // offsets for __EXIRegs[i]
 #define EXI_CR(channel) ((channel) * 5 + 3) // control register
 #define EXI_CR_TSTART   (1 << 0)            // transfer start / busy

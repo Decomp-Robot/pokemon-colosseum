@@ -11,7 +11,6 @@
 // The original build did not pool literals: each string is its own .data object.
 
 void EnableMetroTRKInterrupts(void);
-void __OSInitMemoryProtection(void);
 
 #define NOP 0x60000000
 
