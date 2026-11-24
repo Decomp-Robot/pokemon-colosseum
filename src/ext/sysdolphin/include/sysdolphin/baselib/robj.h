@@ -3,9 +3,17 @@
 
 #include <dolphin/types.h>
 
+#include <sysdolphin/baselib/aobj.h>
+
 typedef struct _HSD_RObj HSD_RObj;
 typedef struct _HSD_RObjDesc HSD_RObjDesc;
 typedef struct _HSD_RObjAnimDesc HSD_RObjAnimDesc;
+
+struct _HSD_RObj {
+    struct _HSD_RObj* next;
+    u8 unk_04[20];
+    HSD_AObj* aobj;
+};
 
 void HSD_RObjRelease(HSD_RObj* robj);
 HSD_RObj* HSD_RObjLoad(HSD_RObjDesc* desc);

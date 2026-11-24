@@ -4,13 +4,24 @@
 #include <dolphin/types.h>
 
 #include <sysdolphin/baselib/class.h>
+#include <sysdolphin/baselib/debug.h>
 
-/* Common prefix shared by the class-based scene objects. */
 typedef struct _HSD_Obj {
     HSD_ClassInfo* class_info;
     u16 ref_count;
     u16 ref_count_individual;
 } HSD_Obj;
+
+#define HSD_OBJ(o) ((HSD_Obj*) (o))
+#define HSD_OBJ_NOREF 0xFFFF
+
+static inline void HSD_ObjAddRef(HSD_Obj* o)
+{
+    if (o != NULL) {
+        o->ref_count++;
+        HSD_ASSERT(93, HSD_OBJ(o)->ref_count != HSD_OBJ_NOREF);
+    }
+}
 
 extern HSD_ClassInfo hsd_ObjInfo;
 

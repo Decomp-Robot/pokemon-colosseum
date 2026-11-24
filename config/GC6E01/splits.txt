@@ -942,6 +942,14 @@ ext/sysdolphin/baselib/objalloc.c:
 	.sbss       start:0x8047B2E0 end:0x8047B2E8
 	.sdata2     start:0x8047DC98 end:0x8047DCA0
 
+ext/sysdolphin/baselib/aobj.c:
+	.text       start:0x801C0270 end:0x801C2AE8
+	.rodata     start:0x80275780 end:0x802757F0
+	.data       start:0x8036D7C0 end:0x8036DCA8
+	.bss        start:0x80466DB8 end:0x80466DE8
+	.sbss       start:0x8047B388 end:0x8047B398
+	.sdata2     start:0x8047DF40 end:0x8047DF58
+
 ext/dolsdk2001/thp/THPDec.c:
 	.text       start:0x801E5548 end:0x801ECAB0
 	.rodata     start:0x80279AE8 end:0x80279B78
