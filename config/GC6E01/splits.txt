@@ -938,6 +938,13 @@ ext/sysdolphin/baselib/class.c:
 	.sbss       start:0x8047B220 end:0x8047B230
 	.sdata2     start:0x8047D950 end:0x8047D958
 
+ext/sysdolphin/baselib/dobj.c:
+	.text       start:0x80198F7C end:0x8019970C
+	.rodata     start:0x80274708 end:0x80274758
+	.data       start:0x8036C7A0 end:0x8036C7E8
+	.sbss       start:0x8047B260 end:0x8047B268
+	.sdata2     start:0x8047DA18 end:0x8047DA30
+
 ext/sysdolphin/baselib/hash.c:
 	.text       start:0x8019BFE8 end:0x8019C0F8
 	.rodata     start:0x80274800 end:0x80274818

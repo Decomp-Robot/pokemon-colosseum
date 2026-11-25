@@ -4915,6 +4915,10 @@ name = "ext/sysdolphin/baselib/class.c"
 extra_cflags = ["-opt level=1", "-rostr", "-use_lmw_stmw on", "-i src/ext/sysdolphin/include", "-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/include/libc"]
 completed = true
 [[lib.object]]
+name = "ext/sysdolphin/baselib/dobj.c"
+extra_cflags = ["-opt level=1", "-rostr", "-use_lmw_stmw on", "-i src/ext/sysdolphin/include", "-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/include/libc"]
+completed = true
+[[lib.object]]
 name = "ext/sysdolphin/baselib/hash.c"
 extra_cflags = ["-O4,p", "-opt level=1", "-rostr", "-i src/ext/sysdolphin/include", "-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/include/libc"]
 completed = true
