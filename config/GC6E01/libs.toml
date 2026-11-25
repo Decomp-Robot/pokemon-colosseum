@@ -78,6 +78,12 @@ mw_version = "GC/2.6"
 completed = true
 
 [[lib.object]]
+name = "menuPc.c"
+mw_version = "GC/2.6"
+extra_cflags = ["-opt nopeephole", "-use_lmw_stmw on", "-lang=c++", "-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/include/libc"]
+completed = true
+
+[[lib.object]]
 name = "menuPokemon.c"
 mw_version = "GC/2.6"
 completed = true

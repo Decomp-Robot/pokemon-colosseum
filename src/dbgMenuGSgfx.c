@@ -7,9 +7,9 @@
  * play when playback is paused. Playback commands stop a running sequence
  * before handing the updated state back to the graphics object.
  */
+#include "app/menu/menuWindow.h"
 #include "pokemon/types.h"
 
-#define GSGFX_MENU_INDEX 8
 #define GSGFX_PANEL_POS_X 380
 #define GSGFX_PANEL_POS_Y 32
 
@@ -21,11 +21,6 @@
 extern u8 lbl_8047A298; /* playback active */
 extern u8 lbl_8047A299; /* paused step selector */
 
-extern u8 zz_80102620_(int menuIndex);
-extern void zz_80102510_(int menuIndex);
-extern int zz_801026A4_(int menuIndex, ...);
-extern void zz_80102868_(int menuIndex, int posX, int posY);
-
 extern u8 zz_80175FFC_(void);
 extern void zz_80176004_(void);
 extern void zz_80176030_(int step);
@@ -35,11 +30,11 @@ extern void zz_801E11D4_(u8 displayState, u8 playState);
 
 int dbgMenuGSgfxChangeDisp(void)
 {
-    if (zz_80102620_(GSGFX_MENU_INDEX) != 0) {
-        zz_80102510_(GSGFX_MENU_INDEX);
+    if (menuWindowIsOpen(MENU_WINDOW_DEBUG_GSGFX) != 0) {
+        menuWindowCloseSingle(MENU_WINDOW_DEBUG_GSGFX);
     } else {
-        zz_801026A4_(GSGFX_MENU_INDEX, 0, 0, 0, 1, 0);
-        zz_80102868_(GSGFX_MENU_INDEX, GSGFX_PANEL_POS_X, GSGFX_PANEL_POS_Y);
+        menuWindowOpenEx(MENU_WINDOW_DEBUG_GSGFX, 0, 0, 0, 1, 0);
+        menuWindowSetPosition(MENU_WINDOW_DEBUG_GSGFX, GSGFX_PANEL_POS_X, GSGFX_PANEL_POS_Y);
     }
     return 0;
 }

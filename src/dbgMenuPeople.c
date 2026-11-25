@@ -6,12 +6,11 @@
  * flags behind window 10, then stops or starts the script whose ID is stored
  * in the current floor's data.
  */
+#include "app/menu/menuWindow.h"
 #include "pokemon/types.h"
 
-#define PEOPLE_MENU_INDEX 12
 #define PEOPLE_PANEL_POS_X 400
 #define PEOPLE_PANEL_POS_Y 40
-#define SCRIPT_MENU_INDEX 10
 
 typedef struct FloorData {
     u8 floorKind;
@@ -32,11 +31,6 @@ typedef struct FloorData {
     u32 mainSctID;
 } FloorData;
 
-extern u8 zz_80102620_(int menuIndex);
-extern void zz_80102510_(int menuIndex);
-extern int zz_801026A4_(int menuIndex, ...);
-extern void zz_80102868_(int menuIndex, int posX, int posY);
-
 extern u32 zz_get_current_room_id(void);
 extern FloorData *floorDataBiosGetPtr(u32 floorID);
 extern u8 zz_801174C4_(void);
@@ -47,11 +41,11 @@ extern void startFloorScript(u32 scriptId);
 
 int dbgMenuDispChangePartyInfo(void)
 {
-    if (zz_80102620_(PEOPLE_MENU_INDEX) != 0) {
-        zz_80102510_(PEOPLE_MENU_INDEX);
+    if (menuWindowIsOpen(MENU_WINDOW_DEBUG_PEOPLE) != 0) {
+        menuWindowCloseSingle(MENU_WINDOW_DEBUG_PEOPLE);
     } else {
-        zz_801026A4_(PEOPLE_MENU_INDEX, 0, 0, 0, 1, 0);
-        zz_80102868_(PEOPLE_MENU_INDEX, PEOPLE_PANEL_POS_X, PEOPLE_PANEL_POS_Y);
+        menuWindowOpenEx(MENU_WINDOW_DEBUG_PEOPLE, 0, 0, 0, 1, 0);
+        menuWindowSetPosition(MENU_WINDOW_DEBUG_PEOPLE, PEOPLE_PANEL_POS_X, PEOPLE_PANEL_POS_Y);
     }
     return 0;
 }
@@ -60,15 +54,15 @@ int zz_8000C588_(void)
 {
     FloorData *floorData = floorDataBiosGetPtr(zz_get_current_room_id());
 
-    if (zz_80102620_(SCRIPT_MENU_INDEX) != 0) {
+    if (menuWindowIsOpen(MENU_WINDOW_DEBUG_SCRIPT) != 0) {
         if (zz_801174C4_() != 0) {
             zz_80117500_();
         }
-        zz_80102510_(SCRIPT_MENU_INDEX);
+        menuWindowCloseSingle(MENU_WINDOW_DEBUG_SCRIPT);
         stopFloorScript(floorData->mainSctID);
     } else {
         zz_801174F4_();
-        zz_801026A4_(SCRIPT_MENU_INDEX, 0, 0, 0, 0, 0);
+        menuWindowOpenEx(MENU_WINDOW_DEBUG_SCRIPT, 0, 0, 0, 0, 0);
         startFloorScript(floorData->mainSctID);
     }
     return 0;

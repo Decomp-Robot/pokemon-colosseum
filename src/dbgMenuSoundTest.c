@@ -7,6 +7,7 @@
  * environment lists first stop every other sound in the same list so that
  * only one ambient track is active at a time.
  */
+#include "app/menu/menuWindow.h"
 #include "pokemon/types.h"
 
 enum DbgMenuCommand {
@@ -34,15 +35,11 @@ enum SoundStatus {
     SOUND_STATUS_PLAYING_END = 4,
 };
 
-#define DBG_SOUND_WINDOW 2
-
 extern void zz_80166D18_(u8 volume, u16 time, u8 music, u8 fx);
 extern int zz_801666BC_(u16 soundId);
 extern void zz_80166B18_(u16 soundId);
 extern void zz_801659FC_(u16 soundId, int fade, u8 volume);
 extern void zz_80165A20_(u16 soundId, int fade, u8 volume);
-extern int zz_8010264C_(int kind, int initialValue);
-extern void zz_80102510_(int windowId);
 
 u16 *dbgMenuSoundEnvBgmTable;
 u32 *dbgMenuSoundEnvBgmCount;
@@ -96,13 +93,13 @@ int zz_8000C6EC_(void)
 {
     int index;
 
-    while ((index = zz_8010264C_(DBG_SOUND_WINDOW, 1)) != DBG_MENU_CLOSE) {
+    while ((index = menuWindowOpen(MENU_WINDOW_DEBUG_INPUT, 1)) != DBG_MENU_CLOSE) {
         if (index >= *dbgMenuSoundBgmCount) {
             continue;
         }
         dbgMenuSoundTestPlayOrStopSE(dbgMenuSoundBgmTable[index]);
     }
-    zz_80102510_(DBG_SOUND_WINDOW);
+    menuWindowCloseSingle(MENU_WINDOW_DEBUG_INPUT);
     return DBG_MENU_CLOSE;
 }
 
@@ -111,13 +108,13 @@ int zz_8000C788_(void)
 {
     int index;
 
-    while ((index = zz_8010264C_(DBG_SOUND_WINDOW, 1)) != DBG_MENU_CLOSE) {
+    while ((index = menuWindowOpen(MENU_WINDOW_DEBUG_INPUT, 1)) != DBG_MENU_CLOSE) {
         if (index >= *dbgMenuSoundSeCount) {
             continue;
         }
         dbgMenuSoundTestPlayOrStopSE(dbgMenuSoundSeTable[index]);
     }
-    zz_80102510_(DBG_SOUND_WINDOW);
+    menuWindowCloseSingle(MENU_WINDOW_DEBUG_INPUT);
     return DBG_MENU_CLOSE;
 }
 
@@ -126,7 +123,7 @@ int dbgMenuSoundTestENV(void)
 {
     int index;
 
-    while ((index = zz_8010264C_(DBG_SOUND_WINDOW, 1)) != DBG_MENU_CLOSE) {
+    while ((index = menuWindowOpen(MENU_WINDOW_DEBUG_INPUT, 1)) != DBG_MENU_CLOSE) {
         int other;
         int status;
 
@@ -148,7 +145,7 @@ int dbgMenuSoundTestENV(void)
         }
         dbgMenuSoundTestPlayOrStopSE(dbgMenuSoundEnvSeTable[index]);
     }
-    zz_80102510_(DBG_SOUND_WINDOW);
+    menuWindowCloseSingle(MENU_WINDOW_DEBUG_INPUT);
     return DBG_MENU_CLOSE;
 }
 
@@ -169,7 +166,7 @@ int zz_8000C92C_(void)
 {
     int index;
 
-    while ((index = zz_8010264C_(DBG_SOUND_WINDOW, 1)) != DBG_MENU_CLOSE) {
+    while ((index = menuWindowOpen(MENU_WINDOW_DEBUG_INPUT, 1)) != DBG_MENU_CLOSE) {
         int other;
         int status;
 
@@ -191,6 +188,6 @@ int zz_8000C92C_(void)
         }
         dbgMenuSoundTestPlayOrStopBGM(dbgMenuSoundEnvBgmTable[index]);
     }
-    zz_80102510_(DBG_SOUND_WINDOW);
+    menuWindowCloseSingle(MENU_WINDOW_DEBUG_INPUT);
     return DBG_MENU_CLOSE;
 }
