@@ -3,10 +3,18 @@
 
 #include "pokemon/types.h"
 
+#define TRAINER_POKEMON_SUBRECORD_COUNT 4
+
 /*
  * A trainer's Pokemon record.  Trainers carry a table of these, indexed by
  * the Pokemon's id, so the record has a fixed stride of 0x50 bytes.
  */
+typedef struct TrainerPokemonSubrecord {
+    u8 kind;
+    u8 pad[3];
+    u32 value;
+} TrainerPokemonSubrecord;
+
 typedef struct TrainerPokemon {
     u8 abilityIndex;       /* 0x00 */
     u8 gender;             /* 0x01 */
@@ -24,11 +32,16 @@ typedef struct TrainerPokemon {
     u8 unk_1C[6];          /* 0x1C */
     s16 unk_22[6];         /* 0x22 */
     u8 unk_2E[2];          /* 0x2E */
-    u8 unk_30[4][8];       /* 0x30 */
+    TrainerPokemonSubrecord subrecords[TRAINER_POKEMON_SUBRECORD_COUNT];
 } TrainerPokemon;
 
 s8 trainerPokemonGetNature(TrainerPokemon *pokemon);
 s8 trainerPokemonGetGender(TrainerPokemon *pokemon);
 s16 trainerPokemonGetHappiness(TrainerPokemon *pokemon);
+u8 trainerPokemonGetSubrecordKind(TrainerPokemon *pokemon, u8 index);
+u32 trainerPokemonGetSubrecordValue(TrainerPokemon *pokemon, u8 index);
+u32 trainerPokemonGetItem(TrainerPokemon *pokemon);
+u16 trainerPokemonGetSpecies(TrainerPokemon *pokemon);
+s8 trainerPokemonGetAbilityIndex(TrainerPokemon *pokemon);
 
 #endif
