@@ -1032,3 +1032,6 @@ ext/dolsdk2001/os/__ppc_eabi_init.c:
 
 ext/metrotrk/mem_TRK.c:
 	.init       start:0x80003458 end:0x800034AC
+
+Runtime.PPCEABI.H/__mem.c:
+	.init       start:0x8000540C end:0x80005544
