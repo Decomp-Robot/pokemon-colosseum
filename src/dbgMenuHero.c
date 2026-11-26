@@ -6,6 +6,7 @@
  * party slot from the hero's trainer data and passes the chosen Pokemon to
  * the shared battle setup routine.
  */
+#include "app/menu/dbgMenu.h"
 #include "app/menu/menuWindow.h"
 #include "app/pokemon/pokemon.h"
 #include "pokemon/types.h"
@@ -21,7 +22,6 @@ enum DbgMenuResult {
 extern void zz_8005DEE8_(void);
 extern void zz_801293FC_(int trainer, int value);
 extern void zz_801294C4_(int trainer, int value);
-extern u8 zz_801EF63C_(void);
 extern void zz_battle_pokemon_init(Pokemon *pokemon);
 extern int zz_800096B4_(Pokemon *pokemon, int, int, int, int, int);
 extern void zz_80129F20_(int trainer, Pokemon *pokemon, int, int, int);
@@ -60,7 +60,7 @@ int dbgMenuHeroIncMoney(void)
 
 int dbgMenuHeroPokemonAdd(void)
 {
-    if (zz_801EF63C_() == 1) {
+    if (dbgTriggerIsEnabled() == 1) {
         return DBG_MENU_CLOSE;
     }
     if (dbgPokemonWorkInit) {
@@ -78,7 +78,7 @@ static inline int selectPokemon(int slot)
 {
     Pokemon *pokemon;
 
-    if (zz_801EF63C_() == 1) {
+    if (dbgTriggerIsEnabled() == 1) {
         return DBG_MENU_CLOSE;
     }
     pokemon = zz_trainer_get_value_with_index(HERO_TRAINER_INDEX, TRAINER_VALUE_PARTY_POKEMON, slot);

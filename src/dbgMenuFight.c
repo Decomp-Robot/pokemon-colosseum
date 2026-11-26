@@ -1,11 +1,5 @@
-/*
- * Debug menu commands for editing a fight's trainer data.
- *
- * The fight menu edits the selected trainer through a panel driven by the
- * selected field. Changing a combo, item, move or swap passes the edit to
- * the matching add/subtract routine in the fight data code; the panel only
- * runs while the debug trigger flag is set.
- */
+#include "app/menu/dbgMenu.h"
+#include "app/menu/menuPokemon.h"
 #include "pokemon/types.h"
 
 /* Pokemon data selectors used to reach the trainer-AI edit field. */
@@ -16,7 +10,6 @@
 extern void *lbl_8047A278;
 
 extern int zz_pokemon_data_get_value_with_index_r5(void *data, int index, int selector, int value);
-extern u8 zz_801EF63C_(void);
 extern int zz_80051E38_(int value);
 
 extern int zz_8004EADC_(void);
@@ -26,6 +19,43 @@ extern int zz_8004F860_(void);
 extern int zz_8004FE3C_(void);
 extern int zz_80050844_(void);
 
+static const int POKEMON_SELECTION_CANCELLED = -1;
+
+u16 dbgFightPokemonSelectIndex = 1;
+
+static inline int selectFightPokemon(void)
+{
+    int selection;
+    u32 count;
+
+    if (menuPokemonSelect(dbgFightPokemonSelectIndex, &selection, dbgMenuFightGetPokemonName) == 0) {
+        return POKEMON_SELECTION_CANCELLED;
+    }
+    count = *pokemonSelectionCountPtr;
+    if (selection >= count) {
+        selection = count - 1;
+    }
+    menuPokemonSelectClose();
+    return selection;
+}
+
+int dbgMenuFightFightPokemonSelectCallback(void)
+{
+    int selection;
+
+    if (dbgTriggerIsEnabled() == 0) {
+        return DBG_MENU_CALLBACK_DISABLED;
+    }
+    while (1) {
+        selection = selectFightPokemon();
+        if (selection < 0) {
+            return DBG_MENU_CALLBACK_COMPLETE;
+        }
+        dbgFightPokemonSelectIndex = selection;
+        dbgMenuFightEditSelectedPokemon(selection);
+    }
+}
+
 int dbgMenuFightFightTrainerAiDataEdit(void)
 {
     u16 trainer;
@@ -34,7 +64,7 @@ int dbgMenuFightFightTrainerAiDataEdit(void)
     trainer = zz_pokemon_data_get_value_with_index_r5(lbl_8047A278, 0, FIGHT_AI_DATA_SELECTOR, 0);
     field = zz_pokemon_data_get_value_with_index_r5(0, trainer, FIGHT_AI_FIELD_SELECTOR, 0);
 
-    if (zz_801EF63C_() == 0) {
+    if (dbgTriggerIsEnabled() == 0) {
         return -1;
     }
     return zz_80051E38_(field);
