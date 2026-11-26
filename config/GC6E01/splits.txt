@@ -50,6 +50,9 @@ dbgMenuSoundTest.c:
 	.text       start:0x8000C624 end:0x8000CA34
 	.sbss       start:0x80478E10 end:0x80478E30
 
+dbgMenuItemCreate.c:
+	.text       start:0x8000FDD8 end:0x8000FF50
+
 menuWorldMapMX.c:
 	.text       start:0x80018F30 end:0x80018F88
 

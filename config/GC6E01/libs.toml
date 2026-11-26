@@ -68,6 +68,16 @@ completed = true
 extra_cflags = ["-opt nopeephole"]
 
 [[lib.object]]
+name = "dbgMenuItemCreate.c"
+mw_version = "GC/2.6"
+completed = true
+extra_cflags = [
+    "-opt nopeephole",
+    "-i src/ext/dolsdk2001/include",
+    "-i src/ext/dolsdk2001/include/libc",
+]
+
+[[lib.object]]
 name = "floorManager.c"
 mw_version = "GC/2.6"
 completed = true
