@@ -20,7 +20,6 @@ enum AgbCommunicationStateFlag {
 };
 
 extern Pokemon *zz_80057270_(void);
-extern void zz_80109220_(FloorCommandEntry *entry, int available);
 extern u8 zz_8011E820_(Pokemon *pokemon);
 
 int zz_80053A60_(void *menu, FloorCommandEntry *entry)
@@ -33,7 +32,7 @@ int zz_80053A60_(void *menu, FloorCommandEntry *entry)
             available = 1;
         }
     }
-    zz_80109220_(entry, available);
+    floorCommandSetAvailable(entry, available);
     return 0;
 }
 
@@ -47,7 +46,7 @@ int zz_80053AC8_(void *menu, FloorCommandEntry *entry)
             available = 1;
         }
     }
-    zz_80109220_(entry, available);
+    floorCommandSetAvailable(entry, available);
     return 0;
 }
 
@@ -61,7 +60,7 @@ int zz_80053B30_(void *menu, FloorCommandEntry *entry)
             available = 1;
         }
     }
-    zz_80109220_(entry, available);
+    floorCommandSetAvailable(entry, available);
     return 0;
 }
 
@@ -75,6 +74,6 @@ int zz_80053B98_(void *menu, FloorCommandEntry *entry)
             available = 1;
         }
     }
-    zz_80109220_(entry, available);
+    floorCommandSetAvailable(entry, available);
     return 0;
 }

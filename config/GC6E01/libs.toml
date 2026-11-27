@@ -20,6 +20,12 @@ extra_cflags = ["-opt nopeephole"]
 completed = true
 
 [[lib.object]]
+name = "dbgMenuFightTrainer.c"
+mw_version = "GC/2.6"
+extra_cflags = ["-opt nopeephole"]
+completed = true
+
+[[lib.object]]
 name = "dbgMenuHero.c"
 mw_version = "GC/2.6"
 extra_cflags = ["-opt nopeephole"]

@@ -11,7 +11,6 @@
 #define MESSAGE_DIGIT_WIDTH 15
 
 extern Pokemon *zz_80057270_(void);
-extern void zz_80109220_(FloorCommandEntry *entry, int available);
 extern u16 zz_801230E0_(Pokemon *pokemon);
 extern u8 zz_8001DA60_(Pokemon *pokemon);
 extern u16 zz_8011F5C8_(Pokemon *pokemon);
@@ -32,7 +31,7 @@ int floorReadSetAvailable(void *menu, FloorCommandEntry *entry)
             available = 1;
         }
     }
-    zz_80109220_(entry, available);
+    floorCommandSetAvailable(entry, available);
     return 0;
 }
 

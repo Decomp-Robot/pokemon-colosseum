@@ -9,10 +9,14 @@
  * whether the command can be used.
  */
 typedef struct FloorCommandEntry {
-    u8 unk_00[76];      /* 0x00 */
+    u8 unk_00[6];
+    s16 command;
+    u8 unk_08[68];
     MessageId messageId; /* 0x4C */
     u8 unk_50[4];       /* 0x50 */
     s16 textX;          /* 0x54 */
 } FloorCommandEntry;
+
+void floorCommandSetAvailable(FloorCommandEntry *entry, int available);
 
 #endif
