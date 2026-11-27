@@ -19,11 +19,17 @@ typedef enum MenuWindowId {
     MENU_WINDOW_PC_ITEM_STORAGE = 33,
     MENU_WINDOW_PC_SAVE = 34,
     MENU_WINDOW_PC_CANCEL = 35,
+    MENU_WINDOW_POCKET_ITEM = 89,
 } MenuWindowId;
 
 typedef enum MenuWindowCloseMode {
     MENU_WINDOW_CLOSE_ALL = 0,
 } MenuWindowCloseMode;
+
+typedef enum MenuWindowCloseWait {
+    MENU_WINDOW_DONT_WAIT_FOR_CLOSE,
+    MENU_WINDOW_WAIT_FOR_CLOSE,
+} MenuWindowCloseWait;
 
 #ifdef __cplusplus
 extern "C" {

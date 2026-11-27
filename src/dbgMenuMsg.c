@@ -19,7 +19,6 @@
 extern void zz_801C41C8_(int mode, float seconds);
 extern void zz_801C40F0_(int wait);
 extern void zz_80105FF8_(int msgId, int unused, int wait);
-extern void zz_801069FC_(int wait);
 extern void zz_80106080_(int wait);
 extern void zz_80105FB0_(int dummy);
 extern void zz_801067E8_(int msgId, int wait, int flag);
@@ -36,7 +35,7 @@ int dbgMenuMsgTest(int menuItem, int command)
         zz_801C41C8_(3, dbgMenuMsgFadeTimes[0]);
         zz_801C40F0_(1);
         zz_80105FF8_(TEST_MESSAGE_ID, 1, 0);
-        zz_801069FC_(1);
+        closeMessageWindow(1);
         zz_801C41C8_(2, dbgMenuMsgFadeTimes[0]);
         zz_801C40F0_(1);
         break;
@@ -53,7 +52,7 @@ int dbgMenuMsgTest(int menuItem, int command)
         waitFrame();
         break;
     case 3:
-        zz_set_msg_var(MESSAGE_VARIABLE_INDEX, MESSAGE_VARIABLE_VALUE);
+        setMessageVariable(MESSAGE_VARIABLE_INDEX, MESSAGE_VARIABLE_VALUE);
         break;
     }
 

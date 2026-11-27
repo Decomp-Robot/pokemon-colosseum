@@ -4,6 +4,7 @@
  * Delete and save only start the card operation; load additionally displays
  * the result message and invokes the menu's follow-up routine.
  */
+#include "app/message/message.h"
 
 enum MemcardOperation {
     MEMCARD_OP_LOAD = 2,
@@ -16,8 +17,6 @@ enum {
 };
 
 extern int zz_801D0748_(int operation, int, int);
-extern int zz_display_message_with_msg_id(int, int messageId, int, int);
-extern void zz_801069FC_(int);
 
 int dbgMenuMemcardDelete(void)
 {
@@ -28,8 +27,9 @@ int dbgMenuMemcardDelete(void)
 int dbgMenuMemcardLoad(void)
 {
     zz_801D0748_(MEMCARD_OP_LOAD, 2, 0);
-    zz_display_message_with_msg_id(2, MSG_MEMCARD_LOAD, 1, 1);
-    zz_801069FC_(1);
+    displayMessage(MESSAGE_DISPLAY_KIND_MENU, MSG_MEMCARD_LOAD,
+                   MESSAGE_DISPLAY_ARGUMENT_SET, MESSAGE_DISPLAY_ARGUMENT_SET);
+    closeMessageWindow(MESSAGE_WINDOW_CLOSE_WAIT);
     return 0;
 }
 

@@ -62,7 +62,7 @@ int floorReadShowSpeciesName(void *menu, FloorCommandEntry *entry)
     Pokemon *pokemon = zz_80057270_();
 
     if (pokemon != 0) {
-        zz_set_msg_var(MESSAGE_VARIABLE_FLOOR_READ_SPECIES_NAME,
+        setMessageVariable(MESSAGE_VARIABLE_FLOOR_READ_SPECIES_NAME,
                        (u32)zz_get_string_with_msg_id(zz_8011E760_(
                            zz_pokemon_stats_get_stats_for_species_with_id(zz_8011F5C8_(pokemon)))));
         zz_msg_window_draw(0, 0, -1, MESSAGE_ID_FLOOR_READ_SPECIES);
@@ -89,7 +89,7 @@ int floorReadShowLevel(void *menu, FloorCommandEntry *entry)
         offset = zz_800FA444_(MESSAGE_ID_FLOOR_READ_LEVEL) >> 16;
         zz_msg_window_draw(entry->textX - digits * MESSAGE_DIGIT_WIDTH - offset, 0, -1,
                            MESSAGE_ID_FLOOR_READ_LEVEL);
-        zz_set_msg_var(MESSAGE_VARIABLE_FLOOR_READ_LEVEL, level);
+        setMessageVariable(MESSAGE_VARIABLE_FLOOR_READ_LEVEL, level);
         messageId = MESSAGE_ID_FLOOR_READ_RESULT;
     }
     entry->messageId = messageId;
