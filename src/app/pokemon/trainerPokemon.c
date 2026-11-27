@@ -80,3 +80,57 @@ s8 trainerPokemonGetAbilityIndex(TrainerPokemon *pokemon)
     }
     return pokemon->abilityIndex;
 }
+
+u8 trainerPokemonGetSpecialPokemonId(TrainerPokemon *pokemon)
+{
+    if (pokemon == 0) {
+        return 0;
+    }
+    return pokemon->specialPokemonId;
+}
+
+u16 trainerPokemonGetHp(TrainerPokemon *pokemon)
+{
+    if (pokemon == 0) {
+        return 0;
+    }
+    return pokemon->hp;
+}
+
+u8 trainerPokemonGetLevel(TrainerPokemon *pokemon)
+{
+    if (pokemon == 0) {
+        return 0;
+    }
+    return pokemon->level;
+}
+
+s16 trainerPokemonGetStat(TrainerPokemon *pokemon, u8 index)
+{
+    if (pokemon == 0) {
+        return -1;
+    }
+    if (index >= TRAINER_POKEMON_STAT_COUNT) {
+        return -1;
+    }
+    return pokemon->stats[index];
+}
+
+s8 trainerPokemonGetIndividualValue(TrainerPokemon *pokemon, u8 index)
+{
+    if (pokemon == 0) {
+        return -1;
+    }
+    if (index >= TRAINER_POKEMON_STAT_COUNT) {
+        return -1;
+    }
+    return pokemon->individualValues[index];
+}
+
+u32 trainerPokemonGetNameId(TrainerPokemon *pokemon)
+{
+    if (pokemon == 0) {
+        return 0;
+    }
+    return pokemon->nameId;
+}

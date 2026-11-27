@@ -1003,7 +1003,7 @@ app/pokemon/pokemonDB.c:
 	.text       start:0x801ED218 end:0x801ED388
 
 app/pokemon/trainerPokemon.c:
-	.text       start:0x801FC838 end:0x801FC964
+	.text       start:0x801FC838 end:0x801FCA2C
 
 app/msgctrl/msgctrl.c:
 	.text       start:0x801FCB0C end:0x801FCCC4
