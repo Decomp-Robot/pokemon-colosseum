@@ -15,7 +15,6 @@
 #define __LO(x) (((int *)&(x))[1])
 
 extern int errno;
-extern float quiet_nan[];
 
 double tan(double), sin(double), cos(double), acos(double);
 

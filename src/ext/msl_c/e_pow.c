@@ -21,9 +21,6 @@ extern int errno;
 extern double sqrt(double);
 extern double ldexp(double,int);
 
-/* NaN handed back when the call is a domain error. */
-extern float quiet_nan[];
-
 #define EDOM 33
 
 static const double

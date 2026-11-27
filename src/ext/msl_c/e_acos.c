@@ -13,7 +13,6 @@
 #define __HI(x) (((int *)&(x))[0])
 #define __LO(x) (((int *)&(x))[1])
 
-extern float quiet_nan[];
 extern double sqrt(double);
 
 static const double

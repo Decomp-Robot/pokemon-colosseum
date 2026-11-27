@@ -8,6 +8,8 @@
 double fabs(double x);
 double sin(double x);
 double cos(double x);
+double tan(double x);
+double atan2(double y, double x);
 
 float sinf(float x);
 float cosf(float x);
@@ -21,6 +23,9 @@ double scalbn(double x, int n);
 
 double copysign(double x, double y);
 
+long __fpclassifyf(float x);
+long __fpclassifyd(double x);
+
 #ifdef __MWERKS__
 #pragma cplusplus on
 #endif
@@ -29,8 +34,8 @@ double floor(double x);
 
 extern inline float sqrtf(float x)
 {
-    static const double _half = .5;
-    static const double _three = 3.0;
+    const double _half = .5;
+    const double _three = 3.0;
     volatile float y;
     if (x > 0.0f)
     {
@@ -52,8 +57,8 @@ extern inline float sqrtf(float x)
 // TODO: this isn't correct! It's just to generate sdata2 in GXDraw.o
 extern inline float sqrt(float x)
 {
-    static const double _half = .5;
-    static const double _three = 3.0;
+    const double _half = .5;
+    const double _three = 3.0;
     volatile float y;
     if (x > 0.0f)
     {
@@ -79,9 +84,6 @@ extern inline float sqrt(float x)
 double fabs(double x);
 float fabsf(float x);
 #endif
-
-long __fpclassifyf(float x);
-long __fpclassifyd(double x);
 
 #define FP_NAN       1
 #define FP_INFINITE  2

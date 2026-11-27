@@ -10,9 +10,6 @@
 #include <sysdolphin/baselib/spline.h>
 #include <sysdolphin/baselib/wobj.h>
 
-#define WOBJ_FLAG_LOCAL_POS 0x1
-#define WOBJ_FLAG_HAS_POS 0x2
-
 static HSD_ClassInfo* wobjClassInfo;
 HSD_WObjInfo hsd_WObjInfo = { { HSD_WObjInit } };
 

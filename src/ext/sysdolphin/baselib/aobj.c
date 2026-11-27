@@ -315,7 +315,7 @@ static void AObjWalkCObj(HSD_CObj* cobj, u32 mask, HSD_AObjCallback cb,
     if ((mask & AOBJ_VISIT_COBJ) != 0 && cobj->aobj != NULL) {
         AObjNotify(cb, fmt, cobj->aobj, cobj, AOBJ_OBJECT_KIND_COBJ, *value);
     }
-    AObjWalkWObj(cobj->eye_position, mask, cb, fmt, value);
+    AObjWalkWObj(cobj->eyepos, mask, cb, fmt, value);
     AObjWalkWObj(cobj->interest, mask, cb, fmt, value);
 }
 

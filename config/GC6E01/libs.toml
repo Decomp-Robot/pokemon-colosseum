@@ -4947,6 +4947,10 @@ name = "ext/sysdolphin/baselib/aobj.c"
 extra_cflags = ["-opt level=1", "-use_lmw_stmw on", "-rostr", "-i src/ext/sysdolphin/include", "-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/include/libc"]
 completed = true
 [[lib.object]]
+name = "ext/sysdolphin/baselib/cobj.c"
+extra_cflags = ["-opt level=1", "-use_lmw_stmw on", "-rostr", "-i src/ext/sysdolphin/include", "-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/include/libc"]
+completed = true
+[[lib.object]]
 name = "ext/sysdolphin/baselib/list.c"
 extra_cflags = ["-rostr", "-i src/ext/sysdolphin/include", "-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/include/libc"]
 completed = true

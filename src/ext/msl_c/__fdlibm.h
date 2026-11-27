@@ -14,6 +14,8 @@ double atan(double);
 
 double copysign(double,double);
 
+#include <libc/msl_math_data.h>
+
 double __ieee754_acos(double);
 double __ieee754_asin(double);
 double __ieee754_atan2(double,double);

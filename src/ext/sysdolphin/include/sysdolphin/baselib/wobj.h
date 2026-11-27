@@ -20,9 +20,14 @@ typedef struct _HSD_WObjAnimDesc {
     HSD_RObjAnimDesc* robjanimdesc;
 } HSD_WObjAnimDesc;
 
+typedef enum _HSD_WObjFlags {
+    WOBJ_FLAG_LOCAL_POS = 0x1,
+    WOBJ_FLAG_HAS_POS = 0x2
+} HSD_WObjFlags;
+
 typedef struct _HSD_WObj {
     HSD_Obj obj;
-    u32 flags;
+    HSD_WObjFlags flags;
     Vec pos;
     HSD_AObj* aobj;
     HSD_RObj* robj;
@@ -41,6 +46,16 @@ typedef struct _HSD_WObjInfo {
     s32 (*load)(HSD_WObj* wobj, HSD_WObjDesc* desc);
     void (*update)(void* obj, s32 cmd, f32* value);
 } HSD_WObjInfo;
+
+static inline void HSD_WObjUnref(HSD_WObj* wobj)
+{
+    if (wobj != NULL) {
+        if (HSD_ObjUnref(&wobj->obj) && wobj != NULL) {
+            wobj->obj.class_info->release(wobj);
+            wobj->obj.class_info->destroy(wobj);
+        }
+    }
+}
 
 extern HSD_WObjInfo hsd_WObjInfo;
 
