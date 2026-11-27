@@ -921,6 +921,9 @@ ext/musyx_sdk/debugger/debugger.c:
 ext/musyx_sdk/txwin/txwin.c:
 	.text       start:0x801653BC end:0x801653BC
 
+app/floor/floorEvent.c:
+	.text       start:0x801660D8 end:0x801662E8
+
 app/floor/floorCharacterBios.c:
 	.text       start:0x80167E64 end:0x80167ED0
 

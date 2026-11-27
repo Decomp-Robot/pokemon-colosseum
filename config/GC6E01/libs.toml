@@ -230,6 +230,12 @@ extra_cflags = ["-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/include/
 completed = true
 
 [[lib.object]]
+name = "app/floor/floorEvent.c"
+mw_version = "GC/2.6"
+extra_cflags = ["-use_lmw_stmw on", "-lang=c++"]
+completed = true
+
+[[lib.object]]
 name = "GSAPI/GSmodel/animation.c"
 mw_version = "GC/2.6"
 extra_cflags = ["-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/include/libc"]
