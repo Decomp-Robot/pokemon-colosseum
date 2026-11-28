@@ -3,6 +3,26 @@
 
 #include "pokemon/types.h"
 
+struct BattlePokemon;
+struct FloorCommandEntry;
+struct MenuWindow;
+
+typedef struct DbgMenuLogEntry {
+    char *moveName;
+    char *typeName;
+    u16 typeIconId;
+    u8 maxPP;
+    u8 currentPP;
+} DbgMenuLogEntry;
+
+typedef struct DbgMenuLog {
+    char *pokemonName;
+    DbgMenuLogEntry moves[4];
+    u8 unk_34[12];
+    struct BattlePokemon *battler;
+    u8 canEvolve;
+} DbgMenuLog;
+
 typedef enum DbgMenuItemMode {
     DBG_MENU_ITEM_MODE_CREATE,
     DBG_MENU_ITEM_MODE_PENDING,
@@ -67,6 +87,10 @@ const DbgMenuInput *dbgMenuGetInput(void);
 int dbgMenuEvolveItemCreate(DbgMenuItem *item);
 void dbgMenuEvolveItemUpdate(DbgMenuItem *item);
 int dbgMenuReliveItemCreate(DbgMenuItem *item);
+
+void dbgMenuLogShow(struct MenuWindow *window, struct FloorCommandEntry *entry);
+
+DbgMenuItem *findDebugMenuSubject(s32 subjectId);
 
 #ifdef __cplusplus
 }

@@ -74,6 +74,12 @@ completed = true
 extra_cflags = ["-opt nopeephole"]
 
 [[lib.object]]
+name = "dbgMenuLog.c"
+mw_version = "GC/2.6"
+extra_cflags = ["-opt nopeephole", "-use_lmw_stmw on"]
+completed = true
+
+[[lib.object]]
 name = "dbgMenuItemCreate.c"
 mw_version = "GC/2.6"
 completed = true

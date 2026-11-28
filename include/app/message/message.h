@@ -9,8 +9,9 @@
  */
 typedef enum MessageId {
     MESSAGE_ID_NONE = 0,
-    MESSAGE_ID_FLOOR_READ_RESULT = 222,
-    MESSAGE_ID_FLOOR_READ_SPECIES = 231,
+    MESSAGE_ID_NUMBER_TEMPLATE = 222,
+    MESSAGE_ID_STRING_TEMPLATE = 231,
+    MESSAGE_ID_SLASH = 407,
     MESSAGE_ID_FLOOR_READ_GENDER_MALE = 3431,
     MESSAGE_ID_FLOOR_READ_GENDER_FEMALE = 3432,
     MESSAGE_ID_PC_WHICH_TO_ACCESS = 7002,
@@ -61,10 +62,10 @@ typedef enum MessageVariable {
     MESSAGE_VARIABLE_UNK_49,
     MESSAGE_VARIABLE_UNK_50,
     MESSAGE_VARIABLE_UNK_51,
-    MESSAGE_VARIABLE_FLOOR_READ_LEVEL,
+    MESSAGE_VARIABLE_NUMBER,
     MESSAGE_VARIABLE_UNK_53,
     MESSAGE_VARIABLE_UNK_54,
-    MESSAGE_VARIABLE_FLOOR_READ_SPECIES_NAME,
+    MESSAGE_VARIABLE_STRING,
     MESSAGE_VARIABLE_UNK_56,
     MESSAGE_VARIABLE_UNK_57,
     MESSAGE_VARIABLE_UNK_58,
@@ -125,7 +126,10 @@ extern "C" {
 
 int displayMessage(int kind, int messageId, int arg1, int arg2);
 void closeMessageWindow(int wait);
-void setMessageVariable(int variable, u32 value);
+u32 measureMessageText(MessageId messageId);
+s32 drawMessageWindow(s32 x, s32 y, s32 color, MessageId messageId);
+s32 drawMessageWithVariables(s32 x, s32 y, s32 textX, s32 textY, s32 color, MessageId messageId);
+void setMessageVariable(MessageVariable variable, u32 value);
 
 #ifdef __cplusplus
 }

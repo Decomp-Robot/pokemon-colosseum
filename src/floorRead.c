@@ -18,8 +18,6 @@ extern u8 zz_8011F4A8_(Pokemon *pokemon);
 extern PokemonStats *zz_pokemon_stats_get_stats_for_species_with_id(u16 species);
 extern u32 zz_8011E760_(const PokemonStats *stats);
 extern char *zz_get_string_with_msg_id(u32 msgId);
-extern s32 zz_msg_window_draw(s32 x, s32 y, s32 color, MessageId msgId);
-extern u32 zz_800FA444_(u32 msgId);
 
 int floorReadSetAvailable(void *menu, FloorCommandEntry *entry)
 {
@@ -61,10 +59,10 @@ int floorReadShowSpeciesName(void *menu, FloorCommandEntry *entry)
     Pokemon *pokemon = zz_80057270_();
 
     if (pokemon != 0) {
-        setMessageVariable(MESSAGE_VARIABLE_FLOOR_READ_SPECIES_NAME,
+        setMessageVariable(MESSAGE_VARIABLE_STRING,
                        (u32)zz_get_string_with_msg_id(zz_8011E760_(
                            zz_pokemon_stats_get_stats_for_species_with_id(zz_8011F5C8_(pokemon)))));
-        zz_msg_window_draw(0, 0, -1, MESSAGE_ID_FLOOR_READ_SPECIES);
+        drawMessageWindow(0, 0, -1, MESSAGE_ID_STRING_TEMPLATE);
     }
     entry->messageId = MESSAGE_ID_NONE;
     return 0;
@@ -85,11 +83,11 @@ int floorReadShowLevel(void *menu, FloorCommandEntry *entry)
         } else {
             digits = 3;
         }
-        offset = zz_800FA444_(MESSAGE_ID_FLOOR_READ_LEVEL) >> 16;
-        zz_msg_window_draw(entry->textX - digits * MESSAGE_DIGIT_WIDTH - offset, 0, -1,
+        offset = measureMessageText(MESSAGE_ID_FLOOR_READ_LEVEL) >> 16;
+        drawMessageWindow(entry->textX - digits * MESSAGE_DIGIT_WIDTH - offset, 0, -1,
                            MESSAGE_ID_FLOOR_READ_LEVEL);
-        setMessageVariable(MESSAGE_VARIABLE_FLOOR_READ_LEVEL, level);
-        messageId = MESSAGE_ID_FLOOR_READ_RESULT;
+        setMessageVariable(MESSAGE_VARIABLE_NUMBER, level);
+        messageId = MESSAGE_ID_NUMBER_TEMPLATE;
     }
     entry->messageId = messageId;
     return 0;

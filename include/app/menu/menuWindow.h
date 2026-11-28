@@ -288,15 +288,26 @@ typedef enum MenuWindowCloseWait {
 } MenuWindowCloseWait;
 
 typedef enum MenuValueIndex {
-    MENU_VALUE_FIGHT_TRAINER_DATA,
-    MENU_VALUE_FIGHT_TRAINER_DATA_EDIT,
-    MENU_VALUE_FIGHT_TRAINER_DATA_AVAILABLE,
+    MENU_VALUE_SLOT_0,
+    MENU_VALUE_SLOT_1,
+    MENU_VALUE_SLOT_2,
+    MENU_VALUE_SLOT_3,
+    MENU_VALUE_SLOT_4,
+    MENU_VALUE_SLOT_5,
+    MENU_VALUE_SLOT_6,
+    MENU_VALUE_SLOT_7,
+    MENU_VALUE_FIGHT_TRAINER_DATA = MENU_VALUE_SLOT_0,
+    MENU_VALUE_FIGHT_TRAINER_DATA_EDIT = MENU_VALUE_SLOT_1,
+    MENU_VALUE_FIGHT_TRAINER_DATA_AVAILABLE = MENU_VALUE_SLOT_2,
+    MENU_VALUE_DBG_MENU_LOG_SUBJECT_ID = MENU_VALUE_SLOT_0,
 } MenuValueIndex;
 
 typedef struct MenuWindow {
     u8 unk_00[4];
     MenuWindowId id;
 } MenuWindow;
+
+struct FloorCommandEntry;
 
 #ifdef __cplusplus
 extern "C" {
@@ -309,6 +320,8 @@ u8 menuWindowIsOpen(int windowId);
 int menuWindowOpenEx(int windowId, ...);
 void menuWindowSetPosition(int windowId, int posX, int posY);
 s32 menuValueGet(MenuWindow *window, MenuValueIndex index);
+s32 getMenuEntryColor(MenuWindow *window, struct FloorCommandEntry *entry);
+void showMenuMessage(s32 x, s32 y, MenuWindow *window, u16 elementId, u32 flags);
 
 #ifdef __cplusplus
 }

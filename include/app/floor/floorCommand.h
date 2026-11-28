@@ -15,6 +15,7 @@ typedef struct FloorCommandEntry {
     MessageId messageId; /* 0x4C */
     u8 unk_50[4];       /* 0x50 */
     s16 textX;          /* 0x54 */
+    s16 textY;          /* 0x56 */
 } FloorCommandEntry;
 
 void floorCommandSetAvailable(FloorCommandEntry *entry, int available);
