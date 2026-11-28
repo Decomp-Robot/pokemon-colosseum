@@ -763,6 +763,12 @@ menuOrreColosseum.c:
 GSAPI/GSmodel/animation.c:
 	.text       start:0x800EC188 end:0x800EC208
 
+script.c:
+	.text       start:0x800F10E8 end:0x800F6D18
+	.rodata     start:0x80271068 end:0x802711E0
+	.bss        start:0x80401A78 end:0x80401BF8
+	.sdata2     start:0x8047CCB8 end:0x8047CCC8
+
 pokemon/type_data.c:
 	.text       start:0x8010C46C end:0x8010C77C
 	.data       start:0x8035B500 end:0x8035B818

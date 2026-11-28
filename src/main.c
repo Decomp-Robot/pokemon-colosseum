@@ -17,6 +17,8 @@
 #include <dolphin/vi.h>
 #include <dolphin/mtx.h>
 #include <libc/string.h>
+#include "GSAPI/GSdebug.h"
+#include "GSAPI/GSgfx/GSgfx.h"
 #include "app/pad/padInput.h"
 
 /* Opaque game thread object used by the play clock. */
@@ -126,7 +128,6 @@ extern void zz_801028B0_(void);
 extern void zz_800FBF10_(void);
 extern u32 zz_801906A0_(u32 id);
 extern s32 zz_800D37CC_(void);
-extern u32 zz_800D3088_(void);
 extern void zz_8008AC34_(u32 port);
 extern u8 zz_8008ABA0_(u32 port);
 extern u8 zz_800F7EF8_(u32 port);
@@ -137,7 +138,6 @@ extern s32 zz_800F7758_(u32 count);
 extern void zz_800366A8_(void);
 extern s32 zz_800FE834_(u32 type, u8 priority, u32 data, void (*callback)());
 extern void zz_800FC528_(u32 arg0, u32 arg1);
-extern void zz_800DD970_(char *format, ...);
 extern u32 zz_800E0DDC_(void);
 extern void zz_800F7DE4_(u32 port, u32 value);
 extern void zz_800FE9B0_(u32 arg0, u32 arg1);
@@ -349,7 +349,7 @@ void runGame(void)
     zz_801C47D0_();
     zz_80168638_(8);
     zz_80130CE0_(32);
-    zz_800DD970_(lbl_80266420, zz_800E0DDC_());
+    GSdebugPrintfNoFloat(lbl_80266420, zz_800E0DDC_());
     zz_800F07A8_(0, 1000, GAME_THREAD_STACK_SIZE, 1, 1, initGameThread);
     while (1) {
         zz_800FE7A0_();
@@ -469,7 +469,7 @@ void updateFrame(void)
     thread = getPlayClockThread();
     if (thread != NULL && lbl_80478DC8 == TRUE && zz_801906A0_(PLAY_CLOCK_HOLD_FLAG) == 0) {
         clock = zz_80135C10_(thread);
-        clock += (f32)zz_800D3088_() / zz_800D37CC_();
+        clock += (f32)GSgetElapsedFrames() / zz_800D37CC_();
         if (clock >= PLAY_CLOCK_MAX) {
             clock = PLAY_CLOCK_MAX;
         }

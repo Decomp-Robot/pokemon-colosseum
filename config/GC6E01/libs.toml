@@ -213,6 +213,12 @@ extra_cflags = ["-i src/ext/dolsdk2001/include", "-i src/ext/dolsdk2001/include/
 completed = true
 
 [[lib.object]]
+name = "script.c"
+mw_version = "GC/2.6"
+completed = true
+extra_cflags = ["-use_lmw_stmw on", "-rostr", "-i src/ext/dolsdk2001/include/libc"]
+
+[[lib.object]]
 name = "pokemon/type_data.c"
 mw_version = "GC/2.6"
 completed = true
