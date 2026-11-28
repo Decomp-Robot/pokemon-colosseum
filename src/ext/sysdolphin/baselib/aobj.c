@@ -323,7 +323,7 @@ static inline void AObjSetFObj(HSD_AObj* aobj, HSD_FObj* fobj)
 {
     if (aobj != NULL) {
         if (aobj->fobj != NULL) {
-            HSD_FObjRemove(aobj->fobj);
+            HSD_FObjRemoveAll(aobj->fobj);
         }
         aobj->fobj = fobj;
     }
@@ -375,7 +375,7 @@ static inline void AObjSetFlags(HSD_AObj* aobj, u32 flags)
 
 static inline void AObjStop(HSD_AObj* aobj, void* obj, HSD_AObjUpdateCallback cb)
 {
-    HSD_FObjStop(aobj->fobj, obj, cb, aobj->framerate);
+    HSD_FObjStopAll(aobj->fobj, obj, cb, aobj->framerate);
     aobj->flags |= AOBJ_STOPPED;
 }
 
@@ -438,10 +438,10 @@ void HSD_AObjInterpret(HSD_AObj* aobj, void* obj, HSD_AObjUpdateCallback cb)
 
     if ((aobj->flags & AOBJ_LOOP) && aobj->end_frame <= aobj->curr_frame) {
         if (aobj->start_frame < aobj->end_frame) {
-            HSD_FObjStop(aobj->fobj, obj, cb, step);
+            HSD_FObjStopAll(aobj->fobj, obj, cb, step);
             aobj->curr_frame = aobj->start_frame + fmod(aobj->curr_frame - aobj->start_frame,
                                                     aobj->end_frame - aobj->start_frame);
-            HSD_FObjSetFrame(aobj->fobj, aobj->curr_frame);
+            HSD_FObjReqAnimAll(aobj->fobj, aobj->curr_frame);
         } else {
             aobj->curr_frame = aobj->end_frame;
         }
@@ -452,9 +452,9 @@ void HSD_AObjInterpret(HSD_AObj* aobj, void* obj, HSD_AObjUpdateCallback cb)
     }
 
     if (aobj->flags & AOBJ_NO_UPDATE) {
-        HSD_FObjInterpretAnim(aobj->fobj, obj, NULL, step);
+        HSD_FObjInterpretAnimAll(aobj->fobj, obj, NULL, step);
     } else {
-        HSD_FObjInterpretAnim(aobj->fobj, obj, cb, step);
+        HSD_FObjInterpretAnimAll(aobj->fobj, obj, cb, step);
     }
 
     if (!(aobj->flags & AOBJ_LOOP) && aobj->end_frame <= aobj->curr_frame && aobj != NULL) {
@@ -473,7 +473,7 @@ void HSD_AObjSetFrame(HSD_AObj* aobj, f32 frame)
     if (aobj != NULL) {
         aobj->curr_frame = frame;
         aobj->flags = (aobj->flags & ~AOBJ_STOPPED) | AOBJ_FIRST_FRAME;
-        HSD_FObjSetFrame(aobj->fobj, frame);
+        HSD_FObjReqAnimAll(aobj->fobj, frame);
     }
 }
 
