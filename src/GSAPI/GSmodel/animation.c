@@ -1,9 +1,28 @@
-/*
- * Start and stop of a model's texture animation. The model update advances the
- * animation while it runs, and marks it finished when it runs to the end of its
- * range; starting the animation clears that finished state.
- */
 #include "GSAPI/GSmodel/GSmodel.h"
+
+void GSmodelLinkTexAnimToAnim(GSmodel *model, u8 link)
+{
+    if (link != 0) {
+        model->flags |= GSMODEL_FLAG_TEXANIM_LINKED;
+    } else {
+        model->flags &= ~GSMODEL_FLAG_TEXANIM_LINKED;
+    }
+}
+
+u8 GSmodelTexAnimIsPresent(GSmodel *model)
+{
+    return (model->flags & GSMODEL_FLAG_TEXANIM_PRESENT) != 0;
+}
+
+u8 GSmodelTexAnimIsEnabled(GSmodel *model)
+{
+    return (model->flags & GSMODEL_FLAG_TEXANIM_ENABLED) != 0;
+}
+
+u8 GSmodelTexAnimIsFinished(GSmodel *model)
+{
+    return (model->flags & GSMODEL_FLAG_TEXANIM_FINISHED) != 0;
+}
 
 void GSmodelStopTexAnimation(GSmodel *model)
 {
