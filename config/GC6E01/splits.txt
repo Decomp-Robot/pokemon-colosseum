@@ -980,6 +980,13 @@ ext/sysdolphin/baselib/fobj.c:
 	.bss        start:0x80465378 end:0x804653A8
 	.sdata2     start:0x8047DA30 end:0x8047DA60 align:4
 
+ext/sysdolphin/baselib/fog.c:
+	.text       start:0x8019B7C0 end:0x8019BFE8
+	.rodata     start:0x802747B8 end:0x80274800 align:4
+	.data       start:0x8036C7E8 end:0x8036C8C0 align:4
+	.sdata2     start:0x8047DA60 end:0x8047DA98
+	.sbss2      start:0x8047E720 end:0x8047E728
+
 ext/sysdolphin/baselib/hash.c:
 	.text       start:0x8019BFE8 end:0x8019C0F8
 	.rodata     start:0x80274800 end:0x80274818
