@@ -57,6 +57,9 @@ dbgMenuFightTrainer.c:
 dbgMenuItemCreate.c:
 	.text       start:0x8000FDD8 end:0x8000FF50
 
+dbgMenuRelive.c:
+	.text       start:0x8000FF50 end:0x8000FFA8
+
 menuPocketBattleDisk.cpp:
 	.text       start:0x80013DFC end:0x800141BC
 

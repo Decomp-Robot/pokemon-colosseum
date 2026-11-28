@@ -66,6 +66,7 @@ const DbgMenuInput *dbgMenuGetInput(void);
 
 int dbgMenuEvolveItemCreate(DbgMenuItem *item);
 void dbgMenuEvolveItemUpdate(DbgMenuItem *item);
+int dbgMenuReliveItemCreate(DbgMenuItem *item);
 
 #ifdef __cplusplus
 }
